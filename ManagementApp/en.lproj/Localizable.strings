@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  TTTTTT
+
+  Created by 邱成西 on 15/2/13.
+  Copyright (c) 2015年 苏州瑞鹏科技有限公司. All rights reserved.
+*/
+
+
+//底部tabBar
+"navicon_stock" = "stock";
+"navicon_client" = "client";
+"navicon_order" = "order";
+"navicon_options" = "options";
+
+"navicon_all" = "all";

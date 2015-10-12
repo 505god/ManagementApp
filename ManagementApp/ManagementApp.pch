@@ -1,0 +1,53 @@
+//
+// Prefix header for all source files of the 'RPPhotos' target in the 'RPPhotos' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <SystemConfiguration/SystemConfiguration.h>
+    #import <MobileCoreServices/MobileCoreServices.h>
+    #import "AppDelegate.h"
+
+#import "NSObject+Motis.h"
+#import "UIView+Common.h"
+
+#endif
+
+
+#define AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES
+
+
+#define PATH_OF_DOCUMENT    [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
+#define COLOR(R,G,B,A) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:A]
+
+#ifdef DEBUG
+#define debugLog(...)    NSLog(__VA_ARGS__)
+#define debugMethod()    NSLog(@"%s", __func__)
+#define debugError()     NSLog(@"Error at %s Line:%d", __func__, __LINE__)
+#define DLog(fmt, ...)   NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#define debugLog(...)
+#define debugMethod()
+#define debugError()
+#define DLog(...)
+#endif
+
+
+#define SafeRelease(__v) (__v = nil);
+
+#define LOADVC(string) [[NSClassFromString(string) alloc]initWithNibName:string bundle:nil];
+
+#define Platform [[[UIDevice currentDevice] systemVersion] floatValue]
+
+#define NavgationHeight 44
+#define TabbarHeight 49
+
+#define SetTitle(string) NSLocalizedString(string, @"")
