@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "InitVC.h"
 
+#import "LoginVC.h"
 
 #import "ICSDrawerController.h"
 #import "MainVC.h"
@@ -18,6 +19,9 @@
 #import "LevelVC.h"
 #import "OrderVC.h"
 #import "OptionsVC.h"
+
+
+#import "ColorVC.h"
 
 @interface AppDelegate ()
 
@@ -70,6 +74,11 @@
 #pragma mark - 加载VC
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
+    
+    ColorVC *colorVC = [[ColorVC alloc]init];
+    self.window.rootViewController = colorVC;
+    return;
+    
     if (type==1) {
         MainVC *mainVC  = [[MainVC alloc]init];
         
@@ -88,7 +97,9 @@
         UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:mainVC];
         
         self.window.rootViewController = navControl;
+    }else {
+        LoginVC *logVC = LOADVC(@"LoginVC");
+        self.window.rootViewController = logVC;
     }
-    
 }
 @end

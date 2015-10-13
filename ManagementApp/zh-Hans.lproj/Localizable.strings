@@ -13,4 +13,16 @@
 "navicon_order" = "订单";
 "navicon_options" = "更多";
 
+"log_account" = "帐号";
+"log_pwd" = "密码";
+"log_in" = "登录";
+"logInNameError" = "请输入帐号";
+"logInPwdError" = "请输入密码";
+
+"color" = "颜色";
+"Search" = "搜索";
+"cancel" = "取消";
+
 "navicon_all" = "全部";
+
+"connect_error" = "稍后再试...";

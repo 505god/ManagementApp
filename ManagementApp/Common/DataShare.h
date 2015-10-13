@@ -10,8 +10,17 @@
 
 ///单例
 
-@interface DataShare : NSObject
+typedef void(^CompleteBlock)(NSArray *array);
+
+@interface DataShare : NSObject{
+    CompleteBlock completeBlock;
+}
 
 + (DataShare *)sharedService;
+
+//颜色
+@property (nonatomic, strong) NSMutableArray *colorArray;
+-(void)sortColors:(NSArray *)colors CompleteBlock:(CompleteBlock)complet;
+
 
 @end

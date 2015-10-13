@@ -13,4 +13,16 @@
 "navicon_order" = "order";
 "navicon_options" = "options";
 
+"log_account" = "account";
+"log_pwd" = "password";
+"log_in" = "login";
+"logInNameError" = "please enter account";
+"logInPwdError" = "please enter password";
+
+"color" = "color";
+"Search" = "Search";
+"cancel" = "cancel";
+
 "navicon_all" = "all";
+
+"connect_error" = "try again later...";

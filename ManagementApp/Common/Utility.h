@@ -12,4 +12,9 @@
 
 @interface Utility : NSObject
 
+#pragma mark - 判断字符串是否为空
++(BOOL)checkString:(NSString *)string;
+
+#pragma mark - 判断接口
++(void)interfaceWithStatus:(NSInteger)status msg:(NSString *)msg;
 @end
