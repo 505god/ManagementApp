@@ -16,5 +16,7 @@
 
 @property(nonatomic, weak) ICSDrawerController *drawer;
 
+///数据源判断  0=商品分类  1=客户等级分类
+@property (nonatomic, assign) NSInteger currentPage;
 
 @end

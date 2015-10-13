@@ -7,6 +7,7 @@
 //
 
 #import "StockVC.h"
+#import "SortVC.h"
 
 @interface StockVC ()
 
@@ -20,6 +21,7 @@
     [super viewDidLoad];
     
     [self setNavBarView];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -40,6 +42,9 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
+    SortVC *sortVC = (SortVC *)self.mainVC.drawer.leftViewController;
+    sortVC.currentPage = 0;
+    
     [self.mainVC.drawer open];
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "ClientVC.h"
+#import "SortVC.h"
 
 @interface ClientVC ()
 
@@ -40,6 +41,8 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
+    SortVC *sortVC = (SortVC *)self.mainVC.drawer.leftViewController;
+    sortVC.currentPage = 1;
     [self.mainVC.drawer open];
 }
 
