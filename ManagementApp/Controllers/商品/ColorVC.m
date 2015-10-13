@@ -18,7 +18,10 @@
 
 #import "ColorCell.h"
 
-@interface ColorVC ()<SearchTableDelegate>
+#import "BlockAlertView.h"
+#import "BlockTextPromptAlertView.h"
+
+@interface ColorVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
 
 ///通讯录列表
 @property (nonatomic, strong) SearchTable *tableView;
@@ -39,56 +42,31 @@
     //集成刷新控件
     [self addHeader];
     
+    self.isSelectedColor  =YES;
     
     ColorModel *model1 = [[ColorModel alloc]init];
     model1.colorName = @"电视剧";
     model1.productCount = 2;
+    model1.colorId = 1;
     
     ColorModel *model2 = [[ColorModel alloc]init];
     model2.colorName = @"fghghfh";
     model2.productCount = 4;
+    model2.colorId = 2;
     
     ColorModel *model3 = [[ColorModel alloc]init];
     model3.colorName = @"了解更多";
     model3.productCount = 45;
+    model3.colorId = 3;
     
     ColorModel *model4 = [[ColorModel alloc]init];
     model4.colorName = @"电视剧";
     model4.productCount = 2;
+    model4.productCount = 4;
+
+    self.hasSelectedColor = [NSMutableArray arrayWithObjects:model1,model2, nil];
     
-    ColorModel *model5 = [[ColorModel alloc]init];
-    model5.colorName = @"fghghfh";
-    model5.productCount = 4;
-    
-    ColorModel *model6 = [[ColorModel alloc]init];
-    model6.colorName = @"了解更多";
-    model6.productCount = 45;
-    
-    ColorModel *model7 = [[ColorModel alloc]init];
-    model7.colorName = @"电视剧";
-    model7.productCount = 2;
-    
-    ColorModel *model8 = [[ColorModel alloc]init];
-    model8.colorName = @"fghghfh";
-    model8.productCount = 4;
-    
-    ColorModel *model9 = [[ColorModel alloc]init];
-    model9.colorName = @"了解更多";
-    model9.productCount = 45;
-    
-    ColorModel *model10 = [[ColorModel alloc]init];
-    model10.colorName = @"电视剧";
-    model10.productCount = 2;
-    
-    ColorModel *model11 = [[ColorModel alloc]init];
-    model11.colorName = @"fghghfh";
-    model11.productCount = 4;
-    
-    ColorModel *model12 = [[ColorModel alloc]init];
-    model12.colorName = @"了解更多";
-    model12.productCount = 45;
-    
-    self.colorList = [NSMutableArray arrayWithObjects:model1,model2,model3,model4,model5,model6,model7,model8,model9,model10,model11,model3,model12, nil];
+    self.colorList = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
     __weak __typeof(self)weakSelf = self;
     [[DataShare sharedService] sortColors:self.colorList CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
@@ -180,7 +158,58 @@
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
+    UITextField *textField;
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addColor") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+        [alert.textField resignFirstResponder];
+        return YES;
+    }];
     
+    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+        
+    }];
+    __weak __typeof(self)weakSelf = self;
+    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+        
+        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        
+        [[APIClient sharedClient] POST:@"/rest/store/addColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            
+            NSDictionary *jsonData=(NSDictionary *)responseObject;
+            
+            if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+                
+                NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
+                if ([aDic allKeys].count>0) {
+                    ColorModel *colorModel = [[ColorModel alloc] init];
+                    [colorModel mts_setValuesForKeysWithDictionary:aDic];
+                    
+                    [[DataShare sharedService].colorArray addObject:colorModel];
+                    [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                        strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                        [strongSelf.tableView setHeaderAnimated:YES];
+                        [strongSelf.tableView reloadData];
+                    }];
+                    [strongSelf.tableView reloadData];
+                }
+            }else {
+                [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            
+            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+        }];
+    }];
+    [alert show];
 }
 
 #pragma mark - 通知来新消息
@@ -274,15 +303,26 @@
                                      reuseIdentifier:CellIdentifier];
     }
     
+    cell.delegate = self;
+    cell.revealDirection = RMSwipeTableViewCellRevealDirectionRight;
     [cell setSelectedType:0];
+    [cell setIndexPath:indexPath];
     
-    ColorModel *colorModel = nil;
-    colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+    ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
     [cell setColorModel:colorModel];
     
-//    cell.delegate = self;
-//    cell.revealDirection = RMSwipeTableViewCellRevealDirectionRight;
-    
+    if (self.isSelectedColor) {
+        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
+        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
+        
+        if (filteredArray.count>0) {
+            ///已经选择
+            [cell setSelectedType:2];
+        }else {
+            [cell setSelectedType:1];
+        }
+    }
+
     return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -290,6 +330,25 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    ColorCell *cell = (ColorCell *)[tableView cellForRowAtIndexPath:indexPath];
+    if (self.isSelectedColor) {
+         ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        
+        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
+        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
+        if (filteredArray.count>0) {
+            ///已经选择,取消选择
+            [cell setSelectedType:1];
+            [self.hasSelectedColor removeObjectsInArray:filteredArray];
+        }else {
+            ///选择
+            [cell setSelectedType:2];
+            [self.hasSelectedColor addObject:colorModel];
+        }
+    }else {
+        //do noting
+    }
 }
 
 -(void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
@@ -375,4 +434,144 @@
     }];
 }
 
+#pragma mark - RMSwipeTableViewCellDelegate
+//删除颜色
+-(void)swipeTableViewCellWillResetState:(RMSwipeTableViewCell *)swipeTableViewCell fromPoint:(CGPoint)point animation:(RMSwipeTableViewCellAnimationType)animation velocity:(CGPoint)velocity {
+    if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
+        NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
+        
+        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+//        if (colorModel.productCount>0) {
+//            [PopView showWithImageName:@"error" message:SetTitle(@"ColorDelete")];
+//        }else {
+            swipeTableViewCell.shouldAnimateCellReset = YES;
+            
+            __weak __typeof(self)weakSelf = self;
+            BlockAlertView *alert = [BlockAlertView alertWithTitle:@"" message:SetTitle(@"ConfirmDelete")];
+            [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+                
+            }];
+            [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+                
+                
+                [UIView animateWithDuration:0.25
+                                      delay:0
+                                    options:UIViewAnimationOptionCurveLinear
+                                 animations:^{
+                                     swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
+                                 }
+                                 completion:^(BOOL finished) {
+                                     
+                                     [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                                     
+                                     [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
+                                         __strong __typeof(weakSelf)strongSelf = weakSelf;
+                                         if (!strongSelf) {
+                                             return;
+                                         }
+                                         [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+                                         
+                                         NSDictionary *jsonData=(NSDictionary *)responseObject;
+                                         
+                                         if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+                                             
+                                             
+                                             NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
+                                             NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                                             
+                                             [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
+                                             
+                                             [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                                                 strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                                                 [strongSelf.tableView setHeaderAnimated:YES];
+                                                 [strongSelf.tableView reloadData];
+                                             }];
+                                             
+                                             
+                                             [swipeTableViewCell setHidden:YES];
+                                             
+                                             [strongSelf.tableView reloadData];
+                                         }else {
+                                             [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+                                         }
+                                     } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                                         __strong __typeof(weakSelf)strongSelf = weakSelf;
+                                         if (!strongSelf) {
+                                             return;
+                                         }
+                                         [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+                                         
+                                         [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                                     }];
+                                 }
+                 ];
+            }];
+            [alert show];
+//        }
+    }
+}
+
+//修改颜色
+-(void)editDidLongPressedOption:(RMSwipeTableViewCell *)cell {
+    UITextField *textField;
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"EditColor") message:nil defaultText:[(ColorCell *)cell colorModel].colorName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+        [alert.textField resignFirstResponder];
+        return YES;
+    }];
+    
+    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+        
+    }];
+    
+    __weak __typeof(self)weakSelf = self;
+    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+        
+        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        
+        NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
+        
+        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        
+        [[APIClient sharedClient] POST:@"/rest/store/updateColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
+            
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            
+            NSDictionary *jsonData=(NSDictionary *)responseObject;
+            if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+                
+                colorModel.colorName = textField.text;
+                
+                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
+                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                
+                [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
+                [[DataShare sharedService].colorArray addObject:colorModel];
+                
+                [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                    strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                    [strongSelf.tableView setHeaderAnimated:YES];
+                    [strongSelf.tableView reloadData];
+                }];
+                
+                
+                [strongSelf.tableView reloadData];
+            }else {
+                [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            }
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            __strong __typeof(weakSelf)strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            
+            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+        }];
+    }];
+    [alert show];
+}
 @end

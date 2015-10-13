@@ -20,8 +20,17 @@
 "logInPwdError" = "please enter password";
 
 "color" = "color";
+"ColorDelete" = "the color include product can't be deleted";
+"ConfirmDelete" = "confirm delete?";
+"EditColor" = "edit color";
+"addColor" = "add color";
+
+"alert_confirm" = "YES";
+"alert_cancel" = "NO";
+
 "Search" = "Search";
 "cancel" = "cancel";
+
 
 "navicon_all" = "all";
 

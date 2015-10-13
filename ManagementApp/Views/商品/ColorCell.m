@@ -19,7 +19,7 @@
 @property (nonatomic, strong) UIImageView *deleteGreyImageView;
 @property (nonatomic, strong) UIImageView *deleteRedImageView;
 
-
+@property (nonatomic, strong) UIImageView *accessView;
 
 @end
 
@@ -39,6 +39,12 @@
         self.lineView = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.lineView.image = [UIImage imageNamed:@"line"];
         [self.contentView addSubview:self.lineView];
+        
+        self.accessView = [[UIImageView alloc]initWithFrame:CGRectZero];
+        self.accessView.contentMode = UIViewContentModeScaleAspectFit;
+        [self.accessView setHidden:YES];
+        [self.accessView setImage:[UIImage imageNamed:@"uncheck"]];
+        [self.contentView addSubview:self.accessView];
         
         WQCellSelectedBackground *selectedBackgroundView = [[WQCellSelectedBackground alloc] initWithFrame:CGRectZero];
         [self setSelectedBackgroundView:selectedBackgroundView];
@@ -80,6 +86,21 @@
     return _deleteRedImageView;
 }
 
+-(void)setSelectedType:(NSInteger)selectedType {
+    _selectedType = selectedType;
+    
+    if (selectedType==0) {
+        [self.accessView setHidden:YES];
+    }else {
+        [self.accessView setHidden:NO];
+        if (selectedType==1) {
+            [self.accessView setImage:[UIImage imageNamed:@"uncheck"]];
+        }else {
+            [self.accessView setImage:[UIImage imageNamed:@"check"]];
+        }
+    }
+}
+
 -(void)layoutSubviews {
     [super layoutSubviews];
     
@@ -89,9 +110,11 @@
     self.imageView.frame = (CGRect){20,(self.height-20)/2,20,20};
     self.textLabel.frame = (CGRect){self.imageView.right+10,(self.height-self.textLabel.height)/2,self.textLabel.width,self.textLabel.height};
     
-    self.titleLab.frame = (CGRect){10,(self.contentView.height-20)/2,self.contentView.width-20,20};
+    self.titleLab.frame = (CGRect){10,(self.contentView.height-20)/2,self.contentView.width-40,20};
     
-    self.lineView.frame = (CGRect){self.titleLab.left,self.height-1,self.titleLab.width,2};
+    self.accessView.frame = (CGRect){self.titleLab.right,(self.contentView.height-10)/2,14,10};
+    
+    self.lineView.frame = (CGRect){self.titleLab.left,self.height-1,self.contentView.width-20,2};
 }
 
 -(void)setColorModel:(ColorModel *)colorModel {

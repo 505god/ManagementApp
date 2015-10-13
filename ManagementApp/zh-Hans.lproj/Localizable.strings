@@ -20,6 +20,14 @@
 "logInPwdError" = "请输入密码";
 
 "color" = "颜色";
+"ColorDelete" = "该颜色下包含商品不能被删除";
+"ConfirmDelete" = "确认删除?";
+"EditColor" = "编辑颜色";
+"addColor" = "添加颜色";
+
+"alert_confirm" = "确认";
+"alert_cancel" = "取消";
+
 "Search" = "搜索";
 "cancel" = "取消";
 
