@@ -42,3 +42,19 @@ typedef NS_ENUM(NSInteger, MessageFrom) {
     WQMessageFromMe    = 0,   // 自己发的
     WQMessageFromOther = 1    // 别人发得
 };
+
+
+#import "PopView.h"
+#import "NSObject+Motis.h"
+#import "UIView+Common.h"
+#import "MBProgressHUD.h"
+#import "XMPPManager.h"
+#import "APIClient.h"
+#import "LocalDB.h"
+#import "DataShare.h"
+#import "Utility.h"
+
+///登录接口
+static NSString *loginInterface = @"";
+
+

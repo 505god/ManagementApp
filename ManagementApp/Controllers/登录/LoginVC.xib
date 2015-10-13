@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LoginVC">
+            <connections>
+                <outlet property="loginBtn" destination="wp9-tm-Pei" id="8zX-po-eXw"/>
+                <outlet property="passwordText" destination="enn-HG-gCR" id="Tgw-VY-cbo"/>
+                <outlet property="userText" destination="LxW-1V-bBg" id="AM6-aB-ghm"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="launch1_5.png" translatesAutoresizingMaskIntoConstraints="NO" id="QLD-8o-Mom">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wp9-tm-Pei">
+                    <rect key="frame" x="0.0" y="286" width="375" height="49"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="49" id="wrH-x5-KqD"/>
+                    </constraints>
+                    <state key="normal" backgroundImage="login_bt.png"/>
+                    <state key="highlighted" backgroundImage="login_bt_dis.png"/>
+                    <connections>
+                        <action selector="loginBtnPressed:" destination="-1" eventType="touchUpInside" id="QNm-H2-hpa"/>
+                    </connections>
+                </button>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_background.png" translatesAutoresizingMaskIntoConstraints="NO" id="yl7-rY-E8X">
+                    <rect key="frame" x="0.0" y="120" width="375" height="116"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="yl7-rY-E8X" secondAttribute="height" multiplier="375:116" id="9Bt-M3-O2j"/>
+                    </constraints>
+                </imageView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="enn-HG-gCR">
+                    <rect key="frame" x="20" y="181" width="335" height="48"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="enn-HG-gCR" secondAttribute="height" multiplier="335:48" id="6sI-no-S7i"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="2f6-wf-B0J"/>
+                    </connections>
+                </textField>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="LxW-1V-bBg">
+                    <rect key="frame" x="20" y="125" width="335" height="48"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="LxW-1V-bBg" secondAttribute="height" multiplier="335:48" id="qMm-kR-Vc0"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="TT1-bH-Hvn"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="enn-HG-gCR" firstAttribute="top" secondItem="LxW-1V-bBg" secondAttribute="bottom" constant="8" id="8RT-QW-CUv"/>
+                <constraint firstAttribute="trailing" secondItem="LxW-1V-bBg" secondAttribute="trailing" constant="20" id="9Db-Fz-kK3"/>
+                <constraint firstItem="wp9-tm-Pei" firstAttribute="top" secondItem="yl7-rY-E8X" secondAttribute="bottom" constant="50" id="AIY-5m-R9O"/>
+                <constraint firstItem="enn-HG-gCR" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="AgS-aC-0xA"/>
+                <constraint firstItem="LxW-1V-bBg" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="J6e-gm-GKH"/>
+                <constraint firstAttribute="trailing" secondItem="wp9-tm-Pei" secondAttribute="trailing" id="Ljs-kA-eIc"/>
+                <constraint firstAttribute="trailing" secondItem="enn-HG-gCR" secondAttribute="trailing" constant="20" id="NtC-mv-g6d"/>
+                <constraint firstItem="yl7-rY-E8X" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="eFm-z4-4kN"/>
+                <constraint firstAttribute="trailing" secondItem="yl7-rY-E8X" secondAttribute="trailing" id="eJE-gp-MQi"/>
+                <constraint firstItem="yl7-rY-E8X" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="120" id="gAm-Ny-qec"/>
+                <constraint firstItem="LxW-1V-bBg" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="125" id="iBF-N0-5d7"/>
+                <constraint firstItem="wp9-tm-Pei" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="lLm-rb-fV2"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="208" y="241"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="launch1_5.png" width="640" height="1137"/>
+        <image name="login_background.png" width="320" height="99"/>
+        <image name="login_bt.png" width="293" height="49"/>
+        <image name="login_bt_dis.png" width="293" height="49"/>
+    </resources>
+</document>

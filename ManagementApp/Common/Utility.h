@@ -12,4 +12,7 @@
 
 @interface Utility : NSObject
 
+#pragma mark - 判断字符串是否为空
++(BOOL)checkString:(NSString *)string;
+
 @end
