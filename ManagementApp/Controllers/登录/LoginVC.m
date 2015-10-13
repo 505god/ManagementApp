@@ -76,6 +76,9 @@
                 
                 NSDictionary *jsonData=(NSDictionary *)responseObject;
                 
+                
+                ///登录成功
+                [[AppDelegate shareInstance]showRootVCWithType:1];
             } failure:^(NSURLSessionDataTask *task, NSError *error) {
                 __strong __typeof(weakSelf)strongSelf = weakSelf;
                 if (!strongSelf) {
