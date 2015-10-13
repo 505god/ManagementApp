@@ -20,6 +20,9 @@
 #import "OrderVC.h"
 #import "OptionsVC.h"
 
+
+#import "ColorVC.h"
+
 @interface AppDelegate ()
 
 @end
@@ -71,6 +74,11 @@
 #pragma mark - 加载VC
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
+    
+    ColorVC *colorVC = [[ColorVC alloc]init];
+    self.window.rootViewController = colorVC;
+    return;
+    
     if (type==1) {
         MainVC *mainVC  = [[MainVC alloc]init];
         

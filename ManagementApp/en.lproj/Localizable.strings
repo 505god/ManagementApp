@@ -19,6 +19,10 @@
 "logInNameError" = "please enter account";
 "logInPwdError" = "please enter password";
 
+"color" = "color";
+"Search" = "Search";
+"cancel" = "cancel";
+
 "navicon_all" = "all";
 
 "connect_error" = "try again later...";

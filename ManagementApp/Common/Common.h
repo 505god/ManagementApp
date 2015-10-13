@@ -53,6 +53,7 @@ typedef NS_ENUM(NSInteger, MessageFrom) {
 #import "LocalDB.h"
 #import "DataShare.h"
 #import "Utility.h"
+#import "MJRefresh.h"
 
 ///登录接口
 static NSString *loginInterface = @"";

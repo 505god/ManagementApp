@@ -86,7 +86,7 @@
                 }
                 [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
                 
-                [PopView showWithImageName:@"alert_sigh" message:SetTitle(@"connect_error")];
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
             }];
             
         }else {

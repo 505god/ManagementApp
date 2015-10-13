@@ -28,4 +28,25 @@
     return YES;
 }
 
+#pragma mark - 判断接口
+
++(void)interfaceWithStatus:(NSInteger)status msg:(NSString *)msg {
+    if (status==0) {
+        
+    }else if (status==101 || status==100) {
+//        [[WQLocalDB sharedWQLocalDB] deleteLocalUserWithCompleteBlock:^(BOOL finished) {
+//            [[Utility sharedService].appDel.xmppManager getOffLineMessage];
+//            [[Utility sharedService].appDel.xmppManager goOffline];
+//            [[Utility sharedService].appDel.xmppManager teardownStream];
+//            [Utility sharedService].appDel.xmppManager = nil;
+//            
+//            [[Utility sharedService].appDel saveMessageData];
+//            [Utility dataShareClear];
+//            
+//            [[Utility sharedService].appDel showRootVC];
+//        }];
+    }
+    [PopView showWithImageName:@"error" message:msg];
+}
+
 @end

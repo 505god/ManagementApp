@@ -19,6 +19,9 @@
 "logInNameError" = "请输入帐号";
 "logInPwdError" = "请输入密码";
 
+"color" = "颜色";
+"Search" = "搜索";
+"cancel" = "取消";
 
 "navicon_all" = "全部";
 
