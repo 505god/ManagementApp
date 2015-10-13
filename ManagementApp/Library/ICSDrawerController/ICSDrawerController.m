@@ -25,7 +25,7 @@
 #import "ICSDrawerController.h"
 #import "ICSDropShadowView.h"
 
-static const CGFloat kICSDrawerControllerDrawerDepth = 200.0f;
+static const CGFloat kICSDrawerControllerDrawerDepth = 260.0f;
 static const CGFloat kICSDrawerControllerLeftViewInitialOffset = -60.0f;
 static const NSTimeInterval kICSDrawerControllerAnimationDuration = 0.5;
 static const CGFloat kICSDrawerControllerOpeningAnimationSpringDamping = 0.7f;

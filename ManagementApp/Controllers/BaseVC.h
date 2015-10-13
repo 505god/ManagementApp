@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "NavBarView.h"
 
-//修改测试
-
 @interface BaseVC : UIViewController
 
 //导航栏
