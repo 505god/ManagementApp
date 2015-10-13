@@ -19,11 +19,8 @@
 
 @property (nonatomic, assign) id<ColorVCDelegate>delegate;
 
-@property (nonatomic, assign) BOOL isPresentVC;
-
-@property (nonatomic, strong) ColorModel *selectedColorObj;
-
-@property (nonatomic, strong) NSIndexPath *selectedIndexPath;
+///判断是选择颜色还是查看颜色
+@property (nonatomic, assign) BOOL isSelectedColor;
 
 ///已选择的颜色
 @property (nonatomic, strong) NSMutableArray *hasSelectedColor;
