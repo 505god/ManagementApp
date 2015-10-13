@@ -10,10 +10,10 @@
 
 ///客户
 
-#import "ICSDrawerController.h"
+#import "MainVC.h"
 
-@interface ClientVC : BaseVC<ICSDrawerControllerChild, ICSDrawerControllerPresenting>
+@interface ClientVC : BaseVC
 
-@property(nonatomic, weak) ICSDrawerController *drawer;
+@property (nonatomic, weak) MainVC *mainVC;
 
 @end

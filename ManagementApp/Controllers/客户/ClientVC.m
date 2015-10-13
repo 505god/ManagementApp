@@ -40,21 +40,12 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-    [self.drawer open];
+    [self.mainVC.drawer open];
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     
 }
 
-#pragma mark - ICSDrawerControllerPresenting
-
-- (void)drawerControllerWillOpen:(ICSDrawerController *)drawerController {
-    self.view.userInteractionEnabled = NO;
-}
-
-- (void)drawerControllerDidClose:(ICSDrawerController *)drawerController {
-    self.view.userInteractionEnabled = YES;
-}
 
 @end

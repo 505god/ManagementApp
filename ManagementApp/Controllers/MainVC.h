@@ -9,7 +9,11 @@
 #import "BaseVC.h"
 #import "TabbarView.h"
 
-@interface MainVC : BaseVC
+#import "ICSDrawerController.h"
+
+@interface MainVC : BaseVC<ICSDrawerControllerChild, ICSDrawerControllerPresenting>
+
+@property(nonatomic, weak) ICSDrawerController *drawer;
 
 ///底部导航
 @property (nonatomic, strong) TabbarView *tabBarView;

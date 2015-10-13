@@ -99,4 +99,14 @@
         [self changeFromController:self.currentViewController toController:[self.childenControllerArray objectAtIndex:itemType]];
     }
 }
+
+#pragma mark - ICSDrawerControllerPresenting
+
+- (void)drawerControllerWillOpen:(ICSDrawerController *)drawerController {
+    self.view.userInteractionEnabled = NO;
+}
+
+- (void)drawerControllerDidClose:(ICSDrawerController *)drawerController {
+    self.view.userInteractionEnabled = YES;
+}
 @end

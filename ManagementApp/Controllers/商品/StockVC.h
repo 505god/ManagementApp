@@ -10,10 +10,9 @@
 
 ///商品
 
-#import "ICSDrawerController.h"
+#import "MainVC.h"
 
-@interface StockVC : BaseVC<ICSDrawerControllerChild, ICSDrawerControllerPresenting>
+@interface StockVC : BaseVC
 
-@property(nonatomic, weak) ICSDrawerController *drawer;
-
+@property (nonatomic, weak) MainVC *mainVC;
 @end

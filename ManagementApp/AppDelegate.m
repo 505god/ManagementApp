@@ -75,26 +75,26 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
     
-    ColorVC *colorVC = [[ColorVC alloc]init];
-    self.window.rootViewController = colorVC;
-    return;
+//    ColorVC *colorVC = [[ColorVC alloc]init];
+//    self.window.rootViewController = colorVC;
+//    return;
     
     if (type==1) {
         MainVC *mainVC  = [[MainVC alloc]init];
         
         StockVC *stockVC = LOADVC(@"StockVC");
-        SortVC *sortVC = LOADVC(@"SortVC");
-        ICSDrawerController *drawer1 = [[ICSDrawerController alloc] initWithLeftViewController:sortVC centerViewController:stockVC];
-        
+        stockVC.mainVC = mainVC;
         ClientVC *clientVC = LOADVC(@"ClientVC");
-        LevelVC *levelVC = LOADVC(@"LevelVC");
-        ICSDrawerController *drawer2 = [[ICSDrawerController alloc] initWithLeftViewController:levelVC centerViewController:clientVC];
-        
+        clientVC.mainVC = mainVC;
         OrderVC *orderVC = LOADVC(@"OrderVC");
         OptionsVC *optionsVC = LOADVC(@"OptionsVC");
         
-        mainVC.childenControllerArray = @[drawer1,drawer2,orderVC,optionsVC];
-        UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:mainVC];
+        mainVC.childenControllerArray = @[stockVC,clientVC,orderVC,optionsVC];
+        
+        SortVC *sortVC = LOADVC(@"SortVC");
+        
+        ICSDrawerController *drawer1 = [[ICSDrawerController alloc] initWithLeftViewController:sortVC centerViewController:mainVC];
+        UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:drawer1];
         
         self.window.rootViewController = navControl;
     }else {
