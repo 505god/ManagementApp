@@ -1,15 +1,16 @@
 //
-//  ColorCell.m
+//  ClassifyCell.m
 //  ManagementApp
 //
-//  Created by 邱成西 on 15/10/13.
+//  Created by 邱成西 on 15/10/14.
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-#import "ColorCell.h"
+#import "ClassifyCell.h"
 #import "WQCellSelectedBackground.h"
 
-@interface ColorCell ()
+
+@interface ClassifyCell ()
 
 ///标题
 @property (nonatomic, strong) UILabel *titleLab;
@@ -23,7 +24,7 @@
 
 @end
 
-@implementation ColorCell
+@implementation ClassifyCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -120,10 +121,10 @@
     self.lineView.frame = (CGRect){self.titleLab.left,self.height-1,self.contentView.width-20,2};
 }
 
--(void)setColorModel:(ColorModel *)colorModel {
-    _colorModel = colorModel;
+-(void)setSortModel:(SortModel *)sortModel {
+    _sortModel = sortModel;
     
-    self.titleLab.text = [NSString stringWithFormat:@"%@  (%ld)",colorModel.colorName,colorModel.productCount];
+    self.titleLab.text = [NSString stringWithFormat:@"%@  (%ld)",sortModel.sortName,sortModel.sortProductCount];
 }
 
 -(void)setIndexPath:(NSIndexPath *)indexPath {
@@ -179,5 +180,6 @@
         }
     }
 }
+
 
 @end

@@ -18,4 +18,6 @@
 @property (nonatomic, assign) NSInteger sortProductCount;
 
 
+///用于选择分类的时候纪录分类的位置
+@property (nonatomic, strong) NSIndexPath *indexPath;
 @end

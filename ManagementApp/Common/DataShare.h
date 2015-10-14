@@ -18,9 +18,13 @@ typedef void(^CompleteBlock)(NSArray *array);
 
 + (DataShare *)sharedService;
 
-//颜色
+///颜色
 @property (nonatomic, strong) NSMutableArray *colorArray;
 -(void)sortColors:(NSArray *)colors CompleteBlock:(CompleteBlock)complet;
+
+///分类
+@property (nonatomic, strong) NSMutableArray *classifyArray;
+-(void)sortClassify:(NSArray *)classify CompleteBlock:(CompleteBlock)complet;
 
 
 @end

@@ -12,6 +12,7 @@
 #import "PinYinForObjc.h"
 
 #import "ColorModel.h"
+#import "SortModel.h"
 
 @implementation DataShare
 - (id)init{
@@ -40,6 +41,13 @@
     return _colorArray;
 }
 
+-(NSMutableArray *)classifyArray {
+    if (!_classifyArray) {
+        _classifyArray = [[NSMutableArray alloc]init];
+    }
+    return _classifyArray;
+}
+
 #pragma mark - 检索
 
 ///A-Z，按照姓名进行排序
@@ -54,12 +62,12 @@
 }
 
 ///对数据进行自定义，方便页面排版
-///0=颜色
+///0=颜色 1=分类
 -(void)setupDataArray:(NSArray *)dataArray type:(NSInteger)type{
     
     NSMutableArray *mutableArray = [[NSMutableArray alloc]init];
     
-    if (type==0) {
+    if (type==0) {//0=颜色
         [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSArray *array = (NSArray *)obj;
             
@@ -81,8 +89,29 @@
                 [mutableArray addObject:aDic];
             }
         }];
+    }else if(type==1) {//1=分类
+        [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSArray *array = (NSArray *)obj;
+            
+            if (array.count>0) {
+                NSMutableDictionary *aDic = [NSMutableDictionary dictionary];
+                [aDic setObject:array forKey:@"data"];
+                
+                SortModel *sortModel = (SortModel *)array[0];
+                
+                NSString *nameSection = [[NSString stringWithFormat:@"%c",[[PinYinForObjc chineseConvertToPinYin:sortModel.sortName] characterAtIndex:0]]uppercaseString];
+                
+                NSString *nameRegex = @"^[a-zA-Z]+$";
+                NSPredicate *nameTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", nameRegex];
+                if ([nameTest evaluateWithObject:nameSection]) {//字母
+                    [aDic setObject:nameSection forKey:@"indexTitle"];
+                }else {
+                    [aDic setObject:@"#" forKey:@"indexTitle"];
+                }
+                [mutableArray addObject:aDic];
+            }
+        }];
     }
-    
     
     if (completeBlock) {
         completeBlock(mutableArray);
@@ -90,6 +119,7 @@
     }
 }
 
+#pragma mark - 颜色
 ///对数据按照A－Z进行排序
 -(void)sortColors:(NSArray *)colors CompleteBlock:(CompleteBlock)complet{
     completeBlock = [complet copy];
@@ -107,4 +137,20 @@
     [self setupDataArray:mutableArray type:0];
 }
 
+#pragma mark - 分类
+
+-(void)sortClassify:(NSArray *)classify CompleteBlock:(CompleteBlock)complet {
+    completeBlock = [complet copy];
+    NSMutableArray *mutableArray = [[self emptyPartitionedArray] mutableCopy];
+    //添加分类
+    for (SortModel *sortModel in classify) {
+        SEL selector = @selector(sortName);
+        NSInteger index = [[WQIndexedCollationWithSearch currentCollation]
+                           sectionForObject:sortModel
+                           collationStringSelector:selector];
+        [mutableArray[index] addObject:sortModel];
+    }
+    
+    [self setupDataArray:mutableArray type:1];
+}
 @end
