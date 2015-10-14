@@ -13,6 +13,7 @@
 
 #import "ColorModel.h"
 #import "SortModel.h"
+#import "MaterialModel.h"
 
 @implementation DataShare
 - (id)init{
@@ -62,7 +63,7 @@
 }
 
 ///对数据进行自定义，方便页面排版
-///0=颜色 1=分类
+///0=颜色 1=分类 2=材质
 -(void)setupDataArray:(NSArray *)dataArray type:(NSInteger)type{
     
     NSMutableArray *mutableArray = [[NSMutableArray alloc]init];
@@ -100,6 +101,28 @@
                 SortModel *sortModel = (SortModel *)array[0];
                 
                 NSString *nameSection = [[NSString stringWithFormat:@"%c",[[PinYinForObjc chineseConvertToPinYin:sortModel.sortName] characterAtIndex:0]]uppercaseString];
+                
+                NSString *nameRegex = @"^[a-zA-Z]+$";
+                NSPredicate *nameTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", nameRegex];
+                if ([nameTest evaluateWithObject:nameSection]) {//字母
+                    [aDic setObject:nameSection forKey:@"indexTitle"];
+                }else {
+                    [aDic setObject:@"#" forKey:@"indexTitle"];
+                }
+                [mutableArray addObject:aDic];
+            }
+        }];
+    }else if(type==2) {//1=材质
+        [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSArray *array = (NSArray *)obj;
+            
+            if (array.count>0) {
+                NSMutableDictionary *aDic = [NSMutableDictionary dictionary];
+                [aDic setObject:array forKey:@"data"];
+                
+                MaterialModel *materialModel = (MaterialModel *)array[0];
+                
+                NSString *nameSection = [[NSString stringWithFormat:@"%c",[[PinYinForObjc chineseConvertToPinYin:materialModel.materialName] characterAtIndex:0]]uppercaseString];
                 
                 NSString *nameRegex = @"^[a-zA-Z]+$";
                 NSPredicate *nameTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", nameRegex];
@@ -152,5 +175,21 @@
     }
     
     [self setupDataArray:mutableArray type:1];
+}
+
+#pragma mark - 材质
+-(void)sortMaterial:(NSArray *)material CompleteBlock:(CompleteBlock)complet {
+    completeBlock = [complet copy];
+    NSMutableArray *mutableArray = [[self emptyPartitionedArray] mutableCopy];
+    //添加分类
+    for (MaterialModel *materialModel in material) {
+        SEL selector = @selector(materialName);
+        NSInteger index = [[WQIndexedCollationWithSearch currentCollation]
+                           sectionForObject:materialModel
+                           collationStringSelector:selector];
+        [mutableArray[index] addObject:materialModel];
+    }
+    
+    [self setupDataArray:mutableArray type:2];
 }
 @end

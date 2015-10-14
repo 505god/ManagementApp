@@ -22,7 +22,7 @@
 #import "OptionsVC.h"
 
 
-#import "ClassifyVC.h"
+#import "MaterialVC.h"
 
 @interface AppDelegate ()
 
@@ -76,7 +76,7 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
     
-    ClassifyVC *colorVC = [[ClassifyVC alloc]init];
+    MaterialVC *colorVC = [[MaterialVC alloc]init];
     self.window.rootViewController = colorVC;
     return;
     

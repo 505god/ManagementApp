@@ -322,6 +322,9 @@
 		5DFD858D1BCE300D007E6EAC /* StockWarningVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5DFD85931BCE3710007E6EAC /* ClassifyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85921BCE3710007E6EAC /* ClassifyVC.m */; settings = {ASSET_TAGS = (); }; };
 		5DFD85961BCE3885007E6EAC /* ClassifyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85951BCE3885007E6EAC /* ClassifyCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD85991BCE5631007E6EAC /* MaterialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85981BCE5631007E6EAC /* MaterialCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD859C1BCE5644007E6EAC /* MaterialModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD859B1BCE5644007E6EAC /* MaterialModel.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD859F1BCE5654007E6EAC /* MaterialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD859E1BCE5654007E6EAC /* MaterialVC.m */; settings = {ASSET_TAGS = (); }; };
 		5DFE00DC1BC8DE2B009A35C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFE00DB1BC8DE2B009A35C3 /* main.m */; };
 		5DFE00DF1BC8DE2B009A35C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFE00DE1BC8DE2B009A35C3 /* AppDelegate.m */; };
 		5DFE00EA1BC8DE2B009A35C3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFE00E81BC8DE2B009A35C3 /* LaunchScreen.storyboard */; };
@@ -905,6 +908,12 @@
 		5DFD85921BCE3710007E6EAC /* ClassifyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassifyVC.m; sourceTree = "<group>"; };
 		5DFD85941BCE3885007E6EAC /* ClassifyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassifyCell.h; sourceTree = "<group>"; };
 		5DFD85951BCE3885007E6EAC /* ClassifyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassifyCell.m; sourceTree = "<group>"; };
+		5DFD85971BCE5631007E6EAC /* MaterialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialCell.h; sourceTree = "<group>"; };
+		5DFD85981BCE5631007E6EAC /* MaterialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialCell.m; sourceTree = "<group>"; };
+		5DFD859A1BCE5644007E6EAC /* MaterialModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialModel.h; sourceTree = "<group>"; };
+		5DFD859B1BCE5644007E6EAC /* MaterialModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialModel.m; sourceTree = "<group>"; };
+		5DFD859D1BCE5654007E6EAC /* MaterialVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialVC.h; sourceTree = "<group>"; };
+		5DFD859E1BCE5654007E6EAC /* MaterialVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialVC.m; sourceTree = "<group>"; };
 		5DFE00D71BC8DE2B009A35C3 /* ManagementApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManagementApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DFE00DB1BC8DE2B009A35C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DFE00DD1BC8DE2B009A35C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -1005,6 +1014,8 @@
 				5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */,
 				5DFD85911BCE3710007E6EAC /* ClassifyVC.h */,
 				5DFD85921BCE3710007E6EAC /* ClassifyVC.m */,
+				5DFD859D1BCE5654007E6EAC /* MaterialVC.h */,
+				5DFD859E1BCE5654007E6EAC /* MaterialVC.m */,
 			);
 			path = "商品";
 			sourceTree = "<group>";
@@ -1039,6 +1050,8 @@
 				5D13D1791BCCEE7D00C8A430 /* ColorCell.m */,
 				5DFD85941BCE3885007E6EAC /* ClassifyCell.h */,
 				5DFD85951BCE3885007E6EAC /* ClassifyCell.m */,
+				5DFD85971BCE5631007E6EAC /* MaterialCell.h */,
+				5DFD85981BCE5631007E6EAC /* MaterialCell.m */,
 				74E358CA1BCD27D300B0144C /* SortCell.h */,
 				74E358CB1BCD27D300B0144C /* SortCell.m */,
 				74E358CC1BCD27D300B0144C /* SortCell.xib */,
@@ -2336,6 +2349,8 @@
 				5D13D1731BCCEDA500C8A430 /* ColorModel.m */,
 				74E358CF1BCD2A0B00B0144C /* SortModel.h */,
 				74E358D01BCD2A0B00B0144C /* SortModel.m */,
+				5DFD859A1BCE5644007E6EAC /* MaterialModel.h */,
+				5DFD859B1BCE5644007E6EAC /* MaterialModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2548,6 +2563,7 @@
 				5DF546D01BC8E34C00DF5295 /* XMPPElement.m in Sources */,
 				5D3F062B1BCB793000849DA8 /* ICSDropShadowView.m in Sources */,
 				5D13D17D1BCCEF2500C8A430 /* WQCellSelectedBackground.m in Sources */,
+				5DFD859C1BCE5644007E6EAC /* MaterialModel.m in Sources */,
 				5DF5449B1BC8E33200DF5295 /* UIImage+WebP.m in Sources */,
 				5DF547561BC8E35500DF5295 /* MBProgressHUD.m in Sources */,
 				5DF547141BC8E34C00DF5295 /* XMPPDateTimeProfiles.m in Sources */,
@@ -2561,6 +2577,7 @@
 				5DF546B61BC8E34C00DF5295 /* MJRefreshFooterView.m in Sources */,
 				5DF546FA1BC8E34C00DF5295 /* XMPPRoomOccupantMemoryStorageObject.m in Sources */,
 				5DF5468F1BC8E34C00DF5295 /* AFURLConnectionOperation.m in Sources */,
+				5DFD85991BCE5631007E6EAC /* MaterialCell.m in Sources */,
 				5DFD85961BCE3885007E6EAC /* ClassifyCell.m in Sources */,
 				5DF546C91BC8E34C00DF5295 /* XMPPSCRAMSHA1Authentication.m in Sources */,
 				5DF544971BC8E33200DF5295 /* SDWebImagePrefetcher.m in Sources */,
@@ -2635,6 +2652,7 @@
 				5DF5472A1BC8E34C00DF5295 /* XMPPStreamManagementStanzas.m in Sources */,
 				5DF546ED1BC8E34C00DF5295 /* XMPPIQ+LastActivity.m in Sources */,
 				5DF547061BC8E34C00DF5295 /* XMPPvCardTempBase.m in Sources */,
+				5DFD859F1BCE5654007E6EAC /* MaterialVC.m in Sources */,
 				5D3F06211BCB71D600849DA8 /* InitVC.m in Sources */,
 				5DF547351BC8E34C00DF5295 /* XMPPMessageCarbons.m in Sources */,
 				5DF546CC1BC8E34C00DF5295 /* NSData+XMPP.m in Sources */,

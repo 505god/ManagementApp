@@ -1,12 +1,12 @@
 //
-//  ClassifyVC.m
+//  MaterialVC.m
 //  ManagementApp
 //
 //  Created by 邱成西 on 15/10/14.
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-#import "ClassifyVC.h"
+#import "MaterialVC.h"
 
 /*
  检索
@@ -16,12 +16,12 @@
 #import "PinYinForObjc.h"
 #import "WQIndexedCollationWithSearch.h"
 
-#import "ClassifyCell.h"
+#import "MaterialCell.h"
 
 #import "BlockAlertView.h"
 #import "BlockTextPromptAlertView.h"
 
-@interface ClassifyVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
+@interface MaterialVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
 
 ///通讯录列表
 @property (nonatomic, strong) SearchTable *tableView;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation ClassifyVC
+@implementation MaterialVC
 
 #pragma mark - lifeStyle
 
@@ -43,33 +43,33 @@
     
     self.isSelectedClassify  =YES;
     
-    SortModel *model1 = [[SortModel alloc]init];
-    model1.sortName = @"电视剧";
-    model1.sortProductCount = 2;
-    model1.sortId = 1;
+    MaterialModel *model1 = [[MaterialModel alloc]init];
+    model1.materialName = @"电视剧";
+    model1.productCount = 2;
+    model1.materialId = 1;
     
-    SortModel *model2 = [[SortModel alloc]init];
-    model2.sortName = @"fghghfh";
-    model2.sortProductCount = 4;
-    model2.sortId = 2;
+    MaterialModel *model2 = [[MaterialModel alloc]init];
+    model2.materialName = @"fghghfh";
+    model2.productCount = 4;
+    model2.materialId = 2;
     
-    SortModel *model3 = [[SortModel alloc]init];
-    model3.sortName = @"了解更多";
-    model3.sortProductCount = 45;
-    model3.sortId = 3;
+    MaterialModel *model3 = [[MaterialModel alloc]init];
+    model3.materialName = @"了解更多";
+    model3.productCount = 45;
+    model3.materialId = 3;
     
-    SortModel *model4 = [[SortModel alloc]init];
-    model4.sortName = @"电视剧";
-    model4.sortProductCount = 2;
-    model4.sortId = 4;
+    MaterialModel *model4 = [[MaterialModel alloc]init];
+    model4.materialName = @"电视剧";
+    model4.productCount = 2;
+    model4.materialId = 4;
     
-    self.selectedSortModel = model4;
-    [self.hasSelectedClassify addObject:self.selectedSortModel];
+    self.selectedMaterialModel = model4;
+    [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
     
-    [DataShare sharedService].classifyArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
+    [DataShare sharedService].materialArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
     __weak __typeof(self)weakSelf = self;
     
-    [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView setHeaderAnimated:YES];
         [weakSelf.tableView reloadData];
@@ -81,9 +81,9 @@
     
     /*
      ///第一次从服务器获取，后续从单例里面读取
-     if ([DataShare sharedService].classifyArray.count>0) {
+     if ([DataShare sharedService].materialArray.count>0) {
      __weak __typeof(self)weakSelf = self;
-     [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+     [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
      weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
      [weakSelf.tableView setHeaderAnimated:YES];
      [weakSelf.tableView reloadData];
@@ -118,17 +118,17 @@
     return _tableView;
 }
 
--(NSMutableArray *)hasSelectedClassify {
-    if (!_hasSelectedClassify) {
-        _hasSelectedClassify = [[NSMutableArray alloc]init];
+-(NSMutableArray *)hasSelectedMaterial {
+    if (!_hasSelectedMaterial) {
+        _hasSelectedMaterial = [[NSMutableArray alloc]init];
     }
-    return _hasSelectedClassify;
+    return _hasSelectedMaterial;
 }
 
 #pragma mark - UI
 
 -(void)setNavBarView {
-    [self.navBarView setTitle:SetTitle(@"classify") image:nil];
+    [self.navBarView setTitle:SetTitle(@"material") image:nil];
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.navBarView setRightWithArray:@[@"add"]];
     [self.view addSubview:self.navBarView];
@@ -143,15 +143,15 @@
         
         [weakSelf getDataFromSever];
         
-    } dateKey:@"ClassifyVC"];
+    } dateKey:@"MaterialVC"];
 }
 
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedClassify) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(classifyVC:selectedClassify:)]) {
-            [self.delegate classifyVC:self selectedClassify:self.hasSelectedClassify];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(materialVC:selectedMaterial:)]) {
+            [self.delegate materialVC:self selectedMaterial:self.hasSelectedMaterial];
         }
     }
     [self.navigationController popViewControllerAnimated:YES];
@@ -159,7 +159,7 @@
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addClassify") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addmaterial") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
         [alert.textField resignFirstResponder];
         return YES;
     }];
@@ -185,11 +185,11 @@
                 
                 NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
                 if ([aDic allKeys].count>0) {
-                    SortModel *sortModel = [[SortModel alloc] init];
-                    [sortModel mts_setValuesForKeysWithDictionary:aDic];
+                    MaterialModel *materialModel = [[MaterialModel alloc] init];
+                    [materialModel mts_setValuesForKeysWithDictionary:aDic];
                     
-                    [[DataShare sharedService].classifyArray addObject:sortModel];
-                    [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+                    [[DataShare sharedService].materialArray addObject:materialModel];
+                    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                         strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                         [strongSelf.tableView setHeaderAnimated:YES];
                         [strongSelf.tableView reloadData];
@@ -290,11 +290,11 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString * CellIdentifier = @"classify_cell";
+    static NSString * CellIdentifier = @"material_cell";
     
-    ClassifyCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    MaterialCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[ClassifyCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+        cell = [[MaterialCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                    reuseIdentifier:CellIdentifier];
     }
     
@@ -303,14 +303,14 @@
     [cell setSelectedType:0];
     [cell setIndexPath:indexPath];
     
-    SortModel *sortModel = (SortModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-    sortModel.indexPath = indexPath;
+    MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+    materialModel.indexPath = indexPath;
     
-    [cell setSortModel:sortModel];
+    [cell setMaterialModel:materialModel];
     
     if (self.isSelectedClassify) {
-        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"sortId == %d", sortModel.sortId];
-        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedClassify filteredArrayUsingPredicate:predicateString]];
+        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedMaterial filteredArrayUsingPredicate:predicateString]];
         if (filteredArray.count>0) {
             ///已经选择
             [cell setSelectedType:2];
@@ -327,35 +327,35 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    ClassifyCell *cell = (ClassifyCell *)[tableView cellForRowAtIndexPath:indexPath];
+    MaterialCell *cell = (MaterialCell *)[tableView cellForRowAtIndexPath:indexPath];
     if (self.isSelectedClassify) {
         
-        SortModel *sortModel = (SortModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
         
-        if (self.hasSelectedClassify.count>0) {
-            SortModel *sortModelTemp = (SortModel *)self.hasSelectedClassify[0];
+        if (self.hasSelectedMaterial.count>0) {
+            MaterialModel *materialModelTemp = (MaterialModel *)self.hasSelectedMaterial[0];
             
-            if (sortModel.sortId == sortModelTemp.sortId) {
+            if (materialModel.materialId == materialModelTemp.materialId) {
                 ///已经选择,取消选择
                 [cell setSelectedType:1];
-                [self.hasSelectedClassify removeAllObjects];
+                [self.hasSelectedMaterial removeAllObjects];
             }else {
-                //找到sortModelTemp的index
-                ClassifyCell *cellTemp = (ClassifyCell *)[tableView cellForRowAtIndexPath:sortModelTemp.indexPath];
+                //找到materialModelTemp的index
+                MaterialCell *cellTemp = (MaterialCell *)[tableView cellForRowAtIndexPath:materialModelTemp.indexPath];
                 [cellTemp setSelectedType:1];
                 
-                [self.hasSelectedClassify removeAllObjects];
-                if (self.selectedSortModel && (sortModel.sortId == self.selectedSortModel.sortId)){
-                    [self.hasSelectedClassify addObject:self.selectedSortModel];
+                [self.hasSelectedMaterial removeAllObjects];
+                if (self.selectedMaterialModel && (materialModel.materialId == self.selectedMaterialModel.materialId)){
+                    [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
                 }else {
-                    [self.hasSelectedClassify addObject:sortModel];
+                    [self.hasSelectedMaterial addObject:materialModel];
                 }
                 ///选择
                 [cell setSelectedType:2];
             }
         }else {
             ///选择
-            [self.hasSelectedClassify addObject:sortModel];
+            [self.hasSelectedMaterial addObject:materialModel];
             [cell setSelectedType:2];
         }
     }else {
@@ -390,7 +390,7 @@
     [search resignFirstResponder];
     
     __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView setHeaderAnimated:YES];
         [weakSelf.tableView reloadData];
@@ -401,46 +401,46 @@
     
     if (searchBar.text.length>0 && ![ChineseInclude isIncludeChineseInString:searchBar.text]) {//英文或者数字搜素
         
-        [[DataShare sharedService].classifyArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            SortModel *sortModel = (SortModel *)obj;
+        [[DataShare sharedService].materialArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            MaterialModel *materialModel = (MaterialModel *)obj;
             
-            if ([ChineseInclude isIncludeChineseInString:sortModel.sortName]) {//名称含有中文
+            if ([ChineseInclude isIncludeChineseInString:materialModel.materialName]) {//名称含有中文
                 //转换为拼音
-                NSString *tempPinYinStr = [PinYinForObjc chineseConvertToPinYin:sortModel.sortName];
+                NSString *tempPinYinStr = [PinYinForObjc chineseConvertToPinYin:materialModel.materialName];
                 NSRange titleResult=[tempPinYinStr rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
-                if (titleResult.length>0 && ![searchResults containsObject:sortModel]) {
-                    [searchResults addObject:sortModel];
+                if (titleResult.length>0 && ![searchResults containsObject:materialModel]) {
+                    [searchResults addObject:materialModel];
                 }
                 
                 //转换为拼音首字母
-                NSString *tempPinYinHeadStr = [PinYinForObjc chineseConvertToPinYinHead:sortModel.sortName];
+                NSString *tempPinYinHeadStr = [PinYinForObjc chineseConvertToPinYinHead:materialModel.materialName];
                 NSRange titleHeadResult=[tempPinYinHeadStr rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
-                if (titleHeadResult.length>0 && ![searchResults containsObject:sortModel]) {
-                    [searchResults addObject:sortModel];
+                if (titleHeadResult.length>0 && ![searchResults containsObject:materialModel]) {
+                    [searchResults addObject:materialModel];
                 }
             }else {
                 //昵称含有数字
-                NSRange titleResult=[sortModel.sortName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
+                NSRange titleResult=[materialModel.materialName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
                 if (titleResult.length>0) {
-                    [searchResults addObject:sortModel];
+                    [searchResults addObject:materialModel];
                 }
             }
         }];
         
     } else if (searchBar.text.length>0&&[ChineseInclude isIncludeChineseInString:searchBar.text]) {//中文搜索
-        for (SortModel *sortModel in [DataShare sharedService].classifyArray) {
-            NSRange titleResult=[sortModel.sortName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
+        for (MaterialModel *materialModel in [DataShare sharedService].materialArray) {
+            NSRange titleResult=[materialModel.materialName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
             if (titleResult.length>0) {
-                [searchResults addObject:sortModel];
+                [searchResults addObject:materialModel];
             }
         }
     }else if (searchBar.text.length == 0){
-        [searchResults addObjectsFromArray:[DataShare sharedService].classifyArray];
+        [searchResults addObjectsFromArray:[DataShare sharedService].materialArray];
     }
     
     
     __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortClassify:searchResults CompleteBlock:^(NSArray *array) {
+    [[DataShare sharedService] sortMaterial:searchResults CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView reloadData];
     }];
@@ -452,10 +452,10 @@
     if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
         NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
         
-        SortModel *sortModel = (SortModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-//        if (sortModel.sortProductCount>0) {
-//            [PopView showWithImageName:@"error" message:SetTitle(@"classifyDelete")];
-//        }else {
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        //        if (materialModel.productCount>0) {
+        //            [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
+        //        }else {
         swipeTableViewCell.shouldAnimateCellReset = YES;
         
         __weak __typeof(self)weakSelf = self;
@@ -479,10 +479,10 @@
                 if ([[jsonData objectForKey:@"status"]integerValue]==1) {
                     
                     
-                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"sortId == %d", sortModel.sortId];
-                    NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].classifyArray filteredArrayUsingPredicate:predicateString]];
+                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+                    NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
                     
-                    [[DataShare sharedService].classifyArray removeObjectsInArray:filteredArray];
+                    [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
                     
                     
                     [UIView animateWithDuration:0.25
@@ -492,7 +492,7 @@
                                          swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
                                      }
                                      completion:^(BOOL finished) {
-                                         [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+                                         [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                                              strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                                              [strongSelf.tableView setHeaderAnimated:YES];
                                              [strongSelf.tableView reloadData];
@@ -524,7 +524,7 @@
 //修改颜色
 -(void)editDidLongPressedOption:(RMSwipeTableViewCell *)cell {
     UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"EditClassify") message:nil defaultText:[(ClassifyCell *)cell sortModel].sortName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"Editmaterial") message:nil defaultText:[(MaterialCell *)cell materialModel].materialName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
         [alert.textField resignFirstResponder];
         return YES;
     }];
@@ -540,7 +540,7 @@
         
         NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
         
-        SortModel *sortModel = (SortModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
         
         [[APIClient sharedClient] POST:@"/rest/store/updateColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
             
@@ -553,15 +553,15 @@
             NSDictionary *jsonData=(NSDictionary *)responseObject;
             if ([[jsonData objectForKey:@"status"]integerValue]==1) {
                 
-                sortModel.sortName = textField.text;
+                materialModel.materialName = textField.text;
                 
-                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"sortId == %d", sortModel.sortId];
-                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].classifyArray filteredArrayUsingPredicate:predicateString]];
+                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
                 
-                [[DataShare sharedService].classifyArray removeObjectsInArray:filteredArray];
-                [[DataShare sharedService].classifyArray addObject:sortModel];
+                [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
+                [[DataShare sharedService].materialArray addObject:materialModel];
                 
-                [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
+                [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                     strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                     [strongSelf.tableView setHeaderAnimated:YES];
                     [strongSelf.tableView reloadData];
@@ -584,6 +584,5 @@
     }];
     [alert show];
 }
-
 
 @end

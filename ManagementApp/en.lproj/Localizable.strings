@@ -21,16 +21,22 @@
 "logInPwdError" = "please enter password";
 
 //颜色
-"color" = "color";
+"color" = "Color";
 "ColorDelete" = "the color include product can't be deleted";
 "EditColor" = "edit color";
 "addColor" = "add color";
 
 //分类
-"classify" = "classify";
+"classify" = "Classify";
 "classifyDelete" = "the classify include product can't be deleted";
 "EditClassify" = "edit classify";
 "addClassify" = "add classify";
+
+//材质
+"material" = "Material";
+"materialDelete" = "the material include product can't be deleted";
+"Editmaterial" = "edit material";
+"addmaterial" = "add material";
 
 //弹出框
 "ConfirmDelete" = "confirm delete?";

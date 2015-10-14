@@ -26,5 +26,7 @@ typedef void(^CompleteBlock)(NSArray *array);
 @property (nonatomic, strong) NSMutableArray *classifyArray;
 -(void)sortClassify:(NSArray *)classify CompleteBlock:(CompleteBlock)complet;
 
-
+///材质
+@property (nonatomic, strong) NSMutableArray *materialArray;
+-(void)sortMaterial:(NSArray *)material CompleteBlock:(CompleteBlock)complet;
 @end
