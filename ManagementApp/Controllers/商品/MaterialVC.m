@@ -1,12 +1,12 @@
 //
-//  ColorVC.m
+//  MaterialVC.m
 //  ManagementApp
 //
-//  Created by 邱成西 on 15/10/13.
+//  Created by 邱成西 on 15/10/14.
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-#import "ColorVC.h"
+#import "MaterialVC.h"
 
 /*
  检索
@@ -16,12 +16,12 @@
 #import "PinYinForObjc.h"
 #import "WQIndexedCollationWithSearch.h"
 
-#import "ColorCell.h"
+#import "MaterialCell.h"
 
 #import "BlockAlertView.h"
 #import "BlockTextPromptAlertView.h"
 
-@interface ColorVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
+@interface MaterialVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
 
 ///通讯录列表
 @property (nonatomic, strong) SearchTable *tableView;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation ColorVC
+@implementation MaterialVC
 
 #pragma mark - lifeStyle
 
@@ -41,33 +41,35 @@
     //集成刷新控件
     [self addHeader];
     
-    self.isSelectedColor  =YES;
+    self.isSelectedClassify  =YES;
     
-    ColorModel *model1 = [[ColorModel alloc]init];
-    model1.colorName = @"电视剧";
+    MaterialModel *model1 = [[MaterialModel alloc]init];
+    model1.materialName = @"电视剧";
     model1.productCount = 2;
-    model1.colorId = 1;
+    model1.materialId = 1;
     
-    ColorModel *model2 = [[ColorModel alloc]init];
-    model2.colorName = @"fghghfh";
+    MaterialModel *model2 = [[MaterialModel alloc]init];
+    model2.materialName = @"fghghfh";
     model2.productCount = 4;
-    model2.colorId = 2;
+    model2.materialId = 2;
     
-    ColorModel *model3 = [[ColorModel alloc]init];
-    model3.colorName = @"了解更多";
+    MaterialModel *model3 = [[MaterialModel alloc]init];
+    model3.materialName = @"了解更多";
     model3.productCount = 45;
-    model3.colorId = 3;
+    model3.materialId = 3;
     
-    ColorModel *model4 = [[ColorModel alloc]init];
-    model4.colorName = @"电视剧";
+    MaterialModel *model4 = [[MaterialModel alloc]init];
+    model4.materialName = @"电视剧";
     model4.productCount = 2;
-    model4.productCount = 4;
+    model4.materialId = 4;
     
-    self.hasSelectedColor = [NSMutableArray arrayWithObjects:model1,model2, nil];
+    self.selectedMaterialModel = model4;
+    [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
     
-    [DataShare sharedService].colorArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
+    [DataShare sharedService].materialArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
     __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+    
+    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView setHeaderAnimated:YES];
         [weakSelf.tableView reloadData];
@@ -76,11 +78,12 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
     /*
      ///第一次从服务器获取，后续从单例里面读取
-     if ([DataShare sharedService].colorArray.count>0) {
+     if ([DataShare sharedService].materialArray.count>0) {
      __weak __typeof(self)weakSelf = self;
-     [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+     [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
      weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
      [weakSelf.tableView setHeaderAnimated:YES];
      [weakSelf.tableView reloadData];
@@ -94,6 +97,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
 }
 
 
@@ -114,11 +118,17 @@
     return _tableView;
 }
 
+-(NSMutableArray *)hasSelectedMaterial {
+    if (!_hasSelectedMaterial) {
+        _hasSelectedMaterial = [[NSMutableArray alloc]init];
+    }
+    return _hasSelectedMaterial;
+}
 
 #pragma mark - UI
 
 -(void)setNavBarView {
-    [self.navBarView setTitle:SetTitle(@"color") image:nil];
+    [self.navBarView setTitle:SetTitle(@"material") image:nil];
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.navBarView setRightWithArray:@[@"add"]];
     [self.view addSubview:self.navBarView];
@@ -133,15 +143,15 @@
         
         [weakSelf getDataFromSever];
         
-    } dateKey:@"ColorVC"];
+    } dateKey:@"MaterialVC"];
 }
 
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-    if (self.isSelectedColor) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(colorVC:selectedColor:)]) {
-            [self.delegate colorVC:self selectedColor:self.hasSelectedColor];
+    if (self.isSelectedClassify) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(materialVC:selectedMaterial:)]) {
+            [self.delegate materialVC:self selectedMaterial:self.hasSelectedMaterial];
         }
     }
     [self.navigationController popViewControllerAnimated:YES];
@@ -149,7 +159,7 @@
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addColor") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addmaterial") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
         [alert.textField resignFirstResponder];
         return YES;
     }];
@@ -175,11 +185,11 @@
                 
                 NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
                 if ([aDic allKeys].count>0) {
-                    ColorModel *colorModel = [[ColorModel alloc] init];
-                    [colorModel mts_setValuesForKeysWithDictionary:aDic];
+                    MaterialModel *materialModel = [[MaterialModel alloc] init];
+                    [materialModel mts_setValuesForKeysWithDictionary:aDic];
                     
-                    [[DataShare sharedService].colorArray addObject:colorModel];
-                    [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                    [[DataShare sharedService].materialArray addObject:materialModel];
+                    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                         strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                         [strongSelf.tableView setHeaderAnimated:YES];
                         [strongSelf.tableView reloadData];
@@ -201,6 +211,7 @@
     }];
     [alert show];
 }
+
 
 #pragma mark - 获取颜色列表
 
@@ -279,12 +290,12 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString * CellIdentifier = @"color_cell";
+    static NSString * CellIdentifier = @"material_cell";
     
-    ColorCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    MaterialCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[ColorCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                reuseIdentifier:CellIdentifier];
+        cell = [[MaterialCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                   reuseIdentifier:CellIdentifier];
     }
     
     cell.delegate = self;
@@ -292,13 +303,14 @@
     [cell setSelectedType:0];
     [cell setIndexPath:indexPath];
     
-    ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-    [cell setColorModel:colorModel];
+    MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+    materialModel.indexPath = indexPath;
     
-    if (self.isSelectedColor) {
-        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
-        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
-        
+    [cell setMaterialModel:materialModel];
+    
+    if (self.isSelectedClassify) {
+        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedMaterial filteredArrayUsingPredicate:predicateString]];
         if (filteredArray.count>0) {
             ///已经选择
             [cell setSelectedType:2];
@@ -315,20 +327,36 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    ColorCell *cell = (ColorCell *)[tableView cellForRowAtIndexPath:indexPath];
-    if (self.isSelectedColor) {
-        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+    MaterialCell *cell = (MaterialCell *)[tableView cellForRowAtIndexPath:indexPath];
+    if (self.isSelectedClassify) {
         
-        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
-        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
-        if (filteredArray.count>0) {
-            ///已经选择,取消选择
-            [cell setSelectedType:1];
-            [self.hasSelectedColor removeObjectsInArray:filteredArray];
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        
+        if (self.hasSelectedMaterial.count>0) {
+            MaterialModel *materialModelTemp = (MaterialModel *)self.hasSelectedMaterial[0];
+            
+            if (materialModel.materialId == materialModelTemp.materialId) {
+                ///已经选择,取消选择
+                [cell setSelectedType:1];
+                [self.hasSelectedMaterial removeAllObjects];
+            }else {
+                //找到materialModelTemp的index
+                MaterialCell *cellTemp = (MaterialCell *)[tableView cellForRowAtIndexPath:materialModelTemp.indexPath];
+                [cellTemp setSelectedType:1];
+                
+                [self.hasSelectedMaterial removeAllObjects];
+                if (self.selectedMaterialModel && (materialModel.materialId == self.selectedMaterialModel.materialId)){
+                    [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
+                }else {
+                    [self.hasSelectedMaterial addObject:materialModel];
+                }
+                ///选择
+                [cell setSelectedType:2];
+            }
         }else {
             ///选择
+            [self.hasSelectedMaterial addObject:materialModel];
             [cell setSelectedType:2];
-            [self.hasSelectedColor addObject:colorModel];
         }
     }else {
         //do noting
@@ -362,7 +390,7 @@
     [search resignFirstResponder];
     
     __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView setHeaderAnimated:YES];
         [weakSelf.tableView reloadData];
@@ -373,46 +401,46 @@
     
     if (searchBar.text.length>0 && ![ChineseInclude isIncludeChineseInString:searchBar.text]) {//英文或者数字搜素
         
-        [[DataShare sharedService].colorArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            ColorModel *colorModel = (ColorModel *)obj;
+        [[DataShare sharedService].materialArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            MaterialModel *materialModel = (MaterialModel *)obj;
             
-            if ([ChineseInclude isIncludeChineseInString:colorModel.colorName]) {//名称含有中文
+            if ([ChineseInclude isIncludeChineseInString:materialModel.materialName]) {//名称含有中文
                 //转换为拼音
-                NSString *tempPinYinStr = [PinYinForObjc chineseConvertToPinYin:colorModel.colorName];
+                NSString *tempPinYinStr = [PinYinForObjc chineseConvertToPinYin:materialModel.materialName];
                 NSRange titleResult=[tempPinYinStr rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
-                if (titleResult.length>0 && ![searchResults containsObject:colorModel]) {
-                    [searchResults addObject:colorModel];
+                if (titleResult.length>0 && ![searchResults containsObject:materialModel]) {
+                    [searchResults addObject:materialModel];
                 }
                 
                 //转换为拼音首字母
-                NSString *tempPinYinHeadStr = [PinYinForObjc chineseConvertToPinYinHead:colorModel.colorName];
+                NSString *tempPinYinHeadStr = [PinYinForObjc chineseConvertToPinYinHead:materialModel.materialName];
                 NSRange titleHeadResult=[tempPinYinHeadStr rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
-                if (titleHeadResult.length>0 && ![searchResults containsObject:colorModel]) {
-                    [searchResults addObject:colorModel];
+                if (titleHeadResult.length>0 && ![searchResults containsObject:materialModel]) {
+                    [searchResults addObject:materialModel];
                 }
             }else {
                 //昵称含有数字
-                NSRange titleResult=[colorModel.colorName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
+                NSRange titleResult=[materialModel.materialName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
                 if (titleResult.length>0) {
-                    [searchResults addObject:colorModel];
+                    [searchResults addObject:materialModel];
                 }
             }
         }];
         
     } else if (searchBar.text.length>0&&[ChineseInclude isIncludeChineseInString:searchBar.text]) {//中文搜索
-        for (ColorModel *colorModel in [DataShare sharedService].colorArray) {
-            NSRange titleResult=[colorModel.colorName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
+        for (MaterialModel *materialModel in [DataShare sharedService].materialArray) {
+            NSRange titleResult=[materialModel.materialName rangeOfString:searchBar.text options:NSCaseInsensitiveSearch];
             if (titleResult.length>0) {
-                [searchResults addObject:colorModel];
+                [searchResults addObject:materialModel];
             }
         }
     }else if (searchBar.text.length == 0){
-        [searchResults addObjectsFromArray:[DataShare sharedService].colorArray];
+        [searchResults addObjectsFromArray:[DataShare sharedService].materialArray];
     }
     
     
     __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortColors:searchResults CompleteBlock:^(NSArray *array) {
+    [[DataShare sharedService] sortMaterial:searchResults CompleteBlock:^(NSArray *array) {
         weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
         [weakSelf.tableView reloadData];
     }];
@@ -424,9 +452,9 @@
     if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
         NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
         
-        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-        //        if (colorModel.productCount>0) {
-        //            [PopView showWithImageName:@"error" message:SetTitle(@"ColorDelete")];
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        //        if (materialModel.productCount>0) {
+        //            [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
         //        }else {
         swipeTableViewCell.shouldAnimateCellReset = YES;
         
@@ -451,10 +479,10 @@
                 if ([[jsonData objectForKey:@"status"]integerValue]==1) {
                     
                     
-                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
-                    NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+                    NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
                     
-                    [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
+                    [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
                     
                     
                     [UIView animateWithDuration:0.25
@@ -464,7 +492,7 @@
                                          swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
                                      }
                                      completion:^(BOOL finished) {
-                                         [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                                         [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                                              strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                                              [strongSelf.tableView setHeaderAnimated:YES];
                                              [strongSelf.tableView reloadData];
@@ -477,6 +505,7 @@
                     [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
                 }
             } failure:^(NSURLSessionDataTask *task, NSError *error) {
+                
                 __strong __typeof(weakSelf)strongSelf = weakSelf;
                 if (!strongSelf) {
                     return;
@@ -495,7 +524,7 @@
 //修改颜色
 -(void)editDidLongPressedOption:(RMSwipeTableViewCell *)cell {
     UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"EditColor") message:nil defaultText:[(ColorCell *)cell colorModel].colorName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
+    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"Editmaterial") message:nil defaultText:[(MaterialCell *)cell materialModel].materialName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
         [alert.textField resignFirstResponder];
         return YES;
     }];
@@ -511,7 +540,7 @@
         
         NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
         
-        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
         
         [[APIClient sharedClient] POST:@"/rest/store/updateColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
             
@@ -524,15 +553,15 @@
             NSDictionary *jsonData=(NSDictionary *)responseObject;
             if ([[jsonData objectForKey:@"status"]integerValue]==1) {
                 
-                colorModel.colorName = textField.text;
+                materialModel.materialName = textField.text;
                 
-                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
-                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
                 
-                [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
-                [[DataShare sharedService].colorArray addObject:colorModel];
+                [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
+                [[DataShare sharedService].materialArray addObject:materialModel];
                 
-                [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
                     strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
                     [strongSelf.tableView setHeaderAnimated:YES];
                     [strongSelf.tableView reloadData];
@@ -555,4 +584,5 @@
     }];
     [alert show];
 }
+
 @end

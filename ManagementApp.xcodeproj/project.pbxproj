@@ -318,6 +318,13 @@
 		5DF5478C1BC8E69700DF5295 /* PushConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5DF5478B1BC8E69700DF5295 /* PushConfig.plist */; settings = {ASSET_TAGS = (); }; };
 		5DF547911BC8E71E00DF5295 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF547931BC8E71E00DF5295 /* Localizable.strings */; };
 		5DF547961BC8E74100DF5295 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF547981BC8E74100DF5295 /* InfoPlist.strings */; };
+		5DFD858C1BCE300D007E6EAC /* StockWarningVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD858D1BCE300D007E6EAC /* StockWarningVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */; settings = {ASSET_TAGS = (); }; };
+		5DFD85931BCE3710007E6EAC /* ClassifyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85921BCE3710007E6EAC /* ClassifyVC.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD85961BCE3885007E6EAC /* ClassifyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85951BCE3885007E6EAC /* ClassifyCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD85991BCE5631007E6EAC /* MaterialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85981BCE5631007E6EAC /* MaterialCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD859C1BCE5644007E6EAC /* MaterialModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD859B1BCE5644007E6EAC /* MaterialModel.m */; settings = {ASSET_TAGS = (); }; };
+		5DFD859F1BCE5654007E6EAC /* MaterialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD859E1BCE5654007E6EAC /* MaterialVC.m */; settings = {ASSET_TAGS = (); }; };
 		5DFE00DC1BC8DE2B009A35C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFE00DB1BC8DE2B009A35C3 /* main.m */; };
 		5DFE00DF1BC8DE2B009A35C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFE00DE1BC8DE2B009A35C3 /* AppDelegate.m */; };
 		5DFE00EA1BC8DE2B009A35C3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DFE00E81BC8DE2B009A35C3 /* LaunchScreen.storyboard */; };
@@ -897,6 +904,19 @@
 		5DF547951BC8E73000DF5295 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		5DF547971BC8E74100DF5295 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5DF547991BC8E74400DF5295 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DFD85891BCE300D007E6EAC /* StockWarningVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StockWarningVC.h; sourceTree = "<group>"; };
+		5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StockWarningVC.m; sourceTree = "<group>"; };
+		5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockWarningVC.xib; sourceTree = "<group>"; };
+		5DFD85911BCE3710007E6EAC /* ClassifyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassifyVC.h; sourceTree = "<group>"; };
+		5DFD85921BCE3710007E6EAC /* ClassifyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassifyVC.m; sourceTree = "<group>"; };
+		5DFD85941BCE3885007E6EAC /* ClassifyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassifyCell.h; sourceTree = "<group>"; };
+		5DFD85951BCE3885007E6EAC /* ClassifyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassifyCell.m; sourceTree = "<group>"; };
+		5DFD85971BCE5631007E6EAC /* MaterialCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialCell.h; sourceTree = "<group>"; };
+		5DFD85981BCE5631007E6EAC /* MaterialCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialCell.m; sourceTree = "<group>"; };
+		5DFD859A1BCE5644007E6EAC /* MaterialModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialModel.h; sourceTree = "<group>"; };
+		5DFD859B1BCE5644007E6EAC /* MaterialModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialModel.m; sourceTree = "<group>"; };
+		5DFD859D1BCE5654007E6EAC /* MaterialVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaterialVC.h; sourceTree = "<group>"; };
+		5DFD859E1BCE5654007E6EAC /* MaterialVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaterialVC.m; sourceTree = "<group>"; };
 		5DFE00D71BC8DE2B009A35C3 /* ManagementApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManagementApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DFE00DB1BC8DE2B009A35C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DFE00DD1BC8DE2B009A35C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -995,6 +1015,13 @@
 				5D13D16A1BCCECA100C8A430 /* ProductAddVC.xib */,
 				5D13D16D1BCCED1600C8A430 /* ColorVC.h */,
 				5D13D16E1BCCED1600C8A430 /* ColorVC.m */,
+				5DFD85891BCE300D007E6EAC /* StockWarningVC.h */,
+				5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */,
+				5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */,
+				5DFD85911BCE3710007E6EAC /* ClassifyVC.h */,
+				5DFD85921BCE3710007E6EAC /* ClassifyVC.m */,
+				5DFD859D1BCE5654007E6EAC /* MaterialVC.h */,
+				5DFD859E1BCE5654007E6EAC /* MaterialVC.m */,
 			);
 			path = "商品";
 			sourceTree = "<group>";
@@ -1027,6 +1054,10 @@
 				5D13D1761BCCEE3A00C8A430 /* RMSwipeTableViewCell.m */,
 				5D13D1781BCCEE7D00C8A430 /* ColorCell.h */,
 				5D13D1791BCCEE7D00C8A430 /* ColorCell.m */,
+				5DFD85941BCE3885007E6EAC /* ClassifyCell.h */,
+				5DFD85951BCE3885007E6EAC /* ClassifyCell.m */,
+				5DFD85971BCE5631007E6EAC /* MaterialCell.h */,
+				5DFD85981BCE5631007E6EAC /* MaterialCell.m */,
 				74E358CA1BCD27D300B0144C /* SortCell.h */,
 				74E358CB1BCD27D300B0144C /* SortCell.m */,
 				74E358CC1BCD27D300B0144C /* SortCell.xib */,
@@ -2327,6 +2358,8 @@
 				5D13D1731BCCEDA500C8A430 /* ColorModel.m */,
 				74E358CF1BCD2A0B00B0144C /* SortModel.h */,
 				74E358D01BCD2A0B00B0144C /* SortModel.m */,
+				5DFD859A1BCE5644007E6EAC /* MaterialModel.h */,
+				5DFD859B1BCE5644007E6EAC /* MaterialModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2488,6 +2521,7 @@
 				745B46F21BCE599D00095E4D /* stock_warnning_icon@2x.png in Resources */,
 				74E358D31BCD316400B0144C /* drawer_bottom@2x.png in Resources */,
 				5D3F05FD1BCB583100849DA8 /* navicon_stock_fo@2x.png in Resources */,
+				5DFD858D1BCE300D007E6EAC /* StockWarningVC.xib in Resources */,
 				5D13D1891BCCF0D800C8A430 /* error@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2499,12 +2533,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DFD85931BCE3710007E6EAC /* ClassifyVC.m in Sources */,
 				5DF546E21BC8E34C00DF5295 /* XMPPRoster.xcdatamodel in Sources */,
 				5DDB201E1BCB87EC0051E30E /* APIClient.m in Sources */,
 				5DF547251BC8E34C00DF5295 /* XMPPPresence+XEP_0172.m in Sources */,
 				5DF547261BC8E34C00DF5295 /* XMPPMessage+XEP_0184.m in Sources */,
 				5DF547471BC8E34C00DF5295 /* DDContextFilterLogFormatter.m in Sources */,
 				5DF546D41BC8E34C00DF5295 /* XMPPModule.m in Sources */,
+				5DFD858C1BCE300D007E6EAC /* StockWarningVC.m in Sources */,
 				5DF546D11BC8E34C00DF5295 /* XMPPIQ.m in Sources */,
 				5DF546D61BC8E34C00DF5295 /* XMPPPresence.m in Sources */,
 				5D3F05EB1BCB562F00849DA8 /* TabBarItem.m in Sources */,
@@ -2539,6 +2575,7 @@
 				5DF546D01BC8E34C00DF5295 /* XMPPElement.m in Sources */,
 				5D3F062B1BCB793000849DA8 /* ICSDropShadowView.m in Sources */,
 				5D13D17D1BCCEF2500C8A430 /* WQCellSelectedBackground.m in Sources */,
+				5DFD859C1BCE5644007E6EAC /* MaterialModel.m in Sources */,
 				5DF5449B1BC8E33200DF5295 /* UIImage+WebP.m in Sources */,
 				5DF547561BC8E35500DF5295 /* MBProgressHUD.m in Sources */,
 				5DF547141BC8E34C00DF5295 /* XMPPDateTimeProfiles.m in Sources */,
@@ -2552,6 +2589,8 @@
 				5DF546B61BC8E34C00DF5295 /* MJRefreshFooterView.m in Sources */,
 				5DF546FA1BC8E34C00DF5295 /* XMPPRoomOccupantMemoryStorageObject.m in Sources */,
 				5DF5468F1BC8E34C00DF5295 /* AFURLConnectionOperation.m in Sources */,
+				5DFD85991BCE5631007E6EAC /* MaterialCell.m in Sources */,
+				5DFD85961BCE3885007E6EAC /* ClassifyCell.m in Sources */,
 				5DF546C91BC8E34C00DF5295 /* XMPPSCRAMSHA1Authentication.m in Sources */,
 				5DF544971BC8E33200DF5295 /* SDWebImagePrefetcher.m in Sources */,
 				5DF546BA1BC8E34C00DF5295 /* UIView+MJExtension.m in Sources */,
@@ -2625,6 +2664,7 @@
 				5DF5472A1BC8E34C00DF5295 /* XMPPStreamManagementStanzas.m in Sources */,
 				5DF546ED1BC8E34C00DF5295 /* XMPPIQ+LastActivity.m in Sources */,
 				5DF547061BC8E34C00DF5295 /* XMPPvCardTempBase.m in Sources */,
+				5DFD859F1BCE5654007E6EAC /* MaterialVC.m in Sources */,
 				5D3F06211BCB71D600849DA8 /* InitVC.m in Sources */,
 				5DF547351BC8E34C00DF5295 /* XMPPMessageCarbons.m in Sources */,
 				5DF546CC1BC8E34C00DF5295 /* NSData+XMPP.m in Sources */,

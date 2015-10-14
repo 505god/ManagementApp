@@ -13,21 +13,37 @@
 "navicon_order" = "订单";
 "navicon_options" = "更多";
 
+//登录
 "log_account" = "帐号";
 "log_pwd" = "密码";
 "log_in" = "登录";
 "logInNameError" = "请输入帐号";
 "logInPwdError" = "请输入密码";
 
+//颜色
 "color" = "颜色";
 "ColorDelete" = "该颜色下包含商品不能被删除";
-"ConfirmDelete" = "确认删除?";
 "EditColor" = "编辑颜色";
 "addColor" = "添加颜色";
 
+//分类
+"classify" = "分类";
+"classifyDelete" = "该分类下包含商品不能被删除";
+"EditClassify" = "编辑分类";
+"addClassify" = "添加分类";
+
+//材质
+"material" = "材质";
+"materialDelete" = "该材质下包含商品不能被删除";
+"Editmaterial" = "编辑材质";
+"addmaterial" = "添加材质";
+
+//弹出框
+"ConfirmDelete" = "确认删除?";
 "alert_confirm" = "确认";
 "alert_cancel" = "取消";
 
+//搜索框
 "Search" = "搜索";
 "cancel" = "取消";
 

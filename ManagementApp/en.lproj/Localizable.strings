@@ -13,21 +13,37 @@
 "navicon_order" = "order";
 "navicon_options" = "options";
 
+//登录
 "log_account" = "account";
 "log_pwd" = "password";
 "log_in" = "login";
 "logInNameError" = "please enter account";
 "logInPwdError" = "please enter password";
 
-"color" = "color";
+//颜色
+"color" = "Color";
 "ColorDelete" = "the color include product can't be deleted";
-"ConfirmDelete" = "confirm delete?";
 "EditColor" = "edit color";
 "addColor" = "add color";
 
+//分类
+"classify" = "Classify";
+"classifyDelete" = "the classify include product can't be deleted";
+"EditClassify" = "edit classify";
+"addClassify" = "add classify";
+
+//材质
+"material" = "Material";
+"materialDelete" = "the material include product can't be deleted";
+"Editmaterial" = "edit material";
+"addmaterial" = "add material";
+
+//弹出框
+"ConfirmDelete" = "confirm delete?";
 "alert_confirm" = "YES";
 "alert_cancel" = "NO";
 
+//搜索框
 "Search" = "Search";
 "cancel" = "cancel";
 

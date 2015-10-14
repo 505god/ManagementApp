@@ -22,12 +22,13 @@
 ///判断是选择颜色还是查看颜色
 @property (nonatomic, assign) BOOL isSelectedColor;
 
-///已选择的颜色
+///已选择的颜色--可多选
 @property (nonatomic, strong) NSMutableArray *hasSelectedColor;
 
 @end
 
 @protocol ColorVCDelegate <NSObject>
 
+-(void)colorVC:(ColorVC *)colorVC selectedColor:(NSArray *)colorArray;
 
 @end
