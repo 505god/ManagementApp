@@ -18,8 +18,11 @@
 -(void)setSortModel:(SortModel *)sortModel {
     _sortModel = sortModel;
     
+    self.nameLab.adjustsFontSizeToFitWidth = YES;
+//    self.nameLab.minimumFontSize = 6;
     self.nameLab.text = [NSString stringWithFormat:@"%@",sortModel.sortName];
     self.countLab.text = [NSString stringWithFormat:@"%d",(int)sortModel.sortProductCount];
+   
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
