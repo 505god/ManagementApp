@@ -22,7 +22,7 @@
 #import "OptionsVC.h"
 
 
-#import "MaterialVC.h"
+#import "ProductPriceVC.h"
 
 @interface AppDelegate ()
 
@@ -76,7 +76,7 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
     
-    MaterialVC *colorVC = [[MaterialVC alloc]init];
+    ProductPriceVC *colorVC = LOADVC(@"ProductPriceVC");
     self.window.rootViewController = colorVC;
     return;
     

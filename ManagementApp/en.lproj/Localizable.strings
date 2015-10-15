@@ -38,6 +38,9 @@
 "Editmaterial" = "edit material";
 "addmaterial" = "add material";
 
+//价格
+"price" = "price";
+
 //弹出框
 "ConfirmDelete" = "confirm delete?";
 "alert_confirm" = "YES";

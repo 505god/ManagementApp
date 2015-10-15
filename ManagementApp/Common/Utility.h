@@ -17,4 +17,7 @@
 
 #pragma mark - 判断接口
 +(void)interfaceWithStatus:(NSInteger)status msg:(NSString *)msg;
+
+#pragma mark - 隐藏UITableView多余的分割线
++ (void)setExtraCellLineHidden: (UITableView *)tableView;
 @end
