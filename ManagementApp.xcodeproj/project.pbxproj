@@ -117,6 +117,7 @@
 		5DA1ACAD1BCF717A00EDA0B9 /* RELengthValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA1ACA51BCF717A00EDA0B9 /* RELengthValidator.m */; settings = {ASSET_TAGS = (); }; };
 		5DA1ACAE1BCF717A00EDA0B9 /* REPresenceValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA1ACA71BCF717A00EDA0B9 /* REPresenceValidator.m */; settings = {ASSET_TAGS = (); }; };
 		5DA1ACB01BCF75AF00EDA0B9 /* ProductPriceVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DA1ACAF1BCF75AF00EDA0B9 /* ProductPriceVC.xib */; settings = {ASSET_TAGS = (); }; };
+		5DA1ACB71BCF825D00EDA0B9 /* RFSegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA1ACB61BCF825D00EDA0B9 /* RFSegmentView.m */; settings = {ASSET_TAGS = (); }; };
 		5DDB20151BCB86CA0051E30E /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB20141BCB86CA0051E30E /* Utility.m */; settings = {ASSET_TAGS = (); }; };
 		5DDB20181BCB86E90051E30E /* DataShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB20171BCB86E90051E30E /* DataShare.m */; settings = {ASSET_TAGS = (); }; };
 		5DDB201B1BCB872F0051E30E /* XMPPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB201A1BCB872F0051E30E /* XMPPManager.m */; settings = {ASSET_TAGS = (); }; };
@@ -545,6 +546,8 @@
 		5DA1ACA61BCF717A00EDA0B9 /* REPresenceValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REPresenceValidator.h; sourceTree = "<group>"; };
 		5DA1ACA71BCF717A00EDA0B9 /* REPresenceValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REPresenceValidator.m; sourceTree = "<group>"; };
 		5DA1ACAF1BCF75AF00EDA0B9 /* ProductPriceVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductPriceVC.xib; sourceTree = "<group>"; };
+		5DA1ACB51BCF825D00EDA0B9 /* RFSegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RFSegmentView.h; sourceTree = "<group>"; };
+		5DA1ACB61BCF825D00EDA0B9 /* RFSegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RFSegmentView.m; sourceTree = "<group>"; };
 		5DDB20131BCB86CA0051E30E /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
 		5DDB20141BCB86CA0051E30E /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
 		5DDB20161BCB86E90051E30E /* DataShare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataShare.h; sourceTree = "<group>"; };
@@ -1316,6 +1319,15 @@
 				5DA1ACA71BCF717A00EDA0B9 /* REPresenceValidator.m */,
 			);
 			path = Validators;
+			sourceTree = "<group>";
+		};
+		5DA1ACB41BCF825D00EDA0B9 /* RFSegmentView */ = {
+			isa = PBXGroup;
+			children = (
+				5DA1ACB51BCF825D00EDA0B9 /* RFSegmentView.h */,
+				5DA1ACB61BCF825D00EDA0B9 /* RFSegmentView.m */,
+			);
+			path = RFSegmentView;
 			sourceTree = "<group>";
 		};
 		5DF5446D1BC8E33200DF5295 /* SDWebImage */ = {
@@ -2400,11 +2412,11 @@
 				5DFE00DE1BC8DE2B009A35C3 /* AppDelegate.m */,
 				5DFE00F11BC8DED9009A35C3 /* Category */,
 				5DFE00F21BC8DED9009A35C3 /* Common */,
-				5DFE00F31BC8DED9009A35C3 /* Controllers */,
-				5DFE00F41BC8DED9009A35C3 /* Images */,
-				5DFE00F51BC8DED9009A35C3 /* Library */,
 				5DFE00F61BC8DED9009A35C3 /* Models */,
 				5DFE00F71BC8DED9009A35C3 /* Views */,
+				5DFE00F31BC8DED9009A35C3 /* Controllers */,
+				5DFE00F51BC8DED9009A35C3 /* Library */,
+				5DFE00F41BC8DED9009A35C3 /* Images */,
 				5D13D19A1BCD0C0C00C8A430 /* Assets.xcassets */,
 				5DFE00E81BC8DE2B009A35C3 /* LaunchScreen.storyboard */,
 				5DFE00EB1BC8DE2B009A35C3 /* Info.plist */,
@@ -2561,6 +2573,7 @@
 		5DFE00F51BC8DED9009A35C3 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				5DA1ACB41BCF825D00EDA0B9 /* RFSegmentView */,
 				5DA1AC461BCF712A00EDA0B9 /* RETableViewManager */,
 				5D3F06251BCB793000849DA8 /* ICSDrawerController */,
 				5DF547511BC8E35500DF5295 /* JSONKit.h */,
@@ -2942,6 +2955,7 @@
 				5DF546E81BC8E34C00DF5295 /* XMPPRoster.m in Sources */,
 				5DA1AC831BCF712A00EDA0B9 /* RETableViewTextCell.m in Sources */,
 				5DDB20211BCB88410051E30E /* LocalDataBase.m in Sources */,
+				5DA1ACB71BCF825D00EDA0B9 /* RFSegmentView.m in Sources */,
 				5DA1AC941BCF712A00EDA0B9 /* RETableViewOptionsController.m in Sources */,
 				5DF5473F1BC8E34C00DF5295 /* XMPPStringPrep.m in Sources */,
 				5DDB20241BCB889E0051E30E /* LocalDB.m in Sources */,
