@@ -43,6 +43,7 @@
 @property (assign, readwrite, nonatomic) UITextAutocorrectionType autocorrectionType;         // default is UITextAutocorrectionTypeDefault
 @property (assign, readwrite, nonatomic) UITextSpellCheckingType spellCheckingType NS_AVAILABLE_IOS(5_0); // default is UITextSpellCheckingTypeDefault;
 @property (assign, readwrite, nonatomic) UIKeyboardType keyboardType;                         // default is UIKeyboardTypeDefault
+@property (assign, readwrite, nonatomic) NSTextAlignment alignment;
 @property (assign, readwrite, nonatomic) UIKeyboardAppearance keyboardAppearance;             // default is UIKeyboardAppearanceDefault
 @property (assign, readwrite, nonatomic) UIReturnKeyType returnKeyType;                       // default is UIReturnKeyDefault (See note under UIReturnKeyType enum)
 @property (assign, readwrite, nonatomic) BOOL enablesReturnKeyAutomatically;                  // default is NO (when YES, will automatically disable return key when text widget has zero-length contents, and will automatically enable when text widget has non-zero-length contents)

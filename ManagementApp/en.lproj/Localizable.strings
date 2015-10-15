@@ -16,41 +16,48 @@
 //登录
 "log_account" = "account";
 "log_pwd" = "password";
-"log_in" = "login";
-"logInNameError" = "please enter account";
-"logInPwdError" = "please enter password";
+"log_in" = "Login";
+"logInNameError" = "Please enter account";
+"logInPwdError" = "Please enter password";
 
 //颜色
 "color" = "Color";
-"ColorDelete" = "the color include product can't be deleted";
-"EditColor" = "edit color";
-"addColor" = "add color";
+"ColorDelete" = "The color include product can't be deleted";
+"EditColor" = "Edit color";
+"addColor" = "Add color";
 
 //分类
 "classify" = "Classify";
-"classifyDelete" = "the classify include product can't be deleted";
-"EditClassify" = "edit classify";
-"addClassify" = "add classify";
+"classifyDelete" = "The classify include product can't be deleted";
+"EditClassify" = "Edit classify";
+"addClassify" = "Add classify";
 
 //材质
 "material" = "Material";
-"materialDelete" = "the material include product can't be deleted";
-"Editmaterial" = "edit material";
-"addmaterial" = "add material";
+"materialDelete" = "The material include product can't be deleted";
+"Editmaterial" = "Edit material";
+"addmaterial" = "Add material";
 
 //价格
-"price" = "price";
+"price" = "Price";
+
+//商品
+"product" = "New Product";
+"Description" = "description";
+"stock" = "stock";
+"product_code" = "code";
+"product_required" = "required";
 
 //弹出框
-"ConfirmDelete" = "confirm delete?";
+"ConfirmDelete" = "Confirm Delete?";
 "alert_confirm" = "YES";
 "alert_cancel" = "NO";
 
 //搜索框
-"Search" = "Search";
+"Search" = "search";
 "cancel" = "cancel";
 
 
-"navicon_all" = "all";
+"navicon_all" = "All";
 
-"connect_error" = "try again later...";
+"connect_error" = "Try again later...";

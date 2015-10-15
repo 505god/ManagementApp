@@ -34,37 +34,95 @@
     [_manager addSection:section];
     
     // Add items
-    
-    self.aItem = [RETextItem itemWithTitle:@"   " value:@"" placeholder:SetTitle(@"price")];
+    self.aItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
     self.aItem.onChange = ^(RETextItem *item){
         
     };
-
-    self.aItem.image = [UIImage imageNamed:@"charc_1_15"];
+    
+    __weak __typeof(self)weakSelf = self;
+    self.aItem.selectionHandler = ^(RETableViewItem *item){
+        item.isHighlighted = YES;
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.bItem.isHighlighted = NO;
+        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.cItem.isHighlighted = NO;
+        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.dItem.isHighlighted = NO;
+        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+    };
+    
+    self.aItem.image = [UIImage imageNamed:@"charc_1_28"];
+    self.aItem.highlightedImage = [UIImage imageNamed:@"charc_1_28_sele"];
     self.aItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.aItem];
     
-    self.bItem = [RETextItem itemWithTitle:@"   " value:@"" placeholder:SetTitle(@"price")];
+    
+    self.bItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
     self.bItem.onChange = ^(RETextItem *item){
         
     };
-    self.bItem.image = [UIImage imageNamed:@"charc_2_15"];
+    self.bItem.selectionHandler = ^(RETableViewItem *item){
+        item.isHighlighted = YES;
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.aItem.isHighlighted = NO;
+        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.cItem.isHighlighted = NO;
+        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.dItem.isHighlighted = NO;
+        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+    };
+    self.bItem.image = [UIImage imageNamed:@"charc_2_28"];
+    self.bItem.highlightedImage = [UIImage imageNamed:@"charc_2_28_sele"];
     self.bItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.bItem];
     
-    self.cItem = [RETextItem itemWithTitle:@"   " value:@"" placeholder:SetTitle(@"price")];
+    self.cItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
     self.cItem.onChange = ^(RETextItem *item){
         
     };
-    self.cItem.image = [UIImage imageNamed:@"charc_3_15"];
+    self.cItem.selectionHandler = ^(RETableViewItem *item){
+        item.isHighlighted = YES;
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.aItem.isHighlighted = NO;
+        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.bItem.isHighlighted = NO;
+        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.dItem.isHighlighted = NO;
+        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+    };
+    self.cItem.image = [UIImage imageNamed:@"charc_3_28"];
+    self.cItem.highlightedImage = [UIImage imageNamed:@"charc_3_28_sele"];
     self.cItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.cItem];
     
-    self.dItem = [RETextItem itemWithTitle:@"   " value:@"" placeholder:SetTitle(@"price")];
+    self.dItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
     self.dItem.onChange = ^(RETextItem *item){
         
     };
-    self.dItem.image = [UIImage imageNamed:@"charc_4_15"];
+    self.dItem.selectionHandler = ^(RETableViewItem *item){
+        item.isHighlighted = YES;
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.aItem.isHighlighted = NO;
+        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.bItem.isHighlighted = NO;
+        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        weakSelf.cItem.isHighlighted = NO;
+        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+    };
+    self.dItem.image = [UIImage imageNamed:@"charc_4_28"];
+    self.dItem.highlightedImage = [UIImage imageNamed:@"charc_4_28_sele"];
     self.dItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.dItem];
     
@@ -83,6 +141,18 @@
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.view addSubview:self.navBarView];
 }
+
+#pragma mark - 导航栏代理
+
+-(void)leftBtnClickByNavBarView:(NavBarView *)navView {
+
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+-(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
+
+}
+
 
 
 @end

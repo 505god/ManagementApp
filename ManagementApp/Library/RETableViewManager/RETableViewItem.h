@@ -34,6 +34,11 @@
 @property (copy, readwrite, nonatomic) NSString *title;
 @property (strong, readwrite, nonatomic) UIImage *image;
 @property (strong, readwrite, nonatomic) UIImage *highlightedImage;
+
+///图片是否高亮
+@property (nonatomic, assign) BOOL isHighlighted;
+
+
 @property (assign, readwrite, nonatomic) NSTextAlignment textAlignment;
 @property (weak, readwrite, nonatomic) RETableViewSection *section;
 @property (copy, readwrite, nonatomic) NSString *detailLabelText;

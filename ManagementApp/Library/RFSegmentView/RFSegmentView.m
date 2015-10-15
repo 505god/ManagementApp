@@ -126,7 +126,6 @@
         self.selectedIndex    = 0;
         self.backgroundColor  = [UIColor clearColor];
         
-        
         //
         self.bgView = [[UIView alloc] init];
         self.bgView.backgroundColor    = [UIColor whiteColor];
@@ -189,7 +188,7 @@
     CGFloat leftRightMargin = self.leftRightMargin?:kLeftRightMargin;
     
     //configure bgView
-    self.bgView.frame = CGRectMake(leftRightMargin, (viewHeight - self.itemHeight?:kItemHeight)/2, viewWidth - 2*kLeftRightMargin, self.itemHeight?:kItemHeight);
+    self.bgView.frame = CGRectMake(leftRightMargin, (viewHeight - kItemHeight)/2, viewWidth - 2*kLeftRightMargin, self.itemHeight?:kItemHeight);
     
     //configure items
     [self.items enumerateObjectsUsingBlock:^(RFSegmentItem * _Nonnull item, NSUInteger idx, BOOL * _Nonnull stop) {

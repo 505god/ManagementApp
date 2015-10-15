@@ -54,7 +54,7 @@
 {
     [super setSelected:selected animated:animated];
     if (selected) {
-        [_textField becomeFirstResponder];
+//        [_textField becomeFirstResponder];
     }
 }
 
@@ -77,6 +77,7 @@
     _textField.secureTextEntry = self.item.secureTextEntry;
     _textField.clearButtonMode = self.item.clearButtonMode;
     _textField.clearsOnBeginEditing = self.item.clearsOnBeginEditing;
+    _textField.textAlignment = self.item.alignment;
 }
 
 - (UIResponder *)responder

@@ -41,6 +41,13 @@
 //价格
 "price" = "商品价格";
 
+//商品
+"product" = "新商品";
+"Description" = "描述";
+"stock" = "库存";
+"product_code" = "货号";
+"product_required" = "必填";
+
 //弹出框
 "ConfirmDelete" = "确认删除?";
 "alert_confirm" = "确认";

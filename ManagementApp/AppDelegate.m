@@ -21,8 +21,8 @@
 #import "OrderVC.h"
 #import "OptionsVC.h"
 
-
 #import "ProductPriceVC.h"
+#import "ProductVC.h"
 
 @interface AppDelegate ()
 
@@ -77,6 +77,7 @@
 -(void)showRootVCWithType:(NSInteger)type {
     
     ProductPriceVC *colorVC = LOADVC(@"ProductPriceVC");
+//    ProductVC *colorVC = [[ProductVC alloc]init];
     self.window.rootViewController = colorVC;
     return;
     
