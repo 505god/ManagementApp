@@ -14,6 +14,7 @@
 #import "ProductPriceVC.h"
 #import "MaterialVC.h"
 #import "ClassifyVC.h"
+#import "StockWarningVC.h"
 
 @interface ProductVC ()<RFSegmentViewDelegate>
 
@@ -192,6 +193,20 @@
         NSLog(@"Value: %@", item.value ? @"YES" : @"NO");
     }];
     [section addItem:promotionlItem];
+    
+    //库存警告
+    RERadioItem *stockItem = [RERadioItem itemWithTitle:SetTitle(@"stock_waring") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        StockWarningVC *stockVC = [[StockWarningVC alloc]init];
+        stockVC.completedBlock = ^(BOOL success){
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        };
+        [weakSelf.navigationController pushViewController:stockVC animated:YES];
+        
+    }];
+    [section addItem:stockItem];
 }
 
 -(void)setStockTableView {

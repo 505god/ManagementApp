@@ -55,6 +55,11 @@
 "product_mark" = "remark";
 "product_display" = "retail side display";
 "product_promotion" = "retail side promotion";
+"stock_waring" = "stock waring";
+
+//库存预警
+"stock_all" = "the total stock";
+"stock_one" = "a single color stock";
 
 //弹出框
 "ConfirmDelete" = "Confirm Delete?";

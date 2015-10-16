@@ -73,6 +73,7 @@
 		5D8BD83A1BCD343D00FEC973 /* button-default-d@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D8BD8321BCD343D00FEC973 /* button-default-d@2x.png */; settings = {ASSET_TAGS = (); }; };
 		5D8BD83B1BCD343D00FEC973 /* button-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D8BD8331BCD343D00FEC973 /* button-default.png */; settings = {ASSET_TAGS = (); }; };
 		5D8BD83C1BCD343D00FEC973 /* button-default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D8BD8341BCD343D00FEC973 /* button-default@2x.png */; settings = {ASSET_TAGS = (); }; };
+		5D944D441BD0D99000B2C116 /* StockWarningVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D944D431BD0D99000B2C116 /* StockWarningVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5D9F701F1BCCA01300145CE8 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F701D1BCCA01300145CE8 /* LoginVC.m */; settings = {ASSET_TAGS = (); }; };
 		5D9F70201BCCA01300145CE8 /* LoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F701E1BCCA01300145CE8 /* LoginVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5D9F70271BCCD00300145CE8 /* login_bt_dis@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F70241BCCD00300145CE8 /* login_bt_dis@2x.png */; settings = {ASSET_TAGS = (); }; };
@@ -398,7 +399,6 @@
 		5DF547911BC8E71E00DF5295 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF547931BC8E71E00DF5295 /* Localizable.strings */; };
 		5DF547961BC8E74100DF5295 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF547981BC8E74100DF5295 /* InfoPlist.strings */; };
 		5DFD858C1BCE300D007E6EAC /* StockWarningVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */; settings = {ASSET_TAGS = (); }; };
-		5DFD858D1BCE300D007E6EAC /* StockWarningVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5DFD85931BCE3710007E6EAC /* ClassifyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85921BCE3710007E6EAC /* ClassifyVC.m */; settings = {ASSET_TAGS = (); }; };
 		5DFD85961BCE3885007E6EAC /* ClassifyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85951BCE3885007E6EAC /* ClassifyCell.m */; settings = {ASSET_TAGS = (); }; };
 		5DFD85991BCE5631007E6EAC /* MaterialCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DFD85981BCE5631007E6EAC /* MaterialCell.m */; settings = {ASSET_TAGS = (); }; };
@@ -507,6 +507,7 @@
 		5D8BD8321BCD343D00FEC973 /* button-default-d@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-default-d@2x.png"; sourceTree = "<group>"; };
 		5D8BD8331BCD343D00FEC973 /* button-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-default.png"; sourceTree = "<group>"; };
 		5D8BD8341BCD343D00FEC973 /* button-default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-default@2x.png"; sourceTree = "<group>"; };
+		5D944D431BD0D99000B2C116 /* StockWarningVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockWarningVC.xib; sourceTree = "<group>"; };
 		5D9F701C1BCCA01300145CE8 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		5D9F701D1BCCA01300145CE8 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		5D9F701E1BCCA01300145CE8 /* LoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginVC.xib; sourceTree = "<group>"; };
@@ -1107,7 +1108,6 @@
 		5DF547991BC8E74400DF5295 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5DFD85891BCE300D007E6EAC /* StockWarningVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StockWarningVC.h; sourceTree = "<group>"; };
 		5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StockWarningVC.m; sourceTree = "<group>"; };
-		5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StockWarningVC.xib; sourceTree = "<group>"; };
 		5DFD85911BCE3710007E6EAC /* ClassifyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassifyVC.h; sourceTree = "<group>"; };
 		5DFD85921BCE3710007E6EAC /* ClassifyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassifyVC.m; sourceTree = "<group>"; };
 		5DFD85941BCE3885007E6EAC /* ClassifyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassifyCell.h; sourceTree = "<group>"; };
@@ -1215,7 +1215,7 @@
 				5D13D16E1BCCED1600C8A430 /* ColorVC.m */,
 				5DFD85891BCE300D007E6EAC /* StockWarningVC.h */,
 				5DFD858A1BCE300D007E6EAC /* StockWarningVC.m */,
-				5DFD858B1BCE300D007E6EAC /* StockWarningVC.xib */,
+				5D944D431BD0D99000B2C116 /* StockWarningVC.xib */,
 				5DFD85911BCE3710007E6EAC /* ClassifyVC.h */,
 				5DFD85921BCE3710007E6EAC /* ClassifyVC.m */,
 				5DFD859D1BCE5654007E6EAC /* MaterialVC.h */,
@@ -2857,6 +2857,7 @@
 				5DAA2D2E1BD0BC1400FBCA24 /* Card_Discover.png in Resources */,
 				5DA1AC421BCF6E3300EDA0B9 /* charc_1_15@2x.png in Resources */,
 				5DF5469F1BC8E34C00DF5295 /* button-default-d@2x.png in Resources */,
+				5D944D441BD0D99000B2C116 /* StockWarningVC.xib in Resources */,
 				5DAA2D361BD0BC1400FBCA24 /* Ribbon_Expired.png in Resources */,
 				5D3F060B1BCB5D5000849DA8 /* StockVC.xib in Resources */,
 				5D13D16C1BCCECA100C8A430 /* ProductAddVC.xib in Resources */,
@@ -2935,7 +2936,6 @@
 				5DA1ACC81BCF986F00EDA0B9 /* charc_1_28@2x.png in Resources */,
 				74E358D31BCD316400B0144C /* drawer_bottom@2x.png in Resources */,
 				5D3F05FD1BCB583100849DA8 /* navicon_stock_fo@2x.png in Resources */,
-				5DFD858D1BCE300D007E6EAC /* StockWarningVC.xib in Resources */,
 				5D13D1891BCCF0D800C8A430 /* error@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

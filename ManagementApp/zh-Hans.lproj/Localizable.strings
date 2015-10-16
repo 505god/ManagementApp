@@ -56,6 +56,11 @@
 "product_mark" = "备注";
 "product_display" = "零售端显示";
 "product_promotion" = "零售端促销";
+"stock_waring" = "库存预警";
+
+//库存预警
+"stock_all" = "当总库存低于";
+"stock_one" = "当单款颜色库存低于";
 
 //弹出框
 "ConfirmDelete" = "确认删除?";
@@ -63,7 +68,6 @@
 "alert_cancel" = "取消";
 "Previous" = "上一项";
 "Next" = "下一项";
-
 
 //搜索框
 "Search" = "搜索";
