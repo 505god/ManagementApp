@@ -29,8 +29,9 @@
 
 @property (copy, readwrite, nonatomic) NSString *value;
 
+@property (copy, readwrite, nonatomic) UIImage *infoImg;
+
 + (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value selectionHandler:(void(^)(RERadioItem *item))selectionHandler;
 - (id)initWithTitle:(NSString *)title value:(NSString *)value selectionHandler:(void(^)(RERadioItem *item))selectionHandler;
-
 
 @end

@@ -29,6 +29,5 @@
 @interface RETableViewNumberCell : RETableViewTextCell
 
 @property (strong, readwrite, nonatomic) RENumberItem *item;
-@property (strong, readwrite, nonatomic) REFormattedNumberField *textField;
 
 @end

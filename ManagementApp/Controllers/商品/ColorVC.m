@@ -140,8 +140,7 @@
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedColor) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(colorVC:selectedColor:)]) {
-            [self.delegate colorVC:self selectedColor:self.hasSelectedColor];
+        if (self.completedBlock){
         }
     }
     [self.navigationController popViewControllerAnimated:YES];

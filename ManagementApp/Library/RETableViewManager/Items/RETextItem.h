@@ -37,13 +37,15 @@
 @property (assign, readwrite, nonatomic) UITextFieldViewMode clearButtonMode;        // default is UITextFieldViewModeNever
 @property (assign, readwrite, nonatomic) BOOL clearsOnBeginEditing;                   // default is NO which moves cursor to location clicked. if YES, all text cleared
 
+@property (assign, readwrite, nonatomic) NSUInteger charactersLimit;                   // characters limit
+
+@property (nonatomic, assign) NSTextAlignment alignment;
 // Keyboard
 //
 @property (assign, readwrite, nonatomic) UITextAutocapitalizationType autocapitalizationType; // default is UITextAutocapitalizationTypeSentences
 @property (assign, readwrite, nonatomic) UITextAutocorrectionType autocorrectionType;         // default is UITextAutocorrectionTypeDefault
 @property (assign, readwrite, nonatomic) UITextSpellCheckingType spellCheckingType NS_AVAILABLE_IOS(5_0); // default is UITextSpellCheckingTypeDefault;
 @property (assign, readwrite, nonatomic) UIKeyboardType keyboardType;                         // default is UIKeyboardTypeDefault
-@property (assign, readwrite, nonatomic) NSTextAlignment alignment;
 @property (assign, readwrite, nonatomic) UIKeyboardAppearance keyboardAppearance;             // default is UIKeyboardAppearanceDefault
 @property (assign, readwrite, nonatomic) UIReturnKeyType returnKeyType;                       // default is UIReturnKeyDefault (See note under UIReturnKeyType enum)
 @property (assign, readwrite, nonatomic) BOOL enablesReturnKeyAutomatically;                  // default is NO (when YES, will automatically disable return key when text widget has zero-length contents, and will automatically enable when text widget has non-zero-length contents)
@@ -53,6 +55,8 @@
 @property (copy, readwrite, nonatomic) void (^onEndEditing)(RETextItem *item);
 @property (copy, readwrite, nonatomic) void (^onChange)(RETextItem *item);
 @property (copy, readwrite, nonatomic) void (^onReturn)(RETextItem *item);
+@property (copy, readwrite, nonatomic) BOOL (^onChangeCharacterInRange)(RETextItem *item, NSRange range, NSString *replacementString);
+
 
 + (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value;
 + (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value  placeholder:(NSString *)placeholder;

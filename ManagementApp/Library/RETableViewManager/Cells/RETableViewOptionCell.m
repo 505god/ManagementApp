@@ -25,47 +25,111 @@
 
 #import "RETableViewOptionCell.h"
 #import "RETableViewManager.h"
+#import "NSString+RETableViewManagerAdditions.h"
+
+@interface RETableViewOptionCell ()
+
+@property (strong, readwrite, nonatomic) UILabel *valueLabel;
+
+@property (assign, readwrite, nonatomic) BOOL enabled;
+
+@end
 
 @implementation RETableViewOptionCell
 
+@synthesize item = _item;
+
 #pragma mark -
 #pragma mark Lifecycle
+
+- (void)dealloc {
+    if (_item != nil) {
+        [_item removeObserver:self forKeyPath:@"enabled"];
+    }
+}
 
 - (void)cellDidLoad
 {
     [super cellDidLoad];
     self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    _valueLabel = [[UILabel alloc] initWithFrame:CGRectNull];
-    _valueLabel.font = [UIFont systemFontOfSize:17];
-    _valueLabel.backgroundColor = [UIColor clearColor];
-    _valueLabel.textColor = self.detailTextLabel.textColor;
-    _valueLabel.highlightedTextColor = [UIColor whiteColor];
-    _valueLabel.textAlignment = NSTextAlignmentRight;
-    [self.contentView addSubview:_valueLabel];
+    self.valueLabel = [[UILabel alloc] initWithFrame:CGRectNull];
+    self.valueLabel.font = [UIFont systemFontOfSize:17];
+    self.valueLabel.backgroundColor = [UIColor clearColor];
+    self.valueLabel.textColor = self.detailTextLabel.textColor;
+    self.valueLabel.highlightedTextColor = [UIColor whiteColor];
+    self.valueLabel.textAlignment = NSTextAlignmentRight;
+    [self.contentView addSubview:self.valueLabel];
+    
+    _imgView = [[UIImageView alloc]initWithFrame:CGRectZero];
+    [self.contentView addSubview:_imgView];
 }
 
 - (void)cellWillAppear
 {
     //[super cellWillAppear];
+    self.accessoryType = self.item.accessoryType;
     self.textLabel.backgroundColor = [UIColor clearColor];
     self.textLabel.text = self.item.title.length == 0 ? @" " : self.item.title;
     self.detailTextLabel.text = @"";
     self.valueLabel.text = self.item.detailLabelText;
+    
+    if (!self.item.title) {
+        self.valueLabel.textAlignment = NSTextAlignmentLeft;
+    }
+    
+    self.enabled = self.item.enabled;
+    _imgView.image = self.item.infoImg;
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    [self layoutDetailView:_valueLabel minimumWidth:[_valueLabel.text sizeWithFont:_valueLabel.font].width];
-    if (REDeviceIsUIKit7()) {
-        CGRect frame = self.valueLabel.frame;
-        frame.size.width += 10.0;
-        self.valueLabel.frame = frame;
+    [self layoutDetailView:self.valueLabel minimumWidth:[self.valueLabel.text re_sizeWithFont:self.valueLabel.font].width];
+    CGRect frame = self.valueLabel.frame;
+    frame.size.width += 10.0;
+    self.valueLabel.frame = frame;
+    
+    if (self.item.infoImg) {
+        _imgView.frame = (CGRect){_valueLabel.right-self.item.infoImg.size.width,(self.contentView.height-self.item.infoImg.size.height)/2,self.item.infoImg.size.width,self.item.infoImg.size.height};
+        
+        _valueLabel.frame = (CGRect){_valueLabel.left,_valueLabel.top,_valueLabel.width-self.item.infoImg.size.width-5,_valueLabel.height};
     }
     
     if ([self.tableViewManager.delegate respondsToSelector:@selector(tableView:willLayoutCellSubviews:forRowAtIndexPath:)])
-        [self.tableViewManager.delegate tableView:self.tableViewManager.tableView willLayoutCellSubviews:self forRowAtIndexPath:[(UITableView *)self.superview indexPathForCell:self]];
+        [self.tableViewManager.delegate tableView:self.tableViewManager.tableView willLayoutCellSubviews:self forRowAtIndexPath:[self.tableViewManager.tableView indexPathForCell:self]];
+}
+
+#pragma mark -
+#pragma mark Handle state
+
+- (void)setItem:(RERadioItem *)item
+{
+    if (_item != nil) {
+        [_item removeObserver:self forKeyPath:@"enabled"];
+    }
+    
+    _item = item;
+    
+    [_item addObserver:self forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    
+    self.userInteractionEnabled = _enabled;
+    
+    self.textLabel.enabled = _enabled;
+    self.valueLabel.enabled = _enabled;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([object isKindOfClass:[REBoolItem class]] && [keyPath isEqualToString:@"enabled"]) {
+        BOOL newValue = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
+        
+        self.enabled = newValue;
+    }
 }
 
 @end

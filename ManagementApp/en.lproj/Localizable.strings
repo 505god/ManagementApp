@@ -40,6 +40,8 @@
 
 //价格
 "price" = "Price";
+"sale_price" = "sale price";
+"purchase_price" = "purchase price";
 
 //商品
 "product" = "New Product";
@@ -47,11 +49,19 @@
 "stock" = "stock";
 "product_code" = "code";
 "product_required" = "required";
+"product_set" = "not set";
+"product_package" = "package number";
+"product_name" = "name";
+"product_mark" = "remark";
+"product_display" = "retail side display";
+"product_promotion" = "retail side promotion";
 
 //弹出框
 "ConfirmDelete" = "Confirm Delete?";
 "alert_confirm" = "YES";
 "alert_cancel" = "NO";
+"Previous" = "Previous";
+"Next" = "Next";
 
 //搜索框
 "Search" = "search";

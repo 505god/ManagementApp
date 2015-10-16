@@ -24,10 +24,12 @@
 //
 
 #import "RETableViewItem.h"
+#import "REInlineDatePickerItem.h"
 
 @interface REDateTimeItem : RETableViewItem
 
 @property (strong, readwrite, nonatomic) NSDate *value;
+@property (strong, readwrite, nonatomic) NSDate *pickerStartDate;         // date to be used for the picker when the value is not set; defaults to current date when not specified
 @property (copy, readwrite, nonatomic) NSString *placeholder;
 @property (strong, readwrite, nonatomic) NSString *format;
 @property (assign, readwrite, nonatomic) UIDatePickerMode datePickerMode; // default is UIDatePickerModeDateAndTime
@@ -39,6 +41,9 @@
 @property (strong, readwrite, nonatomic) NSDate *minimumDate;           // specify min/max date range. default is nil. When min > max, the values are ignored. Ignored in countdown timer mode
 @property (strong, readwrite, nonatomic) NSDate *maximumDate;           // default is nil
 @property (assign, readwrite, nonatomic) NSInteger minuteInterval;        // display minutes wheel with interval. interval must be evenly divided into 60. default is 1. min is 1, max is 30
+@property (copy, readwrite, nonatomic) void (^onChange)(REDateTimeItem *item);
+@property (assign, readwrite, nonatomic) BOOL inlineDatePicker;
+@property (strong, readwrite, nonatomic) REInlineDatePickerItem *inlinePickerItem;
 
 + (instancetype)itemWithTitle:(NSString *)title value:(NSDate *)value placeholder:(NSString *)placeholder format:(NSString *)format datePickerMode:(UIDatePickerMode)datePickerMode;
 - (id)initWithTitle:(NSString *)title value:(NSDate *)value placeholder:(NSString *)placeholder format:(NSString *)format datePickerMode:(UIDatePickerMode)datePickerMode;

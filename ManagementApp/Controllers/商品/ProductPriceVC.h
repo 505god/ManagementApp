@@ -13,19 +13,15 @@
 #import "RETableViewManager.h"
 
 
-@protocol ProductPriceVCDelegate;
+typedef void(^ProductPriceVCCompletedBlock)(BOOL success);
+
 
 @interface ProductPriceVC : BaseVC
 
-@property (nonatomic, assign) id<ProductPriceVCDelegate>delegate;
+@property (nonatomic, strong) ProductPriceVCCompletedBlock completedBlock;
 
 @property (nonatomic, weak) IBOutlet UITableView *table;
 
 @property (strong, readonly, nonatomic) RETableViewManager *manager;
-
-@end
-
-@protocol ProductPriceVCDelegate <NSObject>
-
 
 @end

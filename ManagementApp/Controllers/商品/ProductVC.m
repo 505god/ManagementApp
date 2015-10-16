@@ -11,6 +11,10 @@
 #import "RFSegmentView.h"
 #import "RETableViewManager.h"
 
+#import "ProductPriceVC.h"
+#import "MaterialVC.h"
+#import "ClassifyVC.h"
+
 @interface ProductVC ()<RFSegmentViewDelegate>
 
 @property (nonatomic, strong) RFSegmentView* segmentView;
@@ -30,6 +34,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.view.clipsToBounds = YES;
     
     self.isNewProduct = YES;
     
@@ -96,7 +102,96 @@
     [section addItem:codeItem];
     
     //价格选择
-//    RERadioItem *radioItem = [RERadioItem itemWithTitle:<#(NSString *)#> value:<#(NSString *)#> selectionHandler:<#^(RERadioItem *item)selectionHandler#>]
+    __weak __typeof(self)weakSelf = self;
+    RERadioItem *radioItem = [RERadioItem itemWithTitle:SetTitle(@"sale_price") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        item.value = @"dd";
+        item.infoImg = [UIImage imageNamed:@"charc_1_28"];
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        ProductPriceVC *priceVC = LOADVC(@"ProductPriceVC");
+        priceVC.completedBlock = ^(BOOL success){
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        };
+        [weakSelf.navigationController pushViewController:priceVC animated:YES];
+        
+    }];
+    [section addItem:radioItem];
+    
+    //进货价
+    RETextItem *purchaseItem = [RETextItem itemWithTitle:SetTitle(@"purchase_price") value:@"" placeholder:SetTitle(@"product_set")];
+    purchaseItem.onChange = ^(RETextItem *item){
+        
+    };
+    purchaseItem.keyboardType = UIKeyboardTypeNumberPad;
+    purchaseItem.alignment = NSTextAlignmentRight;
+    [section addItem:purchaseItem];
+    
+    //包装数
+    REPickerItem *pickerItem = [REPickerItem itemWithTitle:SetTitle(@"product_package") value:@[@"1"] placeholder:nil options:@[@[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",@"20",@"21",@"22",@"23",@"24",@"25",@"26",@"27",@"28",@"29",@"30"]]];
+    pickerItem.onChange = ^(REPickerItem *item){
+//        NSLog(@"Value: %@", item.value);
+    };
+    pickerItem.inlinePicker = YES;
+    [section addItem:pickerItem];
+    
+    //名称
+    RETextItem *nameItem = [RETextItem itemWithTitle:SetTitle(@"product_name") value:@"" placeholder:SetTitle(@"product_set")];
+    nameItem.onChange = ^(RETextItem *item){
+        
+    };
+    nameItem.alignment = NSTextAlignmentRight;
+    [section addItem:nameItem];
+    
+    //材质
+    RERadioItem *materialItem = [RERadioItem itemWithTitle:SetTitle(@"material") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        item.value = @"dd";
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        MaterialVC *materialVC = [[MaterialVC alloc]init];
+        materialVC.completedBlock = ^(MaterialModel *materialModel){
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        };
+        [weakSelf.navigationController pushViewController:materialVC animated:YES];
+        
+    }];
+    [section addItem:materialItem];
+    
+    //分类
+    RERadioItem *classifyItem = [RERadioItem itemWithTitle:SetTitle(@"classify") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        item.value = @"dd";
+        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        ClassifyVC *classifyVC = [[ClassifyVC alloc]init];
+        classifyVC.completedBlock = ^(SortModel *sortModel){
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        };
+        [weakSelf.navigationController pushViewController:classifyVC animated:YES];
+        
+    }];
+    [section addItem:classifyItem];
+    
+    //备注
+    RETextItem *markItem = [RETextItem itemWithTitle:SetTitle(@"product_mark") value:@"" placeholder:SetTitle(@"product_set")];
+    markItem.onChange = ^(RETextItem *item){
+        
+    };
+    markItem.alignment = NSTextAlignmentRight;
+    [section addItem:markItem];
+    
+    //上架
+    REBoolItem *displayItem = [REBoolItem itemWithTitle:SetTitle(@"product_display") value:YES switchValueChangeHandler:^(REBoolItem *item) {
+        NSLog(@"Value: %@", item.value ? @"YES" : @"NO");
+    }];
+    [section addItem:displayItem];
+    
+    //热卖
+    REBoolItem *promotionlItem = [REBoolItem itemWithTitle:SetTitle(@"product_promotion") value:YES switchValueChangeHandler:^(REBoolItem *item) {
+        NSLog(@"Value: %@", item.value ? @"YES" : @"NO");
+    }];
+    [section addItem:promotionlItem];
 }
 
 -(void)setStockTableView {

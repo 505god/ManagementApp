@@ -15,6 +15,7 @@
 @property (strong, readwrite, nonatomic) RETextItem *cItem;
 @property (strong, readwrite, nonatomic) RETextItem *dItem;
 
+
 @end
 
 @implementation ProductPriceVC
@@ -34,13 +35,21 @@
     [_manager addSection:section];
     
     // Add items
-    self.aItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
+    //－－－－－－－－－－－－－－－－－A
+    self.aItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.aItem.onChange = ^(RETextItem *item){
         
     };
     
     __weak __typeof(self)weakSelf = self;
     self.aItem.selectionHandler = ^(RETableViewItem *item){
+        [item deselectRowAnimated:YES];
+        
+        if (item.isHighlighted) {
+            //do nothing
+        }else {
+            
+        }
         item.isHighlighted = YES;
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
@@ -56,15 +65,17 @@
     
     self.aItem.image = [UIImage imageNamed:@"charc_1_28"];
     self.aItem.highlightedImage = [UIImage imageNamed:@"charc_1_28_sele"];
+    self.aItem.alignment = NSTextAlignmentRight;
     self.aItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.aItem];
     
-    
-    self.bItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
+    //－－－－－－－－－－－－－－－－－B
+    self.bItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.bItem.onChange = ^(RETextItem *item){
         
     };
     self.bItem.selectionHandler = ^(RETableViewItem *item){
+        [item deselectRowAnimated:YES];
         item.isHighlighted = YES;
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
@@ -79,14 +90,17 @@
     };
     self.bItem.image = [UIImage imageNamed:@"charc_2_28"];
     self.bItem.highlightedImage = [UIImage imageNamed:@"charc_2_28_sele"];
+    self.bItem.alignment = NSTextAlignmentRight;
     self.bItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.bItem];
     
-    self.cItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
+    //－－－－－－－－－－－－－－－－－C
+    self.cItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.cItem.onChange = ^(RETextItem *item){
         
     };
     self.cItem.selectionHandler = ^(RETableViewItem *item){
+        [item deselectRowAnimated:YES];
         item.isHighlighted = YES;
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
@@ -101,14 +115,17 @@
     };
     self.cItem.image = [UIImage imageNamed:@"charc_3_28"];
     self.cItem.highlightedImage = [UIImage imageNamed:@"charc_3_28_sele"];
+    self.cItem.alignment = NSTextAlignmentRight;
     self.cItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.cItem];
     
-    self.dItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:SetTitle(@"price")];
+    //－－－－－－－－－－－－－－－－－D
+    self.dItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.dItem.onChange = ^(RETextItem *item){
         
     };
     self.dItem.selectionHandler = ^(RETableViewItem *item){
+        [item deselectRowAnimated:YES];
         item.isHighlighted = YES;
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
@@ -123,6 +140,7 @@
     };
     self.dItem.image = [UIImage imageNamed:@"charc_4_28"];
     self.dItem.highlightedImage = [UIImage imageNamed:@"charc_4_28_sele"];
+    self.dItem.alignment = NSTextAlignmentRight;
     self.dItem.keyboardType = UIKeyboardTypeNumberPad;
     [section addItem:self.dItem];
     
@@ -146,6 +164,9 @@
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
 
+    if (self.completedBlock) {
+    }
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

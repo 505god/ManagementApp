@@ -12,14 +12,13 @@
 
 #import "MaterialModel.h"
 
-@protocol MaterialVCDelegate;
+
+typedef void(^MaterialVCCompletedBlock)(MaterialModel *materialModel);
 
 @interface MaterialVC : BaseVC
 
-@property (nonatomic, assign) id<MaterialVCDelegate>delegate;
-
 ///判断是选择分类还是查看分类
-@property (nonatomic, assign) BOOL isSelectedClassify;
+@property (nonatomic, assign) BOOL isSelectedMaterial;
 
 //已经选择的分类
 @property (nonatomic, strong) MaterialModel *selectedMaterialModel;
@@ -27,10 +26,5 @@
 ///已选择的分类--只能单选
 @property (nonatomic, strong) NSMutableArray *hasSelectedMaterial;
 
-@end
-
-@protocol MaterialVCDelegate <NSObject>
-
--(void)materialVC:(MaterialVC *)materialVC selectedMaterial:(NSArray *)materialArray;
-
+@property (nonatomic, strong) MaterialVCCompletedBlock completedBlock;
 @end

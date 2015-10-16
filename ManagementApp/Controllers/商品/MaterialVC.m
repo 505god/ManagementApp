@@ -41,7 +41,7 @@
     //集成刷新控件
     [self addHeader];
     
-    self.isSelectedClassify  =YES;
+    self.isSelectedMaterial  =YES;
     
     MaterialModel *model1 = [[MaterialModel alloc]init];
     model1.materialName = @"电视剧";
@@ -149,9 +149,9 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-    if (self.isSelectedClassify) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(materialVC:selectedMaterial:)]) {
-            [self.delegate materialVC:self selectedMaterial:self.hasSelectedMaterial];
+    if (self.isSelectedMaterial) {
+        if (self.completedBlock) {
+            
         }
     }
     [self.navigationController popViewControllerAnimated:YES];
@@ -308,7 +308,7 @@
     
     [cell setMaterialModel:materialModel];
     
-    if (self.isSelectedClassify) {
+    if (self.isSelectedMaterial) {
         NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
         NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedMaterial filteredArrayUsingPredicate:predicateString]];
         if (filteredArray.count>0) {
@@ -328,7 +328,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     MaterialCell *cell = (MaterialCell *)[tableView cellForRowAtIndexPath:indexPath];
-    if (self.isSelectedClassify) {
+    if (self.isSelectedMaterial) {
         
         MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
         

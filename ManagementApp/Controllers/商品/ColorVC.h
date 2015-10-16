@@ -13,11 +13,9 @@
 
 #import "ColorModel.h"
 
-@protocol ColorVCDelegate;
+typedef void(^ColorVCCompletedBlock)(NSArray *array);
 
 @interface ColorVC : BaseVC
-
-@property (nonatomic, assign) id<ColorVCDelegate>delegate;
 
 ///判断是选择颜色还是查看颜色
 @property (nonatomic, assign) BOOL isSelectedColor;
@@ -25,10 +23,6 @@
 ///已选择的颜色--可多选
 @property (nonatomic, strong) NSMutableArray *hasSelectedColor;
 
-@end
-
-@protocol ColorVCDelegate <NSObject>
-
--(void)colorVC:(ColorVC *)colorVC selectedColor:(NSArray *)colorArray;
+@property (nonatomic, strong) ColorVCCompletedBlock completedBlock;
 
 @end

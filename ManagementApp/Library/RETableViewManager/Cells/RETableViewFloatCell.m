@@ -26,40 +26,90 @@
 #import "RETableViewFloatCell.h"
 #import "RETableViewManager.h"
 
+@interface RETableViewFloatCell ()
+
+@property (strong, readwrite, nonatomic) UISlider *sliderView;
+
+@property (assign, readwrite, nonatomic) BOOL enabled;
+
+@end
+
 @implementation RETableViewFloatCell
+
+@synthesize item = _item;
 
 #pragma mark -
 #pragma mark Lifecycle
+
+- (void)dealloc {
+    if (_item != nil) {
+        [_item removeObserver:self forKeyPath:@"enabled"];
+    }
+}
 
 - (void)cellDidLoad
 {
     [super cellDidLoad];
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    _sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, 0, 100, 23.0)];
-    [_sliderView addTarget:self action:@selector(sliderValueDidChange:) forControlEvents:UIControlEventValueChanged];
+    self.sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, 0, 100, 23.0)];
+    [self.sliderView addTarget:self action:@selector(sliderValueDidChange:) forControlEvents:UIControlEventValueChanged];
     
-    [self.contentView addSubview:_sliderView];
+    [self.contentView addSubview:self.sliderView];
 }
 
 - (void)cellWillAppear
 {
     self.textLabel.text = self.item.title;
     self.textLabel.backgroundColor = [UIColor clearColor];
-    _sliderView.value = self.item.value;
+    self.sliderView.value = self.item.value;
+    
+    self.enabled = self.item.enabled;
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
     CGFloat cellOffset = 10.0;
-    if (REDeviceIsUIKit7() && self.section.style.contentViewMargin <= 0)
+    if (self.section.style.contentViewMargin <= 0)
         cellOffset += 5.0;
     
-    _sliderView.frame = CGRectMake(self.contentView.frame.size.width - self.item.sliderWidth - cellOffset, (self.contentView.frame.size.height - _sliderView.frame.size.height) / 2.0, self.item.sliderWidth, 23.0);
+    self.sliderView.frame = CGRectMake(self.contentView.frame.size.width - self.item.sliderWidth - cellOffset, (self.contentView.frame.size.height - self.sliderView.frame.size.height) / 2.0, self.item.sliderWidth, 23.0);
     
     if ([self.tableViewManager.delegate respondsToSelector:@selector(tableView:willLayoutCellSubviews:forRowAtIndexPath:)])
-        [self.tableViewManager.delegate tableView:self.tableViewManager.tableView willLayoutCellSubviews:self forRowAtIndexPath:[(UITableView *)self.superview indexPathForCell:self]];
+        [self.tableViewManager.delegate tableView:self.tableViewManager.tableView willLayoutCellSubviews:self forRowAtIndexPath:[self.tableViewManager.tableView indexPathForCell:self]];
+}
+
+#pragma mark -
+#pragma mark Handle state
+
+- (void)setItem:(REFloatItem *)item
+{
+    if (_item != nil) {
+        [_item removeObserver:self forKeyPath:@"enabled"];
+    }
+    
+    _item = item;
+    
+    [_item addObserver:self forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
+- (void)setEnabled:(BOOL)enabled {
+    _enabled = enabled;
+    
+    self.userInteractionEnabled = _enabled;
+    
+    self.textLabel.enabled = _enabled;
+    self.sliderView.enabled = _enabled;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([object isKindOfClass:[REBoolItem class]] && [keyPath isEqualToString:@"enabled"]) {
+        BOOL newValue = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
+        
+        self.enabled = newValue;
+    }
 }
 
 #pragma mark -
