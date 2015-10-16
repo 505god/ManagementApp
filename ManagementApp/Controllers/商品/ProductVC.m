@@ -27,6 +27,8 @@
 @property (nonatomic, strong) RETableViewManager *stockManager;
 
 @property (nonatomic, assign) NSInteger currentPage;
+
+@property (nonatomic, assign) CGFloat keyboardHeight;
 @end
 
 @implementation ProductVC
@@ -44,6 +46,27 @@
     
     [self setNavBarView];
     [self setSegmentControl];
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleWillShowKeyboardNotification:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleWillHideKeyboardNotification:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+}
+
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -253,6 +276,44 @@
             }];
         }
     }
+}
+
+#pragma mark - keyboard
+
+- (void)handleWillShowKeyboardNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+    
+    CGRect keyboardRect = [aValue CGRectValue];
+    keyboardRect = [self.view convertRect:keyboardRect fromView:nil];
+    
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    
+    [UIView animateWithDuration:animationDuration
+                     animations:^{
+                         CGRect frame = self.descriptionTable.frame;
+                         frame.size.height += self.keyboardHeight;
+                         frame.size.height -= keyboardRect.size.height;
+                         self.descriptionTable.frame = frame;
+                         self.keyboardHeight = keyboardRect.size.height;
+                     }];
+}
+
+- (void)handleWillHideKeyboardNotification:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    
+    [UIView animateWithDuration:animationDuration
+                     animations:^{
+                         CGRect frame = self.descriptionTable.frame;
+                         frame.size.height += self.keyboardHeight;
+                         self.descriptionTable.frame = frame;
+                         self.keyboardHeight = 0;
+                     }];
 }
 
 @end

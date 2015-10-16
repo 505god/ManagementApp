@@ -284,7 +284,7 @@
     if (indexPath) {
         RETableViewCell *cell = (RETableViewCell *)[self.parentTableView cellForRowAtIndexPath:indexPath];
         if (!cell)
-            [self.parentTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            [self.parentTableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         cell = (RETableViewCell *)[self.parentTableView cellForRowAtIndexPath:indexPath];
         [cell.responder becomeFirstResponder];
     }
