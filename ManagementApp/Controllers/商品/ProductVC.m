@@ -15,6 +15,7 @@
 #import "MaterialVC.h"
 #import "ClassifyVC.h"
 #import "StockWarningVC.h"
+#import "ColorVC.h"
 
 @interface ProductVC ()<RFSegmentViewDelegate>
 
@@ -112,13 +113,13 @@
     _descriptionManager = [[RETableViewManager alloc] initWithTableView:self.descriptionTable];
     
     // Add a section
-    RETableViewSection *section = [RETableViewSection sectionWithHeaderTitle:@""];
+    RETableViewSection *section = [RETableViewSection section];
     [_descriptionManager addSection:section];
     
     // Add items
     
     //货号必填
-    RETextItem *codeItem = [RETextItem itemWithTitle:SetTitle(@"product_code") value:@"" placeholder:SetTitle(@"product_required")];
+    RETextItem *codeItem = [RETextItem itemWithTitle:SetTitle(@"product_code") value:@"45" placeholder:SetTitle(@"product_required")];
     codeItem.onChange = ^(RETextItem *item){
         
     };
@@ -234,17 +235,52 @@
 
 -(void)setStockTableView {
     self.stockTable = [[UITableView alloc]initWithFrame:(CGRect){self.view.width,self.navBarView.bottom+60,self.view.width,self.view.height-self.navBarView.bottom-60} style:UITableViewStylePlain];
-//    [Utility setExtraCellLineHidden:self.stockTable];
+    self.stockTable.backgroundColor = [UIColor whiteColor];
+    [Utility setExtraCellLineHidden:self.stockTable];
     [self.view addSubview:self.stockTable];
     
     // Create manager
     _stockManager = [[RETableViewManager alloc] initWithTableView:self.stockTable];
     
     // Add a section
-    RETableViewSection *section = [RETableViewSection sectionWithHeaderTitle:@""];
+    RETableViewSection *section = [RETableViewSection section];
     [_stockManager addSection:section];
     
-    // Add items
+    REProductItem *picItem = [REProductItem itemWithTitle:@"test" value:@"50" placeholder:@"0" image:nil];
+    picItem.cellHeight = 88;
+    picItem.deleteHandler = ^(REProductItem *item){
+        [section removeItem:item];
+        [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
+    };
+    picItem.selectedPictureHandler= ^(REProductItem *item){
+        
+    };
+    [section addItem:picItem];
+    
+    REProductItem *picItem2 = [REProductItem itemWithTitle:@"test" value:@"50" placeholder:@"0" image:nil];
+    picItem2.cellHeight = 88;
+    picItem2.deleteHandler = ^(REProductItem *item){
+        [section removeItem:item];
+        [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
+    };
+    picItem2.selectedPictureHandler = ^(REProductItem *item) {
+    };
+    [section addItem:picItem2];
+
+    // Add a section
+    __weak __typeof(self)weakSelf = self;
+    RETableViewItem *buttonItem = [RETableViewItem itemWithTitle:SetTitle(@"addColor") accessoryType:UITableViewCellAccessoryNone selectionHandler:^(RETableViewItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        ColorVC *colorVC = [[ColorVC alloc]init];
+        colorVC.completedBlock = ^(NSArray *array){
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        };
+        [weakSelf.navigationController pushViewController:colorVC animated:YES];
+    }];
+    buttonItem.textAlignment = NSTextAlignmentCenter;
+    [section addItem:buttonItem];
+    
 }
 #pragma mark - 导航栏代理
 

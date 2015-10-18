@@ -28,7 +28,7 @@
     _manager = [[RETableViewManager alloc] initWithTableView:self.table];
     
     // Add a section
-    RETableViewSection *section = [RETableViewSection sectionWithHeaderTitle:@""];
+    RETableViewSection *section = [RETableViewSection section];
     [_manager addSection:section];
     
     // Add items

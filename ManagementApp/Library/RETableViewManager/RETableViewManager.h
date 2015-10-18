@@ -52,6 +52,8 @@
 #import "REInlinePickerItem.h"
 #import "NSString+RETableViewManagerAdditions.h"
 
+#import "REProductItemCell.h"
+
 @protocol RETableViewManagerDelegate;
 
 /**
