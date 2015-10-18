@@ -76,9 +76,9 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
     
-    MaterialVC *colorVC = [[MaterialVC alloc]init];
-    self.window.rootViewController = colorVC;
-    return;
+//    MaterialVC *colorVC = [[MaterialVC alloc]init];
+//    self.window.rootViewController = colorVC;
+//    return;
     
     if (type==1) {
         MainVC *mainVC  = [[MainVC alloc]init];

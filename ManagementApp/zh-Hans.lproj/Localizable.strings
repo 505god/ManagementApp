@@ -32,6 +32,7 @@
 "EditClassify" = "编辑分类";
 "addClassify" = "添加分类";
 
+
 //材质
 "material" = "材质";
 "materialDelete" = "该材质下包含商品不能被删除";
@@ -47,6 +48,17 @@
 "Search" = "搜索";
 "cancel" = "取消";
 
+//商品
+"stock_warning" = "库存预警";
 "navicon_all" = "全部";
+"not_classified" = "未分类";
+"best_sellers" = "热卖";
+"off_the_shelf" = "下架";
+
+
+//客户
+"private_client" = "私密客户";
+"supplier" = "供货商";
+
 
 "connect_error" = "稍后再试...";

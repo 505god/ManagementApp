@@ -49,4 +49,7 @@
     [PopView showWithImageName:@"error" message:msg];
 }
 
++(UIImage *)getImgWithImageName:(NSString *)imgName{
+    return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:imgName ofType:@".png"]];
+}
 @end

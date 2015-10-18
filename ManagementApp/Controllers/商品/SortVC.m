@@ -15,36 +15,31 @@
 
 @implementation SortVC
 
--(UIImage *)getImgWithImageName:(NSString *)imgName{
-    return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:imgName ofType:@".png"]];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     DLog(@"currebtPage = %d",(int)self.currentPage);
     
-    
+    [self.sortTable reloadData];
     ///底部切换栏布局
     int num = (int)self.currentPage;
     if (num == 0) {
-        self.leftIconImgV.image = [self getImgWithImageName:@"hot_s_bt@2x"];
-        self.leftNameLab.text = @"热卖";
-        self.rightIconImgV.image = [self getImgWithImageName:@"hide_s_bt@2x"];
-        self.rightNameLab.text = @"下架";
+        self.leftIconImgV.image = [Utility getImgWithImageName:@"hot_s_bt@2x"];
+        self.leftNameLab.text = SetTitle(@"best_sellers") ;
+        self.rightIconImgV.image = [Utility getImgWithImageName:@"hide_s_bt@2x"];
+        self.rightNameLab.text = SetTitle(@"off_the_shelf");
         
         SortModel *model1 = [[SortModel alloc] init];
         model1.sortId = 1;
-        model1.sortName = @"全部";
+        model1.sortName = SetTitle(@"navicon_all");
         model1.sortProductCount = 460;
         
         SortModel *model2 = [[SortModel alloc] init];
         model2.sortId = 2;
-        model2.sortName = @"未分类";
+        model2.sortName = SetTitle(@"not_classified");
         model2.sortProductCount = 0;
         
         SortModel *model3 = [[SortModel alloc] init];
@@ -86,10 +81,10 @@
         
         
     }else{
-        self.leftIconImgV.image = [self getImgWithImageName:@"vendor_drawer_icon@2x"];
-        self.leftNameLab.text = @"私密客户";
-        self.rightIconImgV.image = [self getImgWithImageName:@"factory_drawer_icon@2x"];
-        self.rightNameLab.text = @"供货商";
+        self.leftIconImgV.image = [Utility getImgWithImageName:@"vendor_drawer_icon@2x"];
+        self.leftNameLab.text = SetTitle(@"private_client");
+        self.rightIconImgV.image = [Utility getImgWithImageName:@"factory_drawer_icon@2x"];
+        self.rightNameLab.text = SetTitle(@"supplier");
     }
 }
 - (void)didReceiveMemoryWarning {
@@ -118,14 +113,18 @@
                 
             }
             
+            UIView *sv = [cell.contentView viewWithTag:100099];
+            [sv.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [sv removeFromSuperview];
             UIView *customView = [[UIView alloc] initWithFrame:cell.contentView.frame];
+            customView.tag = 100099;
             customView.backgroundColor = [UIColor clearColor];
             UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 25, 25)];
-            img.image = [self getImgWithImageName:@"stock_warnning_icon@2x"];
+            img.image = [Utility getImgWithImageName:@"stock_warnning_icon@2x"];
             [customView addSubview:img];
             
             UILabel *stockWarnLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 12, 100, 21)];
-            stockWarnLabel.text = @"库存预警";
+            stockWarnLabel.text = SetTitle(@"stock_warning");
             stockWarnLabel.textColor = [UIColor whiteColor];
             [customView addSubview:stockWarnLabel];
             
@@ -139,7 +138,7 @@
             [cell.contentView addSubview:customView];
             return cell;
         }else{
-            SortCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+            SortCell *cell = [tableView dequeueReusableCellWithIdentifier:@"sort_cell2"];
             if (cell == nil) {
                 NSArray *array = [[NSBundle mainBundle] loadNibNamed:@"SortCell" owner:self options:nil];
                 cell = (SortCell *)[array objectAtIndex:0];

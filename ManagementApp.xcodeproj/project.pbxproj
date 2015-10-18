@@ -331,6 +331,7 @@
 		745B46EE1BCE3EF100095E4D /* factory_drawer_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 745B46ED1BCE3EF100095E4D /* factory_drawer_icon@2x.png */; settings = {ASSET_TAGS = (); }; };
 		745B46F01BCE3F5100095E4D /* vendor_drawer_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 745B46EF1BCE3F5100095E4D /* vendor_drawer_icon@2x.png */; settings = {ASSET_TAGS = (); }; };
 		745B46F21BCE599D00095E4D /* stock_warnning_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 745B46F11BCE599D00095E4D /* stock_warnning_icon@2x.png */; settings = {ASSET_TAGS = (); }; };
+		745B46F51BCFA52D00095E4D /* ClientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 745B46F41BCFA52D00095E4D /* ClientModel.m */; settings = {ASSET_TAGS = (); }; };
 		74E358CD1BCD27D300B0144C /* SortCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 74E358CB1BCD27D300B0144C /* SortCell.m */; settings = {ASSET_TAGS = (); }; };
 		74E358CE1BCD27D300B0144C /* SortCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74E358CC1BCD27D300B0144C /* SortCell.xib */; settings = {ASSET_TAGS = (); }; };
 		74E358D11BCD2A0C00B0144C /* SortModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 74E358D01BCD2A0B00B0144C /* SortModel.m */; settings = {ASSET_TAGS = (); }; };
@@ -926,6 +927,8 @@
 		745B46ED1BCE3EF100095E4D /* factory_drawer_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "factory_drawer_icon@2x.png"; sourceTree = "<group>"; };
 		745B46EF1BCE3F5100095E4D /* vendor_drawer_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "vendor_drawer_icon@2x.png"; sourceTree = "<group>"; };
 		745B46F11BCE599D00095E4D /* stock_warnning_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stock_warnning_icon@2x.png"; sourceTree = "<group>"; };
+		745B46F31BCFA52D00095E4D /* ClientModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientModel.h; sourceTree = "<group>"; };
+		745B46F41BCFA52D00095E4D /* ClientModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientModel.m; sourceTree = "<group>"; };
 		74E358CA1BCD27D300B0144C /* SortCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SortCell.h; sourceTree = "<group>"; };
 		74E358CB1BCD27D300B0144C /* SortCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SortCell.m; sourceTree = "<group>"; };
 		74E358CC1BCD27D300B0144C /* SortCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SortCell.xib; sourceTree = "<group>"; };
@@ -2358,6 +2361,8 @@
 				5D13D1731BCCEDA500C8A430 /* ColorModel.m */,
 				74E358CF1BCD2A0B00B0144C /* SortModel.h */,
 				74E358D01BCD2A0B00B0144C /* SortModel.m */,
+				745B46F31BCFA52D00095E4D /* ClientModel.h */,
+				745B46F41BCFA52D00095E4D /* ClientModel.m */,
 				5DFD859A1BCE5644007E6EAC /* MaterialModel.h */,
 				5DFD859B1BCE5644007E6EAC /* MaterialModel.m */,
 			);
@@ -2553,6 +2558,7 @@
 				5DF546EA1BC8E34C00DF5295 /* XMPPIQ+JabberRPC.m in Sources */,
 				5DF547551BC8E35500DF5295 /* JSONKit.m in Sources */,
 				5DF546A21BC8E34C00DF5295 /* FMDatabase.m in Sources */,
+				745B46F51BCFA52D00095E4D /* ClientModel.m in Sources */,
 				5DF547161BC8E34C00DF5295 /* XMPPSoftwareVersion.m in Sources */,
 				5DF5449C1BC8E33200DF5295 /* UIImageView+HighlightedWebCache.m in Sources */,
 				5DF5474B1BC8E34C00DF5295 /* NSString+DDXML.m in Sources */,

@@ -47,7 +47,15 @@
 "Search" = "Search";
 "cancel" = "cancel";
 
-
+//商品
+"stock_warning" = "Stock warning";
 "navicon_all" = "all";
+"not_classified" = "Not classified";
+"best_sellers" = "Best sellers";
+"off_the_shelf" = "Off the shelf";
+
+//客户
+"private_client" = "Private client";
+"supplier" = "Supplier";
 
 "connect_error" = "try again later...";
