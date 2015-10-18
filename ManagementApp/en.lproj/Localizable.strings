@@ -16,46 +16,70 @@
 //登录
 "log_account" = "account";
 "log_pwd" = "password";
-"log_in" = "login";
-"logInNameError" = "please enter account";
-"logInPwdError" = "please enter password";
+"log_in" = "Login";
+"logInNameError" = "Please enter account";
+"logInPwdError" = "Please enter password";
 
 //颜色
 "color" = "Color";
-"ColorDelete" = "the color include product can't be deleted";
-"EditColor" = "edit color";
-"addColor" = "add color";
+"ColorDelete" = "The color include product can't be deleted";
+"EditColor" = "Edit color";
+"addColor" = "Add color";
 
 //分类
 "classify" = "Classify";
-"classifyDelete" = "the classify include product can't be deleted";
-"EditClassify" = "edit classify";
-"addClassify" = "add classify";
+"classifyDelete" = "The classify include product can't be deleted";
+"EditClassify" = "Edit classify";
+"addClassify" = "Add classify";
 
 //材质
 "material" = "Material";
-"materialDelete" = "the material include product can't be deleted";
-"Editmaterial" = "edit material";
-"addmaterial" = "add material";
+"materialDelete" = "The material include product can't be deleted";
+"Editmaterial" = "Edit material";
+"addmaterial" = "Add material";
 
-//弹出框
-"ConfirmDelete" = "confirm delete?";
-"alert_confirm" = "YES";
-"alert_cancel" = "NO";
-
-//搜索框
-"Search" = "Search";
-"cancel" = "cancel";
+//价格
+"price" = "Price";
+"sale_price" = "sale price";
+"purchase_price" = "purchase price";
 
 //商品
+"product" = "New Product";
+"Description" = "description";
+"stock" = "stock";
+"product_code" = "code";
+"product_required" = "required";
+"product_set" = "not set";
+"product_package" = "package number";
+"product_name" = "name";
+"product_mark" = "remark";
+"product_display" = "retail side display";
+"product_promotion" = "retail side promotion";
 "stock_warning" = "Stock warning";
 "navicon_all" = "all";
 "not_classified" = "Not classified";
 "best_sellers" = "Best sellers";
 "off_the_shelf" = "Off the shelf";
 
+//库存预警
+"stock_all" = "the total stock";
+"stock_one" = "a single color stock";
+
+//弹出框
+"ConfirmDelete" = "Confirm Delete?";
+"alert_confirm" = "YES";
+"alert_cancel" = "NO";
+"Previous" = "Previous";
+"Next" = "Next";
+
+//搜索框
+"Search" = "search";
+"cancel" = "cancel";
+
 //客户
 "private_client" = "Private client";
 "supplier" = "Supplier";
 
-"connect_error" = "try again later...";
+"navicon_all" = "All";
+
+"connect_error" = "Try again later...";

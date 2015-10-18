@@ -22,7 +22,7 @@
 #import "OptionsVC.h"
 
 
-#import "MaterialVC.h"
+#import "ProductVC.h"
 
 @interface AppDelegate ()
 
@@ -75,10 +75,12 @@
 #pragma mark - 加载VC
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
-    
-//    MaterialVC *colorVC = [[MaterialVC alloc]init];
-//    self.window.rootViewController = colorVC;
-//    return;
+
+    ProductVC *colorVC = [[ProductVC alloc]init];
+    UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:colorVC];
+    self.window.rootViewController = navControl;
+    return;
+
     
     if (type==1) {
         MainVC *mainVC  = [[MainVC alloc]init];

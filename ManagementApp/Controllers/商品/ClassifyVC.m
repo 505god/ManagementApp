@@ -150,8 +150,8 @@
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedClassify) {
-        if (self.delegate && [self.delegate respondsToSelector:@selector(classifyVC:selectedClassify:)]) {
-            [self.delegate classifyVC:self selectedClassify:self.hasSelectedClassify];
+        if (self.completedBlock) {
+            
         }
     }
     [self.navigationController popViewControllerAnimated:YES];

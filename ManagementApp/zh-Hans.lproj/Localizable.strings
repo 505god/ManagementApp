@@ -39,22 +39,44 @@
 "Editmaterial" = "编辑材质";
 "addmaterial" = "添加材质";
 
-//弹出框
-"ConfirmDelete" = "确认删除?";
-"alert_confirm" = "确认";
-"alert_cancel" = "取消";
+//价格
+"price" = "商品价格";
+"sale_price" = "销售价";
+"purchase_price" = "进货价";
 
-//搜索框
-"Search" = "搜索";
-"cancel" = "取消";
 
 //商品
+"product" = "新商品";
+"Description" = "描述";
+"stock" = "库存";
+"product_code" = "货号";
+"product_required" = "必填";
+"product_set" = "未设置";
+"product_package" = "包装数";
+"product_name" = "名称";
+"product_mark" = "备注";
+"product_display" = "零售端显示";
+"product_promotion" = "零售端促销";
 "stock_warning" = "库存预警";
 "navicon_all" = "全部";
 "not_classified" = "未分类";
 "best_sellers" = "热卖";
 "off_the_shelf" = "下架";
 
+//库存预警
+"stock_all" = "当总库存低于";
+"stock_one" = "当单款颜色库存低于";
+
+//弹出框
+"ConfirmDelete" = "确认删除?";
+"alert_confirm" = "确认";
+"alert_cancel" = "取消";
+"Previous" = "上一项";
+"Next" = "下一项";
+
+//搜索框
+"Search" = "搜索";
+"cancel" = "取消";
 
 //客户
 "private_client" = "私密客户";

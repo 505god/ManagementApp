@@ -20,4 +20,7 @@
 
 #pragma mark - 获取本地图片
 +(UIImage *)getImgWithImageName:(NSString *)imgName;
+
+#pragma mark - 隐藏UITableView多余的分割线
++ (void)setExtraCellLineHidden: (UITableView *)tableView;
 @end

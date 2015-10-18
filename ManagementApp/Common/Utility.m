@@ -52,4 +52,12 @@
 +(UIImage *)getImgWithImageName:(NSString *)imgName{
     return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:imgName ofType:@".png"]];
 }
+
+#pragma mark - 隐藏UITableView多余的分割线
+
++ (void)setExtraCellLineHidden: (UITableView *)tableView {
+    UIView *view =[ [UIView alloc]init];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+}
 @end

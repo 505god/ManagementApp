@@ -6,10 +6,14 @@
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "BaseVC.h"
 
 ///库存预警
 
-@interface StockWarningVC : UIViewController
+typedef void(^StockWarningVCCompletedBlock)(BOOL success);
+
+@interface StockWarningVC : BaseVC
+
+@property (nonatomic, strong) StockWarningVCCompletedBlock completedBlock;
 
 @end

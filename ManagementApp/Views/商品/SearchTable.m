@@ -123,7 +123,7 @@
 - (void)tableViewIndex:(SearchTableIndex *)tableViewIndex didSelectSectionAtIndex:(NSInteger)index withTitle:(NSString *)title {
     if ([self.tableView numberOfSections] > index && index > -1){
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:index]
-                              atScrollPosition:UITableViewScrollPositionTop
+                              atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
         self.flotageLabel.text = @"";
         self.flotageLabel.text = title;

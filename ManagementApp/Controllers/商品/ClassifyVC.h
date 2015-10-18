@@ -12,11 +12,9 @@
 
 ///分类
 
-@protocol ClassifyVCDelegate;
+typedef void(^ClassifyVCCompletedBlock)(SortModel *sortModel);
 
 @interface ClassifyVC : BaseVC
-
-@property (nonatomic, assign) id<ClassifyVCDelegate>delegate;
 
 ///判断是选择分类还是查看分类
 @property (nonatomic, assign) BOOL isSelectedClassify;
@@ -27,10 +25,6 @@
 ///已选择的分类--只能单选
 @property (nonatomic, strong) NSMutableArray *hasSelectedClassify;
 
+@property (nonatomic, strong) ClassifyVCCompletedBlock completedBlock;
 @end
 
-@protocol ClassifyVCDelegate <NSObject>
-
--(void)classifyVC:(ClassifyVC *)classifyVC selectedClassify:(NSArray *)classifyArray;
-
-@end
