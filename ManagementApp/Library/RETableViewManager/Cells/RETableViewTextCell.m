@@ -30,6 +30,8 @@
 
 @property (assign, readwrite, nonatomic) BOOL enabled;
 
+@property (strong, readwrite, nonatomic) UIColor *textFieldColor;
+
 @end
 
 @implementation RETableViewTextCell
@@ -47,6 +49,7 @@
 - (void)dealloc {
     if (_item != nil) {
         [_item removeObserver:self forKeyPath:@"enabled"];
+        [_item removeObserver:self forKeyPath:@"textFieldColor"];
     }
 }
 
@@ -78,6 +81,9 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     self.textLabel.text = self.item.title.length == 0 ? @" " : self.item.title;
+    
+    [self.textLabel setHidden:!self.item.isShowTitle];
+    
     self.textField.text = self.item.value;
     self.textField.placeholder = self.item.placeholder;
     self.textField.font = [UIFont systemFontOfSize:17];
@@ -93,6 +99,8 @@
     self.textField.clearsOnBeginEditing = self.item.clearsOnBeginEditing;
     self.textField.textAlignment = self.item.alignment;
     self.actionBar.barStyle = self.item.keyboardAppearance == UIKeyboardAppearanceAlert ? UIBarStyleBlack : UIBarStyleDefault;
+    
+    self.textFieldColor = self.item.textFieldColor;
     
     self.enabled = self.item.enabled;
 }
@@ -119,11 +127,14 @@
 {
     if (_item != nil) {
         [_item removeObserver:self forKeyPath:@"enabled"];
+        [_item removeObserver:self forKeyPath:@"textFieldColor"];
     }
     
     _item = item;
     
     [_item addObserver:self forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    [_item addObserver:self forKeyPath:@"textFieldColor" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 - (void)setEnabled:(BOOL)enabled {
@@ -135,12 +146,21 @@
     self.textField.enabled = _enabled;
 }
 
+-(void)setTextFieldColor:(UIColor *)textFieldColor {
+    _textFieldColor = textFieldColor;
+    
+    self.textField.textColor = textFieldColor;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([object isKindOfClass:[REBoolItem class]] && [keyPath isEqualToString:@"enabled"]) {
         BOOL newValue = [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
         
         self.enabled = newValue;
+    }else if ([keyPath isEqualToString:@"textFieldColor"]){
+        UIColor *color = [change objectForKey: NSKeyValueChangeNewKey];
+        self.textFieldColor = color;
     }
 }
 

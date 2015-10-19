@@ -58,6 +58,7 @@
         [REValidation registerValidator:[RELengthValidator class]];
         [REValidation registerValidator:[REEmailValidator class]];
         [REValidation registerValidator:[REURLValidator class]];
+        [REValidation registerValidator:[REFloatValidator class]];
     });
 }
 
@@ -66,11 +67,12 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSDictionary *messages = @{
-                                   @"com.REValidation.presence": @"%@ can't be blank.",
+                                   @"com.REValidation.presence": [NSString stringWithFormat:@"%@",SetTitle(@"error_blank")],
                                    @"com.REValidation.minimumLength": @"%@ is too short (minimum is %i characters).",
                                    @"com.REValidation.maximumLength": @"%@ is too long (maximum is %i characters).",
                                    @"com.REValidation.email": @"%@ is not a valid email.",
-                                   @"com.REValidation.url": @"%@ is not a valid url."
+                                   @"com.REValidation.url": @"%@ is not a valid url.",
+                                   @"com.REValidation.price": [NSString stringWithFormat:@"%@",SetTitle(@"error_price")]
                                    };
         [REValidation sharedObject].errorMessages = [NSMutableDictionary dictionaryWithDictionary:messages];
     });

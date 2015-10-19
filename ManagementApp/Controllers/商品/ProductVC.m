@@ -137,7 +137,7 @@
         item.infoImg = [UIImage imageNamed:@"charc_1_28"];
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         ProductPriceVC *priceVC = LOADVC(@"ProductPriceVC");
-        priceVC.completedBlock = ^(BOOL success){
+        priceVC.completedBlock = ^(ProductPriceModel *productPriceModel){
             [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         };
         [weakSelf.navigationController pushViewController:priceVC animated:YES];

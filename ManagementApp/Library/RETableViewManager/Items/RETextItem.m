@@ -51,10 +51,13 @@
     self.title = title;
     self.value = value;
     self.placeholder = placeholder;
-    
+    self.isShowTitle = YES;
     return self;
 }
 
+-(void)setIsShowTitle:(BOOL)isShowTitle {
+    _isShowTitle = isShowTitle;
+}
 #pragma mark -
 #pragma mark Error validation
 

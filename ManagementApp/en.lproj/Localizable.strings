@@ -42,6 +42,9 @@
 "price" = "Price";
 "sale_price" = "sale price";
 "purchase_price" = "purchase price";
+"column" = "column";
+"error_price" = "please enter %@ the correct price.";
+"error_blank" = "%@ can't be blank.";
 
 //商品
 "product" = "New Product";

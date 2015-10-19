@@ -96,6 +96,11 @@
 		5D9E3C3F1BD49482009FE9A1 /* selectedNormal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9E3C3D1BD49482009FE9A1 /* selectedNormal@2x.png */; settings = {ASSET_TAGS = (); }; };
 		5D9E3C411BD49600009FE9A1 /* picker_photo_filter_checked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9E3C401BD49600009FE9A1 /* picker_photo_filter_checked@2x.png */; settings = {ASSET_TAGS = (); }; };
 		5D9E3C431BD496FE009FE9A1 /* compose_photograph@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9E3C421BD496FE009FE9A1 /* compose_photograph@2x.png */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C461BD49D81009FE9A1 /* ProductModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C451BD49D81009FE9A1 /* ProductModel.m */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C4C1BD49E72009FE9A1 /* ProductPriceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C4B1BD49E72009FE9A1 /* ProductPriceModel.m */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C4F1BD49FEF009FE9A1 /* StockWarningModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C4E1BD49FEF009FE9A1 /* StockWarningModel.m */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C521BD4A09F009FE9A1 /* ProductStockModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C511BD4A09F009FE9A1 /* ProductStockModel.m */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C551BD4AEB9009FE9A1 /* REFloatValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */; settings = {ASSET_TAGS = (); }; };
 		5D9F701F1BCCA01300145CE8 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F701D1BCCA01300145CE8 /* LoginVC.m */; settings = {ASSET_TAGS = (); }; };
 		5D9F70201BCCA01300145CE8 /* LoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F701E1BCCA01300145CE8 /* LoginVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5D9F70271BCCD00300145CE8 /* login_bt_dis@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F70241BCCD00300145CE8 /* login_bt_dis@2x.png */; settings = {ASSET_TAGS = (); }; };
@@ -567,6 +572,16 @@
 		5D9E3C3D1BD49482009FE9A1 /* selectedNormal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectedNormal@2x.png"; sourceTree = "<group>"; };
 		5D9E3C401BD49600009FE9A1 /* picker_photo_filter_checked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "picker_photo_filter_checked@2x.png"; sourceTree = "<group>"; };
 		5D9E3C421BD496FE009FE9A1 /* compose_photograph@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "compose_photograph@2x.png"; sourceTree = "<group>"; };
+		5D9E3C441BD49D81009FE9A1 /* ProductModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductModel.h; sourceTree = "<group>"; };
+		5D9E3C451BD49D81009FE9A1 /* ProductModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductModel.m; sourceTree = "<group>"; };
+		5D9E3C4A1BD49E72009FE9A1 /* ProductPriceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductPriceModel.h; sourceTree = "<group>"; };
+		5D9E3C4B1BD49E72009FE9A1 /* ProductPriceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductPriceModel.m; sourceTree = "<group>"; };
+		5D9E3C4D1BD49FEF009FE9A1 /* StockWarningModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StockWarningModel.h; sourceTree = "<group>"; };
+		5D9E3C4E1BD49FEF009FE9A1 /* StockWarningModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StockWarningModel.m; sourceTree = "<group>"; };
+		5D9E3C501BD4A09E009FE9A1 /* ProductStockModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductStockModel.h; sourceTree = "<group>"; };
+		5D9E3C511BD4A09F009FE9A1 /* ProductStockModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductStockModel.m; sourceTree = "<group>"; };
+		5D9E3C531BD4AEB9009FE9A1 /* REFloatValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFloatValidator.h; sourceTree = "<group>"; };
+		5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REFloatValidator.m; sourceTree = "<group>"; };
 		5D9F701C1BCCA01300145CE8 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		5D9F701D1BCCA01300145CE8 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		5D9F701E1BCCA01300145CE8 /* LoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginVC.xib; sourceTree = "<group>"; };
@@ -1540,6 +1555,8 @@
 				5DAA2D501BD0BC4A00FBCA24 /* REPresenceValidator.m */,
 				5DAA2D511BD0BC4A00FBCA24 /* REURLValidator.h */,
 				5DAA2D521BD0BC4A00FBCA24 /* REURLValidator.m */,
+				5D9E3C531BD4AEB9009FE9A1 /* REFloatValidator.h */,
+				5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -2854,6 +2871,14 @@
 				745B46F41BCFA52D00095E4D /* ClientModel.m */,
 				5DFD859A1BCE5644007E6EAC /* MaterialModel.h */,
 				5DFD859B1BCE5644007E6EAC /* MaterialModel.m */,
+				5D9E3C441BD49D81009FE9A1 /* ProductModel.h */,
+				5D9E3C451BD49D81009FE9A1 /* ProductModel.m */,
+				5D9E3C4A1BD49E72009FE9A1 /* ProductPriceModel.h */,
+				5D9E3C4B1BD49E72009FE9A1 /* ProductPriceModel.m */,
+				5D9E3C4D1BD49FEF009FE9A1 /* StockWarningModel.h */,
+				5D9E3C4E1BD49FEF009FE9A1 /* StockWarningModel.m */,
+				5D9E3C501BD4A09E009FE9A1 /* ProductStockModel.h */,
+				5D9E3C511BD4A09F009FE9A1 /* ProductStockModel.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -3114,6 +3139,7 @@
 				5DF547311BC8E34C00DF5295 /* XEP_0223.m in Sources */,
 				5DF546CD1BC8E34C00DF5295 /* NSNumber+XMPP.m in Sources */,
 				5DF5471F1BC8E34C00DF5295 /* XMPPMessageArchiving_Contact_CoreDataObject.m in Sources */,
+				5D9E3C461BD49D81009FE9A1 /* ProductModel.m in Sources */,
 				5DF5449D1BC8E33200DF5295 /* UIImageView+WebCache.m in Sources */,
 				5DF546981BC8E34C00DF5295 /* BlockBackground.m in Sources */,
 				5DAA2D421BD0BC1400FBCA24 /* RETableViewSection.m in Sources */,
@@ -3183,6 +3209,7 @@
 				5D3F062F1BCB798500849DA8 /* SortVC.m in Sources */,
 				5DF547221BC8E34C00DF5295 /* XMPPMessageArchiving.m in Sources */,
 				5DF546991BC8E34C00DF5295 /* BlockTextPromptAlertView.m in Sources */,
+				5D9E3C4F1BD49FEF009FE9A1 /* StockWarningModel.m in Sources */,
 				5DF546FD1BC8E34C00DF5295 /* XMPPRoom.m in Sources */,
 				5DF5471D1BC8E34C00DF5295 /* XMPPCapabilities.m in Sources */,
 				5DF547021BC8E34C00DF5295 /* XMPPvCardTempCoreDataStorageObject.m in Sources */,
@@ -3197,6 +3224,7 @@
 				5DF547051BC8E34C00DF5295 /* XMPPvCardTempAdrTypes.m in Sources */,
 				5DF547191BC8E34C00DF5295 /* XMPPCapabilities.xcdatamodel in Sources */,
 				5DF5468A1BC8E34C00DF5295 /* AFHTTPRequestOperation.m in Sources */,
+				5D9E3C551BD4AEB9009FE9A1 /* REFloatValidator.m in Sources */,
 				5DF547881BC8E51700DF5295 /* UIView+Common.m in Sources */,
 				5DF5449E1BC8E33200DF5295 /* UIView+WebCacheOperation.m in Sources */,
 				5DF5468D1BC8E34C00DF5295 /* AFNetworkReachabilityManager.m in Sources */,
@@ -3276,6 +3304,7 @@
 				5DAA2D1E1BD0BC1400FBCA24 /* REInlineDatePickerItem.m in Sources */,
 				5DF5473D1BC8E34C00DF5295 /* XMPPIDTracker.m in Sources */,
 				5DF546DF1BC8E34C00DF5295 /* XMPPReconnect.m in Sources */,
+				5D9E3C4C1BD49E72009FE9A1 /* ProductPriceModel.m in Sources */,
 				5D13D1971BCCF66200C8A430 /* WQIndexedCollationWithSearch.m in Sources */,
 				5DF547481BC8E34C00DF5295 /* DDDispatchQueueLogFormatter.m in Sources */,
 				5DF546901BC8E34C00DF5295 /* AFURLRequestSerialization.m in Sources */,
@@ -3326,6 +3355,7 @@
 				5DF546B81BC8E34C00DF5295 /* UIScrollView+MJExtension.m in Sources */,
 				5DF546C81BC8E34C00DF5295 /* XMPPPlainAuthentication.m in Sources */,
 				5DF544921BC8E33200DF5295 /* SDWebImageCompat.m in Sources */,
+				5D9E3C521BD4A09F009FE9A1 /* ProductStockModel.m in Sources */,
 				5DF544901BC8E33200DF5295 /* NSData+ImageContentType.m in Sources */,
 				5DF546B71BC8E34C00DF5295 /* MJRefreshHeaderView.m in Sources */,
 				5DF546F71BC8E34C00DF5295 /* XMPPRoomOccupantHybridMemoryStorageObject.m in Sources */,

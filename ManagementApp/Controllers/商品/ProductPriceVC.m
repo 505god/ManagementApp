@@ -15,6 +15,8 @@
 @property (strong, readwrite, nonatomic) RETextItem *cItem;
 @property (strong, readwrite, nonatomic) RETextItem *dItem;
 
+///根据self.productPriceModel判断是新建还是修改
+@property (nonatomic, assign) BOOL isNew;
 
 @end
 
@@ -27,6 +29,15 @@
     
     [self setNavBarView];
     
+    if (self.productPriceModel) {
+        self.isNew = NO;
+    }else {
+        self.isNew = YES;
+        self.productPriceModel = [[ProductPriceModel alloc]init];
+        self.productPriceModel.selected=-1;
+    }
+    
+    
     // Create manager
     _manager = [[RETableViewManager alloc] initWithTableView:self.table];
     
@@ -36,112 +47,170 @@
     
     // Add items
     //－－－－－－－－－－－－－－－－－A
-    self.aItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    __weak __typeof(self)weakSelf = self;
+    
+    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.aItem.onChange = ^(RETextItem *item){
+        //判读是否为数字
+        if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
+            item.textFieldColor = [UIColor blackColor];
+            weakSelf.productPriceModel.aPrice = [item.value floatValue];
+        }else {
+            item.textFieldColor = COLOR(251, 0, 41, 1);
+        }
         
     };
-    
-    __weak __typeof(self)weakSelf = self;
     self.aItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
         
         if (item.isHighlighted) {
-            //do nothing
+            weakSelf.productPriceModel.selected = -1;
+            item.isHighlighted = NO;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         }else {
+            weakSelf.productPriceModel.selected = 0;
+            item.isHighlighted = YES;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
             
+            weakSelf.bItem.isHighlighted = NO;
+            [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.cItem.isHighlighted = NO;
+            [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.dItem.isHighlighted = NO;
+            [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
         }
-        item.isHighlighted = YES;
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.bItem.isHighlighted = NO;
-        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.cItem.isHighlighted = NO;
-        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.dItem.isHighlighted = NO;
-        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
     };
-    
+    self.aItem.validators = @[@"presence", @"price"];
+    self.aItem.isShowTitle = NO;
     self.aItem.image = [UIImage imageNamed:@"charc_1_28"];
     self.aItem.highlightedImage = [UIImage imageNamed:@"charc_1_28_sele"];
     self.aItem.alignment = NSTextAlignmentRight;
-    self.aItem.keyboardType = UIKeyboardTypeNumberPad;
+    self.aItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.aItem];
     
     //－－－－－－－－－－－－－－－－－B
-    self.bItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.bItem.onChange = ^(RETextItem *item){
-        
+        //判读是否为数字
+        if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
+            item.textFieldColor = [UIColor blackColor];
+            weakSelf.productPriceModel.bPrice = [item.value floatValue];
+        }else {
+            item.textFieldColor = COLOR(251, 0, 41, 1);
+        }
     };
     self.bItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
-        item.isHighlighted = YES;
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
-        weakSelf.aItem.isHighlighted = NO;
-        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.cItem.isHighlighted = NO;
-        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.dItem.isHighlighted = NO;
-        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        if (item.isHighlighted) {
+            weakSelf.productPriceModel.selected = -1;
+            item.isHighlighted = NO;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }else {
+            weakSelf.productPriceModel.selected = 1;
+            item.isHighlighted = YES;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.aItem.isHighlighted = NO;
+            [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.cItem.isHighlighted = NO;
+            [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.dItem.isHighlighted = NO;
+            [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }
     };
+    self.bItem.validators = @[@"presence", @"price"];
+    self.bItem.isShowTitle = NO;
     self.bItem.image = [UIImage imageNamed:@"charc_2_28"];
     self.bItem.highlightedImage = [UIImage imageNamed:@"charc_2_28_sele"];
     self.bItem.alignment = NSTextAlignmentRight;
-    self.bItem.keyboardType = UIKeyboardTypeNumberPad;
+    self.bItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.bItem];
     
     //－－－－－－－－－－－－－－－－－C
-    self.cItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.cItem.onChange = ^(RETextItem *item){
-        
+        //判读是否为数字
+        if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
+            item.textFieldColor = [UIColor blackColor];
+            weakSelf.productPriceModel.cPrice = [item.value floatValue];
+        }else {
+            item.textFieldColor = COLOR(251, 0, 41, 1);
+        }
     };
     self.cItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
-        item.isHighlighted = YES;
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.aItem.isHighlighted = NO;
-        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.bItem.isHighlighted = NO;
-        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.dItem.isHighlighted = NO;
-        [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        if (item.isHighlighted) {
+            weakSelf.productPriceModel.selected = -1;
+            item.isHighlighted = NO;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }else {
+            weakSelf.productPriceModel.selected = 2;
+            
+            item.isHighlighted = YES;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.aItem.isHighlighted = NO;
+            [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.bItem.isHighlighted = NO;
+            [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.dItem.isHighlighted = NO;
+            [weakSelf.dItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }
     };
+    self.cItem.validators = @[@"presence", @"price"];
+    self.cItem.isShowTitle = NO;
     self.cItem.image = [UIImage imageNamed:@"charc_3_28"];
     self.cItem.highlightedImage = [UIImage imageNamed:@"charc_3_28_sele"];
     self.cItem.alignment = NSTextAlignmentRight;
-    self.cItem.keyboardType = UIKeyboardTypeNumberPad;
+    self.cItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.cItem];
     
     //－－－－－－－－－－－－－－－－－D
-    self.dItem = [RETextItem itemWithTitle:@"      " value:@"" placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.dItem.onChange = ^(RETextItem *item){
-        
+        //判读是否为数字
+        if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
+            item.textFieldColor = [UIColor blackColor];
+            weakSelf.productPriceModel.dPrice = [item.value floatValue];
+        }else {
+            item.textFieldColor = COLOR(251, 0, 41, 1);
+        }
     };
     self.dItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
-        item.isHighlighted = YES;
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         
-        weakSelf.aItem.isHighlighted = NO;
-        [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.bItem.isHighlighted = NO;
-        [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
-        
-        weakSelf.cItem.isHighlighted = NO;
-        [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        if (item.isHighlighted) {
+            weakSelf.productPriceModel.selected = -1;
+            item.isHighlighted = NO;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }else {
+            weakSelf.productPriceModel.selected = 3;
+            item.isHighlighted = YES;
+            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.aItem.isHighlighted = NO;
+            [weakSelf.aItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.bItem.isHighlighted = NO;
+            [weakSelf.bItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+            
+            weakSelf.cItem.isHighlighted = NO;
+            [weakSelf.cItem reloadRowWithAnimation:UITableViewRowAnimationNone];
+        }
     };
+    self.dItem.validators = @[@"presence", @"price"];
+    self.dItem.isShowTitle = NO;
     self.dItem.image = [UIImage imageNamed:@"charc_4_28"];
     self.dItem.highlightedImage = [UIImage imageNamed:@"charc_4_28_sele"];
     self.dItem.alignment = NSTextAlignmentRight;
-    self.dItem.keyboardType = UIKeyboardTypeNumberPad;
+    self.dItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.dItem];
     
     [Utility setExtraCellLineHidden:self.table];
@@ -162,16 +231,30 @@
 
 #pragma mark - 导航栏代理
 
--(void)leftBtnClickByNavBarView:(NavBarView *)navView {
 
-    if (self.completedBlock) {
-    }
+-(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     
-    [self.navigationController popViewControllerAnimated:YES];
+    //判断数据
+    NSArray *managerErrors = self.manager.errors;
+    if (managerErrors.count > 0) {
+        NSMutableArray *errors = [NSMutableArray array];
+        for (NSError *error in managerErrors) {
+            [errors addObject:error.localizedDescription];
+        }
+        NSString *errorString = [errors componentsJoinedByString:@"\n"];
+        
+        [PopView showWithImageName:@"error" message:errorString];
+    }else {
+        if (self.completedBlock) {
+            self.completedBlock (self.productPriceModel);
+        }
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-
+    
 }
 
 

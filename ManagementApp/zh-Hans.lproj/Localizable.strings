@@ -43,8 +43,9 @@
 "price" = "商品价格";
 "sale_price" = "销售价";
 "purchase_price" = "进货价";
-
-
+"column" = "栏";
+"error_price" = "请在%@填写正确的价格。";
+"error_blank" = "%@ 不能为空。";
 //商品
 "product" = "新商品";
 "Description" = "描述";

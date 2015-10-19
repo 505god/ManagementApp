@@ -26,4 +26,7 @@
 
 #pragma mark -  对图片data大小比例压缩
 +(UIImage *)dealImageData:(UIImage *)image;
+
+#pragma mark -  正则判断
++(BOOL)predicateText:(NSString *)text regex:(NSString *)regex;
 @end

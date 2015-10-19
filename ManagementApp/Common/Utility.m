@@ -82,4 +82,14 @@
     return [UIImage imageWithData:imageData];
 }
 
+#pragma mark -  正则判断
+
++(BOOL)predicateText:(NSString *)text regex:(NSString *)regex {
+    NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+    if (![test evaluateWithObject:text]){
+        return NO;
+    }else {
+        return YES;
+    }
+}
 @end

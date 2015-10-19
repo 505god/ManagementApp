@@ -57,6 +57,9 @@
 @property (copy, readwrite, nonatomic) void (^onReturn)(RETextItem *item);
 @property (copy, readwrite, nonatomic) BOOL (^onChangeCharacterInRange)(RETextItem *item, NSRange range, NSString *replacementString);
 
+@property (nonatomic, strong) UIColor *textFieldColor;
+///是否显示标题
+@property (nonatomic, assign) BOOL isShowTitle;
 
 + (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value;
 + (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value  placeholder:(NSString *)placeholder;
