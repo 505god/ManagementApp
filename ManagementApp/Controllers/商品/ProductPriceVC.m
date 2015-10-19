@@ -7,6 +7,7 @@
 //
 
 #import "ProductPriceVC.h"
+#import "BlockAlertView.h"
 
 @interface ProductPriceVC ()
 
@@ -233,20 +234,33 @@
 
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-    
+    [self.view endEditing:YES];
     //判断数据
     NSArray *managerErrors = self.manager.errors;
     if (managerErrors.count > 0) {
+        
         NSMutableArray *errors = [NSMutableArray array];
         for (NSError *error in managerErrors) {
             [errors addObject:error.localizedDescription];
         }
         NSString *errorString = [errors componentsJoinedByString:@"\n"];
         
-        [PopView showWithImageName:@"error" message:errorString];
+        __weak __typeof(self)weakSelf = self;
+        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"edit_price_error") message:errorString];
+        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+            if (weakSelf.completedBlock) {
+                weakSelf.completedBlock (weakSelf.productPriceModel,NO);
+            }
+            
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+            
+        }];
+        [alert show];
     }else {
         if (self.completedBlock) {
-            self.completedBlock (self.productPriceModel);
+            self.completedBlock (self.productPriceModel,YES);
         }
         
         [self.navigationController popViewControllerAnimated:YES];

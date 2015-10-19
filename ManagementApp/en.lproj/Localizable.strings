@@ -45,6 +45,7 @@
 "column" = "column";
 "error_price" = "please enter %@ the correct price.";
 "error_blank" = "%@ can't be blank.";
+"edit_price_error" = "prices fill in an error, return to re-edit?";
 
 //商品
 "product" = "New Product";
@@ -70,7 +71,7 @@
 "stock_one" = "a single color stock";
 
 //弹出框
-"ConfirmDelete" = "Confirm Delete?";
+"ConfirmDelete" = "Confirm delete?";
 "alert_confirm" = "YES";
 "alert_cancel" = "NO";
 "Previous" = "Previous";

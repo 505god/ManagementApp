@@ -46,6 +46,8 @@
 "column" = "栏";
 "error_price" = "请在%@填写正确的价格。";
 "error_blank" = "%@ 不能为空。";
+"edit_price_error" = "价格设置存在错误，重新修改？";
+
 //商品
 "product" = "新商品";
 "Description" = "描述";

@@ -430,7 +430,7 @@
         swipeTableViewCell.shouldAnimateCellReset = YES;
         
         __weak __typeof(self)weakSelf = self;
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:@"" message:SetTitle(@"ConfirmDelete")];
+        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"ConfirmDelete") message:nil];
         [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
             
         }];

@@ -64,8 +64,10 @@ static UIFont *buttonFont = nil;
             labelView.textAlignment = NSTextAlignmentCenter;
             labelView.text = title;
             
-            [labelView sizeToFit];
-            labelView.frame = (CGRect){kAlertViewBorder,_height,frame.size.width-kAlertViewBorder*2,labelView.height};
+            
+            NSDictionary *fontDic = @{NSFontAttributeName:titleFont};
+            CGRect rect = [title boundingRectWithSize:CGSizeMake(frame.size.width-kAlertViewBorder*2, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:fontDic context:nil];
+            labelView.frame = (CGRect){kAlertViewBorder,_height,frame.size.width-kAlertViewBorder*2,rect.size.height};
             
             [_view addSubview:labelView];
             
@@ -129,12 +131,12 @@ static UIFont *buttonFont = nil;
 
 - (void)setCancelButtonWithTitle:(NSString *)title block:(void (^)())block 
 {
-    [self addButtonWithTitle:title color:@"button-cancel" block:block];
+    [self addButtonWithTitle:title color:@"black" block:block];
 }
 
 - (void)setDestructiveButtonWithTitle:(NSString *)title block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"button-default" block:block];
+    [self addButtonWithTitle:title color:@"red" block:block];
 }
 
 - (void)show
@@ -145,14 +147,10 @@ static UIFont *buttonFont = nil;
     {
         NSArray *block = [_blocks objectAtIndex:i];
         NSString *title = [block objectAtIndex:1];
-        NSString *color = [block objectAtIndex:2];
 
-        UIImage *normalImage = nil;
-        UIImage *highlightedImage = nil;
-        normalImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@", color]];
-        highlightedImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@-d", color]];
+        UIImage *image = [UIImage imageNamed:@"stock_bg"];
+        image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width+1)>>1 topCapHeight:0];
 
-        
         CGFloat maxHalfWidth = floorf((_view.bounds.size.width-kAlertViewBorder*3)*0.5);
         CGFloat width = _view.bounds.size.width-kAlertViewBorder*2;
         CGFloat xOffset = kAlertViewBorder;
@@ -206,17 +204,15 @@ static UIFont *buttonFont = nil;
         button.backgroundColor = [UIColor clearColor];
         button.tag = i+1;
         
-        CGFloat hInset = floorf(normalImage.size.width / 2);
-        CGFloat vInset = floorf(normalImage.size.height / 2);
-        UIEdgeInsets insets = UIEdgeInsetsMake(vInset, hInset, vInset, hInset);
-        normalImage = [normalImage resizableImageWithCapInsets:insets];
-        highlightedImage = [highlightedImage resizableImageWithCapInsets:insets];
-        [button setBackgroundImage:normalImage forState:UIControlStateNormal];
-        [button setBackgroundImage:highlightedImage forState:UIControlStateHighlighted];
-        
+        [button setBackgroundImage:nil forState:UIControlStateNormal];
+        [button setBackgroundImage:image forState:UIControlStateHighlighted];
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [button setTitle:title forState:UIControlStateNormal];
         button.accessibilityLabel = title;
+        
+        button.layer.cornerRadius = 6;
+        button.layer.borderColor = COLOR(212, 212, 212, 1).CGColor;
+        button.layer.borderWidth = 0.5;
         
         [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -228,7 +224,7 @@ static UIFont *buttonFont = nil;
         index++;
     }
     
-    _height += 10;  // Margin for the shadow
+    _height += 5;  // Margin for the shadow
     
     if (_height < background.size.height)
     {
@@ -255,8 +251,8 @@ static UIFont *buttonFont = nil;
     _view.layer.shadowOffset = CGSizeMake(5, 5);
     _view.layer.shadowRadius = 5;
     _view.layer.shadowOpacity = 0.5;
-    
     _view.backgroundColor = [UIColor whiteColor];
+    
     if (_backgroundImage)
     {
         [BlockBackground sharedInstance].backgroundImage = _backgroundImage;
@@ -269,7 +265,7 @@ static UIFont *buttonFont = nil;
     __block CGPoint center = _view.center;
     center.y = floorf([BlockBackground sharedInstance].bounds.size.height * 0.5) + kAlertViewBounce;
     
-    [UIView animateWithDuration:0.4
+    [UIView animateWithDuration:0.3
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
@@ -312,7 +308,7 @@ static UIFont *buttonFont = nil;
                              _view.center = center;
                          } 
                          completion:^(BOOL finished) {
-                             [UIView animateWithDuration:0.4
+                             [UIView animateWithDuration:0.3
                                                    delay:0.0 
                                                  options:UIViewAnimationOptionCurveEaseIn
                                               animations:^{

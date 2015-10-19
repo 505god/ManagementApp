@@ -19,7 +19,7 @@
 #define kActionSheetTitleShadowColor    [UIColor blackColor]
 #define kActionSheetTitleShadowOffset   CGSizeMake(0, -1)
 
-#define kActionSheetButtonFont          [UIFont systemFontOfSize:18]
+#define kActionSheetButtonFont          [UIFont systemFontOfSize:20]
 #define kActionSheetButtonTextColor     [UIColor whiteColor]
 #define kActionSheetButtonShadowColor   [UIColor blackColor]
 #define kActionSheetButtonShadowOffset  CGSizeMake(0, -1)
@@ -32,9 +32,9 @@
 
 #define kAlertViewBounce         20
 #define kAlertViewBorder         10
-#define kAlertButtonHeight       44
+#define kAlertButtonHeight       38
 
-#define kAlertViewTitleFont             [UIFont systemFontOfSize:18]
+#define kAlertViewTitleFont             [UIFont systemFontOfSize:20]
 #define kAlertViewTitleTextColor        [UIColor colorWithWhite:244.0/255.0 alpha:1.0]
 #define kAlertViewTitleShadowColor      [UIColor blackColor]
 #define kAlertViewTitleShadowOffset     CGSizeMake(0, -1)

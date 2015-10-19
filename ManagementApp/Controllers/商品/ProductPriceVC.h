@@ -13,7 +13,7 @@
 #import "RETableViewManager.h"
 #import "ProductPriceModel.h"
 
-typedef void(^ProductPriceVCCompletedBlock)(ProductPriceModel *productPriceModel);
+typedef void(^ProductPriceVCCompletedBlock)(ProductPriceModel *productPriceModel, BOOL editting);
 
 
 @interface ProductPriceVC : BaseVC
