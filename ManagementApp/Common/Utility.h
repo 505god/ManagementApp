@@ -23,4 +23,7 @@
 
 #pragma mark - 隐藏UITableView多余的分割线
 + (void)setExtraCellLineHidden: (UITableView *)tableView;
+
+#pragma mark -  对图片data大小比例压缩
++(UIImage *)dealImageData:(UIImage *)image;
 @end

@@ -17,6 +17,8 @@
 #import "StockWarningVC.h"
 #import "ColorVC.h"
 
+#import "JKImagePickerController.h"
+
 @interface ProductVC ()<RFSegmentViewDelegate>
 
 @property (nonatomic, strong) RFSegmentView* segmentView;
@@ -252,7 +254,52 @@
         [section removeItem:item];
         [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
     };
+    
+    __weak typeof(self) weakSelf = self;
     picItem.selectedPictureHandler= ^(REProductItem *item){
+        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        
+        __block JKImagePickerController *imagePicker = [[JKImagePickerController alloc] init];
+        imagePicker.allowsMultipleSelection = NO;
+        imagePicker.minimumNumberOfSelection = 1;
+        imagePicker.maximumNumberOfSelection = 1;
+        
+        imagePicker.selectAssets = ^(JKImagePickerController *imagePicker,NSArray *assets){
+            JKAssets *asset = (JKAssets *)assets[0];
+            
+            __block UIImage *image = nil;
+            ALAssetsLibrary   *lib = [[ALAssetsLibrary alloc] init];
+            [lib assetForURL:asset.assetPropertyURL resultBlock:^(ALAsset *asset) {
+                if (asset) {
+                    UIImage *tempImg = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullScreenImage]];
+                    image = [Utility dealImageData:tempImg];//图片处理
+                    SafeRelease(tempImg);
+                }
+            } failureBlock:^(NSError *error) {
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                
+                [PopView showWithImageName:@"picker_alert_sigh" message:SetTitle(@"PhotoSelectedError")];
+                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            }];
+            
+            [imagePicker dismissViewControllerAnimated:YES completion:^{
+                
+                item.picImg = image;
+                [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+                
+                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            }];
+            
+        };
+        imagePicker.cancelAssets = ^(JKImagePickerController *imagePicker){
+            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            [imagePicker dismissViewControllerAnimated:YES completion:^{
+            }];
+        };
+        
+        [self.view.window.rootViewController presentViewController:imagePicker animated:YES completion:^{
+            SafeRelease(imagePicker);
+        }];
         
     };
     [section addItem:picItem];
@@ -268,7 +315,6 @@
     [section addItem:picItem2];
 
     // Add a section
-    __weak __typeof(self)weakSelf = self;
     RETableViewItem *buttonItem = [RETableViewItem itemWithTitle:SetTitle(@"addColor") accessoryType:UITableViewCellAccessoryNone selectionHandler:^(RETableViewItem *item) {
         [item deselectRowAnimated:YES];
         

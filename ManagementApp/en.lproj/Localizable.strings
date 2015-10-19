@@ -60,6 +60,7 @@
 "not_classified" = "Not classified";
 "best_sellers" = "Best sellers";
 "off_the_shelf" = "Off the shelf";
+"navicon_all" = "All";
 
 //库存预警
 "stock_all" = "the total stock";
@@ -80,6 +81,13 @@
 "private_client" = "Private client";
 "supplier" = "Supplier";
 
-"navicon_all" = "All";
+
+//相册
+"title" = "Select Album";
+"Format_photo" = "%ld Photo";
+"Format_photos" = "%ld Photos";
+"PhotoSelectedError" = "select a picture errors";
+"SelectedMaxPhoto" = "select up a photo";
+
 
 "connect_error" = "Try again later...";

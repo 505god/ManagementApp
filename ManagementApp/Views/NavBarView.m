@@ -20,6 +20,8 @@
         UIImage *normal = [UIImage imageNamed:@"nav_bg"];
         normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
         [self setBackgroundColor:[UIColor colorWithPatternImage:normal]];
+        
+        self.rightEnable = YES;
     }
     return self;
 }
@@ -82,12 +84,21 @@
         [btn setImage:[UIImage imageNamed:array[i]] forState:UIControlStateNormal];
         [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_highlighted",array[i]]] forState:UIControlStateHighlighted];
         btn.tag = i+30000;
+        btn.enabled = self.rightEnable;
+        
         [btn addTarget:self action:@selector(tapRight:) forControlEvents:UIControlEventTouchUpInside];
         
         btn.frame = (CGRect){self.width-5-40*(i+1),20+(NavgationHeight-40)/2,40,40};
         [self addSubview:btn];
         btn = nil;
     }
+}
+
+-(void)setRightEnable:(BOOL)rightEnable {
+    _rightEnable = rightEnable;
+    
+    UIButton *btn = (UIButton *)[self viewWithTag:30000];
+    btn.enabled = rightEnable;
 }
 
 ///设置标题

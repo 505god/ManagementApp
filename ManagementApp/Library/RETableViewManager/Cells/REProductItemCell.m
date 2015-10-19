@@ -103,6 +103,8 @@
     self.pictureImg.delegate = self;
     self.pictureImg.tag = 200;
     self.pictureImg.image = [UIImage imageNamed:@"camera_item_detail"];
+    self.pictureImg.contentMode = UIViewContentModeScaleAspectFill;
+    self.pictureImg.clipsToBounds = YES;
     [self.contentView addSubview:self.pictureImg];
     
     self.backImg = [[UIImageView alloc]initWithFrame:CGRectZero];

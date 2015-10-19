@@ -24,6 +24,9 @@
 
 ///设置标题
 -(void)setTitle:(NSString *)title image:(NSString *)imageString;
+
+
+@property (nonatomic, assign) BOOL rightEnable;
 @end
 
 

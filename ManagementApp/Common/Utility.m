@@ -49,6 +49,8 @@
     [PopView showWithImageName:@"error" message:msg];
 }
 
+#pragma mark - 获取本地图片
+
 +(UIImage *)getImgWithImageName:(NSString *)imgName{
     return [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:imgName ofType:@".png"]];
 }
@@ -60,4 +62,24 @@
     view.backgroundColor = [UIColor clearColor];
     [tableView setTableFooterView:view];
 }
+
+#pragma mark -  对图片data大小比例压缩
+
++(UIImage *)dealImageData:(UIImage *)image {
+    
+    CGFloat compression = 1.0f;
+    CGFloat maxCompression = 0.1f;
+    int maxFileSize = 200*1024;
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, compression);
+    
+    while ([imageData length] > maxFileSize && compression > maxCompression)
+    {
+        compression -= 0.1;
+        imageData = UIImageJPEGRepresentation(image, compression);
+    }
+    
+    return [UIImage imageWithData:imageData];
+}
+
 @end
