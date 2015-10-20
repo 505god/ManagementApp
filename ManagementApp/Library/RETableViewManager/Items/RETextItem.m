@@ -58,6 +58,7 @@
 -(void)setIsShowTitle:(BOOL)isShowTitle {
     _isShowTitle = isShowTitle;
 }
+
 #pragma mark -
 #pragma mark Error validation
 

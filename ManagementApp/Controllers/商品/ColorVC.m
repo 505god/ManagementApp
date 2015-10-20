@@ -31,6 +31,13 @@
 
 @implementation ColorVC
 
+-(void)dealloc {
+    SafeRelease(_tableView);
+    SafeRelease(_dataArray);
+    SafeRelease(_hasSelectedColor);
+    SafeRelease(_completedBlock);
+}
+
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
@@ -40,43 +47,10 @@
     
     //集成刷新控件
     [self addHeader];
-    
-    self.isSelectedColor  =YES;
-    
-    ColorModel *model1 = [[ColorModel alloc]init];
-    model1.colorName = @"电视剧";
-    model1.productCount = 2;
-    model1.colorId = 1;
-    
-    ColorModel *model2 = [[ColorModel alloc]init];
-    model2.colorName = @"fghghfh";
-    model2.productCount = 4;
-    model2.colorId = 2;
-    
-    ColorModel *model3 = [[ColorModel alloc]init];
-    model3.colorName = @"了解更多";
-    model3.productCount = 45;
-    model3.colorId = 3;
-    
-    ColorModel *model4 = [[ColorModel alloc]init];
-    model4.colorName = @"电视剧";
-    model4.productCount = 2;
-    model4.productCount = 4;
-    
-    self.hasSelectedColor = [NSMutableArray arrayWithObjects:model1,model2, nil];
-    
-    [DataShare sharedService].colorArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
-    __weak __typeof(self)weakSelf = self;
-    [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
-        weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-        [weakSelf.tableView setHeaderAnimated:YES];
-        [weakSelf.tableView reloadData];
-    }];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    /*
      ///第一次从服务器获取，后续从单例里面读取
      if ([DataShare sharedService].colorArray.count>0) {
      __weak __typeof(self)weakSelf = self;
@@ -89,7 +63,6 @@
      //自动刷新(一进入程序就下拉刷新)
      [self.tableView.tableView headerBeginRefreshing];
      }
-     */
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -141,6 +114,7 @@
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedColor) {
         if (self.completedBlock){
+            self.completedBlock(self.hasSelectedColor);
         }
     }
     [self.navigationController popViewControllerAnimated:YES];

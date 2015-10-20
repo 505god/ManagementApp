@@ -22,7 +22,15 @@
 @end
 
 @implementation ProductPriceVC
-
+-(void)dealloc {
+    SafeRelease(_aItem);
+    SafeRelease(_bItem);
+    SafeRelease(_cItem);
+    SafeRelease(_dItem);
+    SafeRelease(_table);
+    SafeRelease(_manager);
+    SafeRelease(_productPriceModel);
+}
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {

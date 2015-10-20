@@ -31,6 +31,14 @@
 
 @implementation MaterialVC
 
+-(void)dealloc {
+    SafeRelease(_tableView);
+    SafeRelease(_dataArray);
+    SafeRelease(_selectedMaterialModel);
+    SafeRelease(_hasSelectedMaterial);
+    SafeRelease(_completedBlock);
+}
+
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
@@ -41,45 +49,14 @@
     //集成刷新控件
     [self addHeader];
     
-    self.isSelectedMaterial  =YES;
-    
-    MaterialModel *model1 = [[MaterialModel alloc]init];
-    model1.materialName = @"电视剧";
-    model1.productCount = 2;
-    model1.materialId = 1;
-    
-    MaterialModel *model2 = [[MaterialModel alloc]init];
-    model2.materialName = @"fghghfh";
-    model2.productCount = 4;
-    model2.materialId = 2;
-    
-    MaterialModel *model3 = [[MaterialModel alloc]init];
-    model3.materialName = @"了解更多";
-    model3.productCount = 45;
-    model3.materialId = 3;
-    
-    MaterialModel *model4 = [[MaterialModel alloc]init];
-    model4.materialName = @"电视剧";
-    model4.productCount = 2;
-    model4.materialId = 4;
-    
-    self.selectedMaterialModel = model4;
-    [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
-    
-    [DataShare sharedService].materialArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
-    __weak __typeof(self)weakSelf = self;
-    
-    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-        weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-        [weakSelf.tableView setHeaderAnimated:YES];
-        [weakSelf.tableView reloadData];
-    }];
+    if (self.selectedMaterialModel) {
+        [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    /*
      ///第一次从服务器获取，后续从单例里面读取
      if ([DataShare sharedService].materialArray.count>0) {
      __weak __typeof(self)weakSelf = self;
@@ -92,7 +69,6 @@
      //自动刷新(一进入程序就下拉刷新)
      [self.tableView.tableView headerBeginRefreshing];
      }
-     */
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -150,8 +126,8 @@
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedMaterial) {
-        if (self.completedBlock) {
-            
+        if (self.completedBlock && self.hasSelectedMaterial.count>0) {
+            self.completedBlock(self.hasSelectedMaterial[0]);
         }
     }
     [self.navigationController popViewControllerAnimated:YES];

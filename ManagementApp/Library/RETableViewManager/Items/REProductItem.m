@@ -10,10 +10,10 @@
 
 @implementation REProductItem
 
-+ (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image{
-    return [[self alloc] initWithTitle:title value:value placeholder:placeholder image:image];
++ (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image imageString:(NSString *)imageString{
+    return [[self alloc] initWithTitle:title value:value placeholder:placeholder image:image imageString:imageString];
 }
-- (id)initWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image{
+- (id)initWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image imageString:(NSString *)imageString{
     self = [super init];
     if (!self)
         return nil;
@@ -22,7 +22,16 @@
     self.value = value;
     self.placeholder = placeholder;
     self.picImg = image;
+    self.imageString = imageString;
+    
     return self;
 }
 
+#pragma mark -
+#pragma mark Error validation
+
+- (NSArray *)errors
+{
+    return [REValidation validateObject:self.value name:self.name ? self.name : self.title validators:self.validators];
+}
 @end

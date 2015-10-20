@@ -8,6 +8,7 @@
 
 #import "REProductItemCell.h"
 #import "RETableViewManager.h"
+#import "UIImageView+WebCache.h"
 
 @protocol TapImgDelegate;
 
@@ -135,6 +136,7 @@
     self.textLabel.adjustsFontSizeToFitWidth = YES;
     self.textLabel.textAlignment = NSTextAlignmentRight;
     self.textLabel.text = self.item.title.length == 0 ? @" " : self.item.title;
+    self.textLabel.hidden = NO;
     self.textField.text = self.item.value;
     self.textField.placeholder = self.item.placeholder;
     self.textField.font = [UIFont systemFontOfSize:17];
@@ -145,9 +147,12 @@
     self.stockLab.text = self.textField.text.length==0?@"0":self.textField.text;
     self.stockLab.textAlignment = NSTextAlignmentRight;
     
-    
-    if (self.item.picImg) {
-        self.pictureImg.image = self.item.picImg;
+    if (self.item.imageString != nil) {
+        [self.pictureImg sd_setImageWithURL:[NSURL URLWithString:self.item.imageString]];
+    }else {
+        if (self.item.picImg != nil) {
+            self.pictureImg.image = self.item.picImg;
+        }
     }
     
     self.enabled = self.item.enabled;
@@ -268,10 +273,15 @@
         self.stockLab.hidden = YES;
         self.addImg.hidden = YES;
         textField.text = [NSString stringWithFormat:@"%ld",[self.stockLab.text integerValue]+[textField.text integerValue]];
+        
+        self.item.value = textField.text;
+        
+        if (self.item.onEndEditing)
+            self.item.onEndEditing(self.item);
     }];
     
-    if (self.item.onEndEditing)
-        self.item.onEndEditing(self.item);
+    
+    
     return YES;
 }
 

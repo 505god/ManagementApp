@@ -93,6 +93,7 @@
 		5D9E3C521BD4A09F009FE9A1 /* ProductStockModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C511BD4A09F009FE9A1 /* ProductStockModel.m */; settings = {ASSET_TAGS = (); }; };
 		5D9E3C551BD4AEB9009FE9A1 /* REFloatValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */; settings = {ASSET_TAGS = (); }; };
 		5D9E3C631BD4BA4E009FE9A1 /* alert-window@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9E3C5C1BD4BA4E009FE9A1 /* alert-window@2x.png */; settings = {ASSET_TAGS = (); }; };
+		5D9E3C661BD4C349009FE9A1 /* RENumberValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9E3C651BD4C349009FE9A1 /* RENumberValidator.m */; settings = {ASSET_TAGS = (); }; };
 		5D9F701F1BCCA01300145CE8 /* LoginVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F701D1BCCA01300145CE8 /* LoginVC.m */; settings = {ASSET_TAGS = (); }; };
 		5D9F70201BCCA01300145CE8 /* LoginVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F701E1BCCA01300145CE8 /* LoginVC.xib */; settings = {ASSET_TAGS = (); }; };
 		5D9F70271BCCD00300145CE8 /* login_bt_dis@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D9F70241BCCD00300145CE8 /* login_bt_dis@2x.png */; settings = {ASSET_TAGS = (); }; };
@@ -558,6 +559,8 @@
 		5D9E3C531BD4AEB9009FE9A1 /* REFloatValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFloatValidator.h; sourceTree = "<group>"; };
 		5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = REFloatValidator.m; sourceTree = "<group>"; };
 		5D9E3C5C1BD4BA4E009FE9A1 /* alert-window@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "alert-window@2x.png"; sourceTree = "<group>"; };
+		5D9E3C641BD4C349009FE9A1 /* RENumberValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RENumberValidator.h; sourceTree = "<group>"; };
+		5D9E3C651BD4C349009FE9A1 /* RENumberValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RENumberValidator.m; sourceTree = "<group>"; };
 		5D9F701C1BCCA01300145CE8 /* LoginVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginVC.h; sourceTree = "<group>"; };
 		5D9F701D1BCCA01300145CE8 /* LoginVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginVC.m; sourceTree = "<group>"; };
 		5D9F701E1BCCA01300145CE8 /* LoginVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginVC.xib; sourceTree = "<group>"; };
@@ -1525,6 +1528,8 @@
 				5DAA2D521BD0BC4A00FBCA24 /* REURLValidator.m */,
 				5D9E3C531BD4AEB9009FE9A1 /* REFloatValidator.h */,
 				5D9E3C541BD4AEB9009FE9A1 /* REFloatValidator.m */,
+				5D9E3C641BD4C349009FE9A1 /* RENumberValidator.h */,
+				5D9E3C651BD4C349009FE9A1 /* RENumberValidator.m */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -3249,6 +3254,7 @@
 				5DF547451BC8E34C00DF5295 /* DDLog.m in Sources */,
 				5DF547131BC8E34C00DF5295 /* NSDate+XMPPDateTimeProfiles.m in Sources */,
 				5DF547331BC8E34C00DF5295 /* XMPPMessage+XEP_0224.m in Sources */,
+				5D9E3C661BD4C349009FE9A1 /* RENumberValidator.m in Sources */,
 				5DF546E31BC8E34C00DF5295 /* XMPPRosterCoreDataStorage.m in Sources */,
 				5DF546E71BC8E34C00DF5295 /* XMPPUserMemoryStorageObject.m in Sources */,
 				5DAA2D1A1BD0BC1400FBCA24 /* REBoolItem.m in Sources */,

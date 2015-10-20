@@ -17,7 +17,7 @@ typedef void(^MaterialVCCompletedBlock)(MaterialModel *materialModel);
 
 @interface MaterialVC : BaseVC
 
-///判断是选择分类还是查看分类
+///判断是选择材质还是查看材质
 @property (nonatomic, assign) BOOL isSelectedMaterial;
 
 //已经选择的分类

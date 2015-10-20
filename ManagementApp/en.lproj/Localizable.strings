@@ -69,6 +69,7 @@
 //库存预警
 "stock_all" = "the total stock";
 "stock_one" = "a single color stock";
+"edit_stock_error" = "stock fill in an error, return to re-edit?";
 
 //弹出框
 "ConfirmDelete" = "Confirm delete?";

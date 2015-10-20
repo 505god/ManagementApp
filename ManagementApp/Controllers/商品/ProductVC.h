@@ -8,9 +8,11 @@
 
 #import "BaseVC.h"
 
+#import "ProductModel.h"
+
 @interface ProductVC : BaseVC
 
-///判断是否是新增商品还是查看商品
-@property (nonatomic, assign) BOOL isNewProduct;
+@property (nonatomic, strong) ProductModel *productModel;
+
 
 @end

@@ -41,7 +41,7 @@
     dispatch_once(&onceToken, ^{
         _sharedClient = [[REValidation alloc] init];
     });
-
+    
     return _sharedClient;
 }
 
@@ -59,6 +59,7 @@
         [REValidation registerValidator:[REEmailValidator class]];
         [REValidation registerValidator:[REURLValidator class]];
         [REValidation registerValidator:[REFloatValidator class]];
+        [REValidation registerValidator:[RENumberValidator class]];
     });
 }
 
@@ -72,7 +73,8 @@
                                    @"com.REValidation.maximumLength": @"%@ is too long (maximum is %i characters).",
                                    @"com.REValidation.email": @"%@ is not a valid email.",
                                    @"com.REValidation.url": @"%@ is not a valid url.",
-                                   @"com.REValidation.price": [NSString stringWithFormat:@"%@",SetTitle(@"error_price")]
+                                   @"com.REValidation.price": [NSString stringWithFormat:@"%@",SetTitle(@"error_price")],
+                                   @"com.REValidation.number": @"%@ is not a valid number."
                                    };
         [REValidation sharedObject].errorMessages = [NSMutableDictionary dictionaryWithDictionary:messages];
     });
@@ -113,7 +115,7 @@
 + (NSArray *)validateObject:(NSObject *)object name:(NSString *)name validators:(NSArray *)validators
 {
     NSMutableArray *errors = [NSMutableArray array];
-
+    
     for (id validator in validators) {
         NSError *error;
         if ([validator isKindOfClass:[NSString class]]) {
@@ -129,7 +131,7 @@
         if (error)
             [errors addObject:error];
     }
-
+    
     return errors;
 }
 
@@ -139,9 +141,9 @@
     self = [super init];
     if (!self)
         return nil;
-
+    
     self.registeredValidators = [[NSMutableDictionary alloc] init];
-
+    
     return self;
 }
 

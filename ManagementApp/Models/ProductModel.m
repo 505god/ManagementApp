@@ -17,7 +17,7 @@
               @"purchaseprice": mts_key(purchaseprice),
               @"packageNum": mts_key(packageNum),
               @"productName": mts_key(productName),
-              @"productMaterial": mts_key(productMaterial),
+              @"materialModel": mts_key(materialModel),
               @"sortModel": mts_key(sortModel),
               @"productMark": mts_key(productMark),
               @"isDisplay": mts_key(isDisplay),
@@ -36,7 +36,9 @@
     return @{mts_key(productPriceModel) : ProductPriceModel.class,
              mts_key(sortModel) : SortModel.class,
              mts_key(stockWarningModel) : StockWarningModel.class,
-             mts_key(productStockArray) : ProductStockModel.class
+             mts_key(productStockArray) : ProductStockModel.class,
+             mts_key(materialModel) : MaterialModel.class
+             
              };
 }
 

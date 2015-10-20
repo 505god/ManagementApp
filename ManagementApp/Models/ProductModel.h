@@ -12,6 +12,7 @@
 #import "SortModel.h"
 #import "StockWarningModel.h"
 #import "ProductStockModel.h"
+#import "MaterialModel.h"
 
 @interface ProductModel : NSObject
 
@@ -34,7 +35,7 @@
 @property (nonatomic, strong) NSString *productName;
 
 ///材质
-@property (nonatomic, strong) NSString *productMaterial;
+@property (nonatomic, strong) MaterialModel *materialModel;
 
 ///分类
 @property (nonatomic, strong) SortModel *sortModel;

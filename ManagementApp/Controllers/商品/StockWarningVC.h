@@ -10,10 +10,15 @@
 
 ///库存预警
 
-typedef void(^StockWarningVCCompletedBlock)(BOOL success);
+
+#import "StockWarningModel.h"
+
+typedef void(^StockWarningVCCompletedBlock)(StockWarningModel *stockWarningModel,BOOL editting);
 
 @interface StockWarningVC : BaseVC
 
 @property (nonatomic, strong) StockWarningVCCompletedBlock completedBlock;
 
+///从上个页面传过来
+@property (nonatomic, strong) StockWarningModel *stockWarningModel;
 @end

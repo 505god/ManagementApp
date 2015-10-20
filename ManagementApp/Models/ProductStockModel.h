@@ -20,6 +20,7 @@
 
 ///图片
 @property (nonatomic, strong) NSString *picHeader;
+@property (nonatomic, strong) UIImage *image;
 
 ///库存
 @property (nonatomic, assign) NSInteger stockNum;

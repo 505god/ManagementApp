@@ -10,7 +10,11 @@
 
 @interface REProductItem : RETextItem
 
+@property (nonatomic, assign) NSInteger index;
+
 @property (nonatomic, strong) UIImage *picImg;
+
+@property (nonatomic, strong) NSString *imageString;
 
 ///删除
 @property (copy, nonatomic) void (^deleteHandler)(REProductItem *item);
@@ -19,6 +23,7 @@
 @property (copy, nonatomic) void (^selectedPictureHandler)(REProductItem *item);
 
 
-+ (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image;
-- (id)initWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image;
++ (instancetype)itemWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image imageString:(NSString *)imageString;
+
+- (id)initWithTitle:(NSString *)title value:(NSString *)value placeholder:(NSString *)placeholder image:(UIImage *)image imageString:(NSString *)imageString;
 @end

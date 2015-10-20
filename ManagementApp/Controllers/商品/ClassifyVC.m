@@ -31,6 +31,14 @@
 
 @implementation ClassifyVC
 
+-(void)dealloc {
+    SafeRelease(_tableView);
+    SafeRelease(_dataArray);
+    SafeRelease(_selectedSortModel);
+    SafeRelease(_hasSelectedClassify);
+    SafeRelease(_completedBlock);
+}
+
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
@@ -40,46 +48,15 @@
     
     //集成刷新控件
     [self addHeader];
-    
-    self.isSelectedClassify  =YES;
-    
-    SortModel *model1 = [[SortModel alloc]init];
-    model1.sortName = @"电视剧";
-    model1.sortProductCount = 2;
-    model1.sortId = 1;
-    
-    SortModel *model2 = [[SortModel alloc]init];
-    model2.sortName = @"fghghfh";
-    model2.sortProductCount = 4;
-    model2.sortId = 2;
-    
-    SortModel *model3 = [[SortModel alloc]init];
-    model3.sortName = @"了解更多";
-    model3.sortProductCount = 45;
-    model3.sortId = 3;
-    
-    SortModel *model4 = [[SortModel alloc]init];
-    model4.sortName = @"电视剧";
-    model4.sortProductCount = 2;
-    model4.sortId = 4;
-    
-    self.selectedSortModel = model4;
-    [self.hasSelectedClassify addObject:self.selectedSortModel];
-    
-    [DataShare sharedService].classifyArray = [NSMutableArray arrayWithObjects:model1,model2,model3,model4, nil];
-    __weak __typeof(self)weakSelf = self;
-    
-    [[DataShare sharedService] sortClassify:[DataShare sharedService].classifyArray CompleteBlock:^(NSArray *array) {
-        weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-        [weakSelf.tableView setHeaderAnimated:YES];
-        [weakSelf.tableView reloadData];
-    }];
+
+    if (self.selectedSortModel) {
+        [self.hasSelectedClassify addObject:self.selectedSortModel];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    /*
      ///第一次从服务器获取，后续从单例里面读取
      if ([DataShare sharedService].classifyArray.count>0) {
      __weak __typeof(self)weakSelf = self;
@@ -92,7 +69,6 @@
      //自动刷新(一进入程序就下拉刷新)
      [self.tableView.tableView headerBeginRefreshing];
      }
-     */
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -149,9 +125,9 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-    if (self.isSelectedClassify) {
+    if (self.isSelectedClassify && self.hasSelectedClassify.count>0) {
         if (self.completedBlock) {
-            
+            self.completedBlock(self.hasSelectedClassify[0]);
         }
     }
     [self.navigationController popViewControllerAnimated:YES];

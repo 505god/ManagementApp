@@ -19,4 +19,6 @@
 ///颜色下产品数量
 @property (nonatomic, assign) NSInteger productCount;
 
+
+@property (nonatomic, assign) NSInteger index;
 @end

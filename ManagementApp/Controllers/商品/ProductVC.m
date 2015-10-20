@@ -32,6 +32,11 @@
 @property (nonatomic, assign) NSInteger currentPage;
 
 @property (nonatomic, assign) CGFloat keyboardHeight;
+
+
+///根据productModel判断是新建还是修改
+@property (nonatomic, assign) BOOL isNew;
+
 @end
 
 @implementation ProductVC
@@ -43,7 +48,14 @@
     
     self.view.clipsToBounds = YES;
     
-    self.isNewProduct = YES;
+    if (self.productModel) {
+        self.isNew = NO;
+    }else {
+        self.isNew = YES;
+        self.productModel = [[ProductModel alloc]init];
+        self.productModel.isDisplay = YES;
+        self.productModel.isHot = YES;
+    }
     
     self.currentPage = 0;
     
@@ -77,14 +89,18 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - getter/setter
+
+
+
 #pragma mark - UI
 
 -(void)setNavBarView {
     
     //左侧名称显示的分类名称
-    [self.navBarView setLeftWithImage:self.isNewProduct?@"cancel_bt":@"back_nav" title:nil];
+    [self.navBarView setLeftWithImage:self.isNew?@"cancel_bt":@"back_nav" title:nil];
     [self.navBarView setRightWithArray:@[@"ok_bt"]];
-    [self.navBarView setTitle:self.isNewProduct?SetTitle(@"product"):@"dd" image:nil];
+    [self.navBarView setTitle:self.isNew?SetTitle(@"product"):self.productModel.productCode image:nil];
     [self.view addSubview:self.navBarView];
 }
 
@@ -119,65 +135,112 @@
     [_descriptionManager addSection:section];
     
     // Add items
-    
+    __weak __typeof(self)weakSelf = self;
     //货号必填
-    RETextItem *codeItem = [RETextItem itemWithTitle:SetTitle(@"product_code") value:@"45" placeholder:SetTitle(@"product_required")];
+    RETextItem *codeItem = [RETextItem itemWithTitle:SetTitle(@"product_code") value:self.productModel.productCode.length>0?self.productModel.productCode:@"" placeholder:SetTitle(@"product_required")];
     codeItem.onChange = ^(RETextItem *item){
-        
+        weakSelf.productModel.productCode = item.value;
     };
     codeItem.alignment = NSTextAlignmentRight;
+    codeItem.validators = @[@"presence"];
     [section addItem:codeItem];
     
     //价格选择
-    __weak __typeof(self)weakSelf = self;
-    RERadioItem *radioItem = [RERadioItem itemWithTitle:SetTitle(@"sale_price") value:@"" selectionHandler:^(RERadioItem *item) {
+    NSString *value = @"";
+    UIImage *infoImage = nil;
+    if (self.productModel.productPriceModel) {
+        if (self.productModel.productPriceModel.selected==0) {
+            value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.aPrice];
+            infoImage = [UIImage imageNamed:@"charc_1_28"];
+        }else if (self.productModel.productPriceModel.selected==1) {
+            value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.bPrice];
+            infoImage = [UIImage imageNamed:@"charc_2_28"];
+        }
+        else if (self.productModel.productPriceModel.selected==2) {
+            value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.cPrice];
+            infoImage = [UIImage imageNamed:@"charc_3_28"];
+        }
+        else if (self.productModel.productPriceModel.selected==3) {
+            value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.dPrice];
+            infoImage = [UIImage imageNamed:@"charc_4_28"];
+        }
+    }
+    RERadioItem *radioItem = [RERadioItem itemWithTitle:SetTitle(@"sale_price") value:value selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
         
-        item.value = @"dd";
-        item.infoImg = [UIImage imageNamed:@"charc_1_28"];
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         ProductPriceVC *priceVC = LOADVC(@"ProductPriceVC");
         priceVC.completedBlock = ^(ProductPriceModel *productPriceModel, BOOL editting){
-            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+            if (editting) {
+                weakSelf.productModel.productPriceModel = productPriceModel;
+                if (productPriceModel.selected==0) {
+                    item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.aPrice];
+                    item.infoImg = [UIImage imageNamed:@"charc_1_28"];
+                }else if (productPriceModel.selected==1) {
+                    item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.bPrice];
+                    item.infoImg = [UIImage imageNamed:@"charc_2_28"];
+                }
+                else if (productPriceModel.selected==2) {
+                    item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.cPrice];
+                    item.infoImg = [UIImage imageNamed:@"charc_3_28"];
+                }
+                else if (productPriceModel.selected==3) {
+                    item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.dPrice];
+                    item.infoImg = [UIImage imageNamed:@"charc_4_28"];
+                }
+                
+                [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+            }
         };
         [weakSelf.navigationController pushViewController:priceVC animated:YES];
         
     }];
+    radioItem.infoImg = infoImage;
     [section addItem:radioItem];
     
     //进货价
     RETextItem *purchaseItem = [RETextItem itemWithTitle:SetTitle(@"purchase_price") value:@"" placeholder:SetTitle(@"product_set")];
     purchaseItem.onChange = ^(RETextItem *item){
-        
+        //判读是否为数字
+        if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
+            item.textFieldColor = [UIColor blackColor];
+            weakSelf.productModel.purchaseprice = [item.value floatValue];
+        }else {
+            item.textFieldColor = COLOR(251, 0, 41, 1);
+        }
     };
-    purchaseItem.keyboardType = UIKeyboardTypeNumberPad;
+    purchaseItem.validators = @[@"price"];
+    purchaseItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     purchaseItem.alignment = NSTextAlignmentRight;
     [section addItem:purchaseItem];
     
     //包装数
     REPickerItem *pickerItem = [REPickerItem itemWithTitle:SetTitle(@"product_package") value:@[@"1"] placeholder:nil options:@[@[@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",@"20",@"21",@"22",@"23",@"24",@"25",@"26",@"27",@"28",@"29",@"30"]]];
     pickerItem.onChange = ^(REPickerItem *item){
-//        NSLog(@"Value: %@", item.value);
+        weakSelf.productModel.packageNum =  [item.value[0] integerValue];
     };
     pickerItem.inlinePicker = YES;
     [section addItem:pickerItem];
     
     //名称
-    RETextItem *nameItem = [RETextItem itemWithTitle:SetTitle(@"product_name") value:@"" placeholder:SetTitle(@"product_set")];
+    RETextItem *nameItem = [RETextItem itemWithTitle:SetTitle(@"product_name") value:self.productModel.productName?self.productModel.productName:@"" placeholder:SetTitle(@"product_set")];
     nameItem.onChange = ^(RETextItem *item){
-        
+        weakSelf.productModel.productName = item.value;
     };
     nameItem.alignment = NSTextAlignmentRight;
     [section addItem:nameItem];
     
     //材质
-    RERadioItem *materialItem = [RERadioItem itemWithTitle:SetTitle(@"material") value:@"" selectionHandler:^(RERadioItem *item) {
+    RERadioItem *materialItem = [RERadioItem itemWithTitle:SetTitle(@"material") value:self.productModel.materialModel?self.productModel.materialModel.materialName:@"" selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
         
-        item.value = @"dd";
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         MaterialVC *materialVC = [[MaterialVC alloc]init];
+        materialVC.isSelectedMaterial = YES;
+        if (weakSelf.productModel.materialModel) {
+            materialVC.selectedMaterialModel = weakSelf.productModel.materialModel;
+        }
         materialVC.completedBlock = ^(MaterialModel *materialModel){
+            item.value = materialModel.materialName;
+            weakSelf.productModel.materialModel = materialModel;
             [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         };
         [weakSelf.navigationController pushViewController:materialVC animated:YES];
@@ -186,13 +249,17 @@
     [section addItem:materialItem];
     
     //分类
-    RERadioItem *classifyItem = [RERadioItem itemWithTitle:SetTitle(@"classify") value:@"" selectionHandler:^(RERadioItem *item) {
+    RERadioItem *classifyItem = [RERadioItem itemWithTitle:SetTitle(@"classify") value:self.productModel.sortModel?self.productModel.sortModel.sortName:@"" selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
-        
-        item.value = @"dd";
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+
         ClassifyVC *classifyVC = [[ClassifyVC alloc]init];
+        classifyVC.isSelectedClassify = YES;
+        if (weakSelf.productModel.sortModel) {
+            classifyVC.selectedSortModel = weakSelf.productModel.sortModel;
+        }
         classifyVC.completedBlock = ^(SortModel *sortModel){
+            item.value = sortModel.sortName;
+            weakSelf.productModel.sortModel = sortModel;
             [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         };
         [weakSelf.navigationController pushViewController:classifyVC animated:YES];
@@ -203,31 +270,36 @@
     //备注
     RETextItem *markItem = [RETextItem itemWithTitle:SetTitle(@"product_mark") value:@"" placeholder:SetTitle(@"product_set")];
     markItem.onChange = ^(RETextItem *item){
-        
+        weakSelf.productModel.productMark = item.value;
     };
     markItem.alignment = NSTextAlignmentRight;
     [section addItem:markItem];
     
     //上架
     REBoolItem *displayItem = [REBoolItem itemWithTitle:SetTitle(@"product_display") value:YES switchValueChangeHandler:^(REBoolItem *item) {
-        NSLog(@"Value: %@", item.value ? @"YES" : @"NO");
+        weakSelf.productModel.isDisplay = item.value;
     }];
     [section addItem:displayItem];
     
     //热卖
     REBoolItem *promotionlItem = [REBoolItem itemWithTitle:SetTitle(@"product_promotion") value:YES switchValueChangeHandler:^(REBoolItem *item) {
-        NSLog(@"Value: %@", item.value ? @"YES" : @"NO");
+        weakSelf.productModel.isHot = item.value;
     }];
     [section addItem:promotionlItem];
     
     //库存警告
     RERadioItem *stockItem = [RERadioItem itemWithTitle:SetTitle(@"stock_warning") value:@"" selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
-
-        [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
         StockWarningVC *stockVC = [[StockWarningVC alloc]init];
-        stockVC.completedBlock = ^(BOOL success){
-            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
+        
+        if (weakSelf.productModel.stockWarningModel) {
+            stockVC.stockWarningModel = weakSelf.productModel.stockWarningModel;
+        }
+        stockVC.completedBlock = ^(StockWarningModel *stockWarningModel,BOOL editting){
+            if (editting) {
+                weakSelf.productModel.stockWarningModel = stockWarningModel;
+            }
         };
         [weakSelf.navigationController pushViewController:stockVC animated:YES];
         
@@ -248,15 +320,103 @@
     RETableViewSection *section = [RETableViewSection section];
     [_stockManager addSection:section];
     
-    REProductItem *picItem = [REProductItem itemWithTitle:@"test" value:@"50" placeholder:@"0" image:nil];
+    
+    // Add Item
+    
+    //选择颜色后保存的item数组
+    NSMutableArray *expandedItems = [NSMutableArray array];
+    NSMutableArray *collapsedItems = [NSMutableArray array];
+    __weak typeof(self) weakSelf = self;
+    
+    if (self.productModel.productStockArray.count>0) {
+        for (int i=0; i<self.productModel.productStockArray.count; i++) {
+            ProductStockModel *model = (ProductStockModel *)self.productModel.productStockArray[i];
+            
+            REProductItem *picItem = [self returnProductItemWithTitle:model.colorModel.colorName value:[NSString stringWithFormat:@"%d",(int)model.stockNum] image:nil imageString:model.picHeader bySection:section index:i];
+
+            [section addItem:picItem];
+        }
+    }
+    
+    RETableViewItem *buttonItem = [RETableViewItem itemWithTitle:SetTitle(@"addColor") accessoryType:UITableViewCellAccessoryNone selectionHandler:^(RETableViewItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        //颜色model的数组
+        NSMutableArray *colorArray = [NSMutableArray array];
+        
+        NSMutableArray *tempArray = [NSMutableArray array];
+        
+        if (self.productModel.productStockArray.count>0) {
+            for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
+                ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
+                
+                model.colorModel.index = i;
+                [colorArray addObject:model.colorModel];
+            }
+        }
+        
+        ColorVC *colorVC = [[ColorVC alloc]init];
+        colorVC.isSelectedColor = YES;
+        colorVC.hasSelectedColor = colorArray;
+        colorVC.completedBlock = ^(NSArray *array){
+            //比较原有的颜色数组和颜色页面传过来的
+            for (int i=0; i<array.count; i++) {
+                ColorModel *colorModel = (ColorModel *)array[i];
+                
+                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
+                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[colorArray filteredArrayUsingPredicate:predicateString]];
+                if (filteredArray.count>0) {
+                    ColorModel *colorModel2 = filteredArray[0];
+                    [tempArray addObject:weakSelf.productModel.productStockArray[colorModel2.index]];
+                }else {
+                    ProductStockModel *model2 = [[ProductStockModel alloc]init];
+                    model2.colorModel = colorModel;
+                    [tempArray addObject:model2];
+                }
+            }
+            
+            if (tempArray.count>0) {
+                [expandedItems removeAllObjects];
+                
+                for (int i=0; i<tempArray.count; i++) {
+                    ProductStockModel *model = (ProductStockModel *)tempArray[i];
+                    
+                    REProductItem *picItem = [weakSelf returnProductItemWithTitle:model.colorModel?model.colorModel.colorName:@"" value:[NSString stringWithFormat:@"%d",(int)model.stockNum] image:nil imageString:model.picHeader bySection:section index:i];
+                    [expandedItems addObject:picItem];
+                }
+                [expandedItems addObjectsFromArray:collapsedItems];
+                [section replaceItemsWithItemsFromArray:expandedItems];
+                [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
+            }
+
+        };
+        [weakSelf.navigationController pushViewController:colorVC animated:YES];
+    }];
+    buttonItem.textAlignment = NSTextAlignmentCenter;
+    [section addItem:buttonItem];
+    
+    [collapsedItems addObject:buttonItem];
+}
+
+-(REProductItem *)returnProductItemWithTitle:(NSString *)string value:(NSString *)value image:(UIImage *)image imageString:(NSString *)imageString bySection:(RETableViewSection *)section index:(NSInteger)index{
+    
+    __weak typeof(self) weakSelf = self;
+    
+     REProductItem *picItem = [REProductItem itemWithTitle:string value:value placeholder:@"0" image:image imageString:imageString];
     picItem.cellHeight = 88;
+    picItem.index = index;
     picItem.deleteHandler = ^(REProductItem *item){
+        [weakSelf.productModel.productStockArray removeObjectAtIndex:index];
         [section removeItem:item];
         [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
     };
     
-    __weak typeof(self) weakSelf = self;
-    picItem.selectedPictureHandler= ^(REProductItem *item){
+    picItem.onEndEditing = ^(RETextItem *item) {
+         ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[index];
+        model.stockNum = [item.value integerValue];
+    };
+    
+    picItem.selectedPictureHandler= ^(REProductItem *item) {
         [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
         
         __block JKImagePickerController *imagePicker = [[JKImagePickerController alloc] init];
@@ -276,14 +436,14 @@
                     SafeRelease(tempImg);
                 }
             } failureBlock:^(NSError *error) {
-                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                
-                [PopView showWithImageName:@"picker_alert_sigh" message:SetTitle(@"PhotoSelectedError")];
+                [PopView showWithImageName:@"error" message:SetTitle(@"PhotoSelectedError")];
                 [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
             }];
             
             [imagePicker dismissViewControllerAnimated:YES completion:^{
-                
+                ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[index];
+                model.image = image;
+                model.picHeader = nil;
                 item.picImg = image;
                 [item reloadRowWithAnimation:UITableViewRowAnimationNone];
                 
@@ -300,34 +460,11 @@
         [self.view.window.rootViewController presentViewController:imagePicker animated:YES completion:^{
             SafeRelease(imagePicker);
         }];
-        
     };
-    [section addItem:picItem];
     
-    REProductItem *picItem2 = [REProductItem itemWithTitle:@"test" value:@"50" placeholder:@"0" image:nil];
-    picItem2.cellHeight = 88;
-    picItem2.deleteHandler = ^(REProductItem *item){
-        [section removeItem:item];
-        [section reloadSectionWithAnimation:UITableViewRowAnimationAutomatic];
-    };
-    picItem2.selectedPictureHandler = ^(REProductItem *item) {
-    };
-    [section addItem:picItem2];
-
-    // Add a section
-    RETableViewItem *buttonItem = [RETableViewItem itemWithTitle:SetTitle(@"addColor") accessoryType:UITableViewCellAccessoryNone selectionHandler:^(RETableViewItem *item) {
-        [item deselectRowAnimated:YES];
-        
-        ColorVC *colorVC = [[ColorVC alloc]init];
-        colorVC.completedBlock = ^(NSArray *array){
-            [item reloadRowWithAnimation:UITableViewRowAnimationNone];
-        };
-        [weakSelf.navigationController pushViewController:colorVC animated:YES];
-    }];
-    buttonItem.textAlignment = NSTextAlignmentCenter;
-    [section addItem:buttonItem];
-    
+    return picItem;
 }
+
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
