@@ -55,7 +55,7 @@
         if (thumbnailImageRef) {
             self.imageView.image = [UIImage imageWithCGImage:thumbnailImageRef];
         } else {
-            self.imageView.image = [UIImage imageNamed:@"assets_placeholder_picture"];
+            self.imageView.image = [Utility getImgWithImageName:@"assets_placeholder_picture@2x"];
         }
     }
     
@@ -91,8 +91,8 @@
 - (UIButton *)checkButton{
     if (!_checkButton) {
         _checkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        UIImage  *img = [UIImage imageNamed:@"selectedNormal"];
-        UIImage  *imgH = [UIImage imageNamed:@"selectedAct"];
+        UIImage  *img = [Utility getImgWithImageName:@"selectedNormal@2x"];
+        UIImage  *imgH = [Utility getImgWithImageName:@"selectedAct@2x"];
         _checkButton.frame = CGRectMake(0, 0, img.size.width, img.size.height);
         [_checkButton setBackgroundImage:img forState:UIControlStateNormal];
         [_checkButton setBackgroundImage:imgH forState:UIControlStateSelected];
@@ -108,7 +108,7 @@
     if (!_photoButton) {
         _photoButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _photoButton.frame = self.contentView.bounds;
-        UIImage  *img = [UIImage imageNamed:@"camera_item_detail"];
+        UIImage  *img = [Utility getImgWithImageName:@"camera_item_detail@2x"];
         [_photoButton setBackgroundImage:img forState:UIControlStateNormal];
         [_photoButton addTarget:self action:@selector(photo) forControlEvents:UIControlEventTouchUpInside];
         _photoButton.exclusiveTouch = YES;

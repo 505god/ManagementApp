@@ -95,7 +95,7 @@
     [self.contentView insertSubview:self.stockLab aboveSubview:self.textField];
     
     self.deleteImg = [[TapImg alloc]initWithFrame:(CGRect){0,0,20.5,20.5}];
-    self.deleteImg.image = [UIImage imageNamed:@"delete_icon_7_0"];
+    self.deleteImg.image = [Utility getImgWithImageName:@"delete_icon_7_0@2x"];
     self.deleteImg.delegate = self;
     self.deleteImg.tag = 100;
     [self.contentView addSubview:self.deleteImg];
@@ -103,18 +103,18 @@
     self.pictureImg = [[TapImg alloc]initWithFrame:(CGRect){0,0,75,75}];
     self.pictureImg.delegate = self;
     self.pictureImg.tag = 200;
-    self.pictureImg.image = [UIImage imageNamed:@"camera_item_detail"];
+    self.pictureImg.image = [Utility getImgWithImageName:@"camera_item_detail@2x"];
     self.pictureImg.contentMode = UIViewContentModeScaleAspectFill;
     self.pictureImg.clipsToBounds = YES;
     [self.contentView addSubview:self.pictureImg];
     
     self.backImg = [[UIImageView alloc]initWithFrame:CGRectZero];
-    self.backImg.image = [UIImage imageNamed:@"stock_bg"];
+    self.backImg.image = [Utility getImgWithImageName:@"stock_bg@2x"];
     [self.contentView insertSubview:self.backImg belowSubview:self.textField];
     
     self.addImg = [[UIImageView alloc]initWithFrame:CGRectZero];
     self.addImg.hidden  = YES;
-    self.addImg.image = [UIImage imageNamed:@"add_highlighted"];
+    self.addImg.image = [Utility getImgWithImageName:@"add_highlighted@2x"];
     [self.contentView insertSubview:self.addImg belowSubview:self.textField];
 }
 

@@ -14,8 +14,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.logoImg = [[UIImageView alloc]initWithFrame:(CGRect){(frame.size.width-30)/2,3,30,30}];
-        self.logoImg.image = [UIImage imageNamed:normal];
-        self.logoImg.highlightedImage = [UIImage imageNamed:active];
+        self.logoImg.image = [Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",normal]];
+        self.logoImg.highlightedImage = [Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",active]];
         [self addSubview:self.logoImg];
         
         self.titleLab = [[UILabel alloc]initWithFrame:(CGRect){0,frame.size.height-12,frame.size.width,12}];

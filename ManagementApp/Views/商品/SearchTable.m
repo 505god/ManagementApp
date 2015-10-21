@@ -48,7 +48,7 @@
         
         self.flotageLabel = [[UILabel alloc] initWithFrame:(CGRect){(self.width - 64 ) / 2,(self.height-64-NavgationHeight)/2,64,64}];
         self.flotageLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-        self.flotageLabel.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"flotageBackgroud"]];
+        self.flotageLabel.backgroundColor = [UIColor colorWithPatternImage:[Utility getImgWithImageName:@"flotageBackgroud@2x"]];
         self.flotageLabel.hidden = YES;
         self.flotageLabel.font = [UIFont systemFontOfSize:20];
         self.flotageLabel.textAlignment = NSTextAlignmentCenter;

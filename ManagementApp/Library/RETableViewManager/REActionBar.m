@@ -48,15 +48,15 @@
     self.navigationControl.momentary = YES;
     [self.navigationControl addTarget:self action:@selector(handleActionBarPreviousNext:) forControlEvents:UIControlEventValueChanged];
     
-    [self.navigationControl setImage:[UIImage imageNamed:@"UIButtonBarArrowLeft"] forSegmentAtIndex:0];
-    [self.navigationControl setImage:[UIImage imageNamed:@"UIButtonBarArrowRight"] forSegmentAtIndex:1];
+    [self.navigationControl setImage:[Utility getImgWithImageName:@"UIButtonBarArrowLeft@2x"] forSegmentAtIndex:0];
+    [self.navigationControl setImage:[Utility getImgWithImageName:@"UIButtonBarArrowRight@2x"] forSegmentAtIndex:1];
     
     [self.navigationControl setDividerImage:[[UIImage alloc] init]
                         forLeftSegmentState:UIControlStateNormal
                           rightSegmentState:UIControlStateNormal
                                  barMetrics:UIBarMetricsDefault];
     
-    [self.navigationControl setBackgroundImage:[UIImage imageNamed:@"Transparent"] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    [self.navigationControl setBackgroundImage:[Utility getImgWithImageName:@"Transparent@2x"] forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [self.navigationControl setWidth:40.0f forSegmentAtIndex:0];
     [self.navigationControl setWidth:40.0f forSegmentAtIndex:1];
     [self.navigationControl setContentOffset:CGSizeMake(-4, 0) forSegmentAtIndex:0];

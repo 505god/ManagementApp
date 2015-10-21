@@ -76,10 +76,10 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
 
-    ProductVC *colorVC = [[ProductVC alloc]init];
-    UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:colorVC];
-    self.window.rootViewController = navControl;
-    return;
+//    ProductVC *colorVC = [[ProductVC alloc]init];
+//    UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:colorVC];
+//    self.window.rootViewController = navControl;
+//    return;
 
     
     if (type==1) {

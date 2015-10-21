@@ -23,7 +23,11 @@
               @"isDisplay": mts_key(isDisplay),
               @"isHot": mts_key(isHot),
               @"stockWarningModel": mts_key(stockWarningModel),
-              @"productStockArray": mts_key(productStockArray)
+              @"productStockArray": mts_key(productStockArray),
+              @"saleCount": mts_key(saleCount),
+              @"stockCount": mts_key(stockCount),
+              @"picHeader": mts_key(picHeader)
+              
               };
 }
 

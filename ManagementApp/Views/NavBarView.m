@@ -17,7 +17,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self){
-        UIImage *normal = [UIImage imageNamed:@"nav_bg"];
+        UIImage *normal = [Utility getImgWithImageName:@"nav_bg@2x"];
         normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
         [self setBackgroundColor:[UIColor colorWithPatternImage:normal]];
         
@@ -40,8 +40,8 @@
         [self removeViewWithTag:10000];
         
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [btn setImage:[UIImage imageNamed:imageString] forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_highlighted",imageString]] forState:UIControlStateHighlighted];
+        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",imageString]] forState:UIControlStateNormal];
+        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@_highlighted@2x",imageString]] forState:UIControlStateHighlighted];
         btn.tag = 10000;
         [btn addTarget:self action:@selector(tapLeft:) forControlEvents:UIControlEventTouchUpInside];
         btn.frame = (CGRect){5,20+(NavgationHeight-40)/2,40,40};
@@ -81,8 +81,8 @@
     for (int i=0; i<array.count; i++) {
         [self removeViewWithTag:30000+i];
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [btn setImage:[UIImage imageNamed:array[i]] forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_highlighted",array[i]]] forState:UIControlStateHighlighted];
+        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",array[i]]] forState:UIControlStateNormal];
+        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@_highlighted@2x",array[i]]] forState:UIControlStateHighlighted];
         btn.tag = i+30000;
         btn.enabled = self.rightEnable;
         
@@ -116,7 +116,7 @@
     if (imageString != nil) {
         [self removeViewWithTag:20000];
         UIImageView *img = [[UIImageView alloc]initWithFrame:(CGRect){0,0,40,40}];
-        img.image = [UIImage imageNamed:imageString];
+        img.image = [Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",imageString]];
         img.frame = (CGRect){(self.width-lab.width-45)/2,20+(NavgationHeight-40)/2,40,40};
         img.tag = 20000;
         [self addSubview:img];

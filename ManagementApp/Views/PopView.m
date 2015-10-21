@@ -24,7 +24,7 @@ static PopView *instancePop;
         self.layer.masksToBounds = YES;
         self.layer.cornerRadius = 4;
         
-        UIImage *img = [UIImage imageNamed:imageName];
+        UIImage *img = [Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",imageName]];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:img];
         imageView.backgroundColor = [UIColor clearColor];
         [self addSubview:imageView];

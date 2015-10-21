@@ -125,6 +125,7 @@
             
             UILabel *stockWarnLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 12, 100, 21)];
             stockWarnLabel.text = SetTitle(@"stock_warning");
+            stockWarnLabel.adjustsFontSizeToFitWidth = YES;
             stockWarnLabel.textColor = [UIColor whiteColor];
             [customView addSubview:stockWarnLabel];
             

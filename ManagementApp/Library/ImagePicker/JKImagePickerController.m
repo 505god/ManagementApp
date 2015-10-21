@@ -552,8 +552,8 @@ static NSString *kJKAssetsFooterViewIdentifier = @"kJKAssetsFooterViewIdentifier
 
 - (UIButton *)arrowImageView{
     if (!_arrowImageView) {
-        UIImage  *img = [UIImage imageNamed:@"arrow_down"];
-        UIImage  *imgSelect = [UIImage imageNamed:@"arrow_up"];
+        UIImage  *img = [Utility getImgWithImageName:@"arrow_down@2x"];
+        UIImage  *imgSelect = [Utility getImgWithImageName:@"arrow_up@2x"];
         _arrowImageView = [UIButton buttonWithType:UIButtonTypeCustom];
         _arrowImageView.frame = CGRectMake(0, 0, 24, 24);
         [_arrowImageView setBackgroundImage:img forState:UIControlStateNormal];

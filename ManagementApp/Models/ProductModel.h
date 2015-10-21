@@ -54,4 +54,13 @@
 
 ///商品库存
 @property (nonatomic, strong) NSMutableArray *productStockArray;
+
+///销售量
+@property (nonatomic, assign) NSInteger saleCount;
+
+///库存数量
+@property (nonatomic, assign) NSInteger stockCount;
+
+///图片
+@property (nonatomic, strong) NSString *picHeader;
 @end

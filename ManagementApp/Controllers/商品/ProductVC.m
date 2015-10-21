@@ -41,6 +41,15 @@
 
 @implementation ProductVC
 
+-(void)dealloc {
+    SafeRelease(_productModel);
+    SafeRelease(_segmentView);
+    SafeRelease(_descriptionTable);
+    SafeRelease(_descriptionManager);
+    SafeRelease(_stockTable);
+    SafeRelease(_stockManager);
+}
+
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
@@ -80,8 +89,7 @@
 -(void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,7 +106,7 @@
 -(void)setNavBarView {
     
     //左侧名称显示的分类名称
-    [self.navBarView setLeftWithImage:self.isNew?@"cancel_bt":@"back_nav" title:nil];
+    [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.navBarView setRightWithArray:@[@"ok_bt"]];
     [self.navBarView setTitle:self.isNew?SetTitle(@"product"):self.productModel.productCode image:nil];
     [self.view addSubview:self.navBarView];
@@ -151,18 +159,18 @@
     if (self.productModel.productPriceModel) {
         if (self.productModel.productPriceModel.selected==0) {
             value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.aPrice];
-            infoImage = [UIImage imageNamed:@"charc_1_28"];
+            infoImage = [Utility getImgWithImageName:@"charc_1_28@2x"];
         }else if (self.productModel.productPriceModel.selected==1) {
             value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.bPrice];
-            infoImage = [UIImage imageNamed:@"charc_2_28"];
+            infoImage = [Utility getImgWithImageName:@"charc_2_28@2x"];
         }
         else if (self.productModel.productPriceModel.selected==2) {
             value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.cPrice];
-            infoImage = [UIImage imageNamed:@"charc_3_28"];
+            infoImage = [Utility getImgWithImageName:@"charc_3_28@2x"];
         }
         else if (self.productModel.productPriceModel.selected==3) {
             value = [NSString stringWithFormat:@"%.2f",self.productModel.productPriceModel.dPrice];
-            infoImage = [UIImage imageNamed:@"charc_4_28"];
+            infoImage = [Utility getImgWithImageName:@"charc_4_28@2x"];
         }
     }
     RERadioItem *radioItem = [RERadioItem itemWithTitle:SetTitle(@"sale_price") value:value selectionHandler:^(RERadioItem *item) {
@@ -174,18 +182,18 @@
                 weakSelf.productModel.productPriceModel = productPriceModel;
                 if (productPriceModel.selected==0) {
                     item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.aPrice];
-                    item.infoImg = [UIImage imageNamed:@"charc_1_28"];
+                    item.infoImg = [Utility getImgWithImageName:@"charc_1_28@2x"];
                 }else if (productPriceModel.selected==1) {
                     item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.bPrice];
-                    item.infoImg = [UIImage imageNamed:@"charc_2_28"];
+                    item.infoImg = [Utility getImgWithImageName:@"charc_2_28@2x"];
                 }
                 else if (productPriceModel.selected==2) {
                     item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.cPrice];
-                    item.infoImg = [UIImage imageNamed:@"charc_3_28"];
+                    item.infoImg = [Utility getImgWithImageName:@"charc_3_28@2x"];
                 }
                 else if (productPriceModel.selected==3) {
                     item.value = [NSString stringWithFormat:@"%.2f",productPriceModel.dPrice];
-                    item.infoImg = [UIImage imageNamed:@"charc_4_28"];
+                    item.infoImg = [Utility getImgWithImageName:@"charc_4_28@2x"];
                 }
                 
                 [item reloadRowWithAnimation:UITableViewRowAnimationNone];
@@ -320,8 +328,9 @@
     RETableViewSection *section = [RETableViewSection section];
     [_stockManager addSection:section];
     
-    
+    __block RETableViewSection *sectionTemp = section;
     // Add Item
+    
     
     //选择颜色后保存的item数组
     NSMutableArray *expandedItems = [NSMutableArray array];
@@ -346,7 +355,7 @@
         
         NSMutableArray *tempArray = [NSMutableArray array];
         
-        if (self.productModel.productStockArray.count>0) {
+        if (weakSelf.productModel.productStockArray.count>0) {
             for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
                 ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
                 
@@ -399,7 +408,6 @@
 }
 
 -(REProductItem *)returnProductItemWithTitle:(NSString *)string value:(NSString *)value image:(UIImage *)image imageString:(NSString *)imageString bySection:(RETableViewSection *)section index:(NSInteger)index{
-    
     __weak typeof(self) weakSelf = self;
     
      REProductItem *picItem = [REProductItem itemWithTitle:string value:value placeholder:@"0" image:image imageString:imageString];
@@ -468,7 +476,7 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
-
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {

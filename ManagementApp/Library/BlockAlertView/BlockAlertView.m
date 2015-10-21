@@ -24,7 +24,7 @@ static UIFont *buttonFont = nil;
 {
     if (self == [BlockAlertView class])
     {
-        background = [UIImage imageNamed:kAlertViewBackground];
+        background = [Utility getImgWithImageName:@"alert-window@2x"];
         background = [[background stretchableImageWithLeftCapWidth:0 topCapHeight:kAlertViewBackgroundCapHeight] retain];
         titleFont = [kAlertViewTitleFont retain];
         messageFont = [kAlertViewMessageFont retain];
@@ -148,7 +148,7 @@ static UIFont *buttonFont = nil;
         NSArray *block = [_blocks objectAtIndex:i];
         NSString *title = [block objectAtIndex:1];
 
-        UIImage *image = [UIImage imageNamed:@"stock_bg"];
+        UIImage *image = [Utility getImgWithImageName:@"stock_bg@2x"];
         image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width+1)>>1 topCapHeight:0];
 
         CGFloat maxHalfWidth = floorf((_view.bounds.size.width-kAlertViewBorder*3)*0.5);

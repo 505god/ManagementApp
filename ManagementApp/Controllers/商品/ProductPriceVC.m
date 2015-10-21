@@ -58,7 +58,7 @@
     //－－－－－－－－－－－－－－－－－A
     __weak __typeof(self)weakSelf = self;
     
-    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.aItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -93,14 +93,14 @@
     };
     self.aItem.validators = @[@"presence", @"price"];
     self.aItem.isShowTitle = NO;
-    self.aItem.image = [UIImage imageNamed:@"charc_1_28"];
-    self.aItem.highlightedImage = [UIImage imageNamed:@"charc_1_28_sele"];
+    self.aItem.image = [Utility getImgWithImageName:@"charc_1_28@2x"];
+    self.aItem.highlightedImage = [Utility getImgWithImageName:@"charc_1_28_sele@2x"];
     self.aItem.alignment = NSTextAlignmentRight;
     self.aItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.aItem];
     
     //－－－－－－－－－－－－－－－－－B
-    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.bItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -134,14 +134,14 @@
     };
     self.bItem.validators = @[@"presence", @"price"];
     self.bItem.isShowTitle = NO;
-    self.bItem.image = [UIImage imageNamed:@"charc_2_28"];
-    self.bItem.highlightedImage = [UIImage imageNamed:@"charc_2_28_sele"];
+    self.bItem.image = [Utility getImgWithImageName:@"charc_2_28@2x"];
+    self.bItem.highlightedImage = [Utility getImgWithImageName:@"charc_2_28_sele@2x"];
     self.bItem.alignment = NSTextAlignmentRight;
     self.bItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.bItem];
     
     //－－－－－－－－－－－－－－－－－C
-    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.cItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -175,14 +175,14 @@
     };
     self.cItem.validators = @[@"presence", @"price"];
     self.cItem.isShowTitle = NO;
-    self.cItem.image = [UIImage imageNamed:@"charc_3_28"];
-    self.cItem.highlightedImage = [UIImage imageNamed:@"charc_3_28_sele"];
+    self.cItem.image = [Utility getImgWithImageName:@"charc_3_28@2x"];
+    self.cItem.highlightedImage = [Utility getImgWithImageName:@"charc_3_28_sele@2x"];
     self.cItem.alignment = NSTextAlignmentRight;
     self.cItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.cItem];
     
     //－－－－－－－－－－－－－－－－－D
-    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice] placeholder:[NSString stringWithFormat:@"%@  %@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.dItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -216,8 +216,8 @@
     };
     self.dItem.validators = @[@"presence", @"price"];
     self.dItem.isShowTitle = NO;
-    self.dItem.image = [UIImage imageNamed:@"charc_4_28"];
-    self.dItem.highlightedImage = [UIImage imageNamed:@"charc_4_28_sele"];
+    self.dItem.image = [Utility getImgWithImageName:@"charc_4_28@2x"];
+    self.dItem.highlightedImage = [Utility getImgWithImageName:@"charc_4_28_sele@2x"];
     self.dItem.alignment = NSTextAlignmentRight;
     self.dItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     [section addItem:self.dItem];

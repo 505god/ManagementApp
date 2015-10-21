@@ -8,7 +8,7 @@
 
 
 //底部tabBar
-"navicon_stock" = "stock";
+"navicon_stock" = "product";
 "navicon_client" = "client";
 "navicon_order" = "order";
 "navicon_options" = "options";
@@ -62,9 +62,10 @@
 "stock_warning" = "Stock warning";
 "navicon_all" = "all";
 "not_classified" = "Not classified";
-"best_sellers" = "Best sellers";
+"best_sellers" = "Hot";
 "off_the_shelf" = "Off the shelf";
 "navicon_all" = "All";
+"product_sale" = "sales";
 
 //库存预警
 "stock_all" = "the total stock";

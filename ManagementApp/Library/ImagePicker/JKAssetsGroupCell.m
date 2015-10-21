@@ -83,7 +83,7 @@
 
 - (UIImageView *)checkImageView{
     if (!_checkImageView) {
-        _checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"picker_photo_filter_checked"]];
+        _checkImageView = [[UIImageView alloc] initWithImage:[Utility getImgWithImageName:@"picker_photo_filter_checked@2x"]];
         _checkImageView.backgroundColor = [UIColor clearColor];
         _checkImageView.right = self.thumbnailView.width-3;
         _checkImageView.bottom = self.thumbnailView.height-3;

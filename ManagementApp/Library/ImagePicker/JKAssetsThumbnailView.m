@@ -103,7 +103,7 @@
 - (UIImage *)blankImage
 {
     if (_blankImage == nil) {
-        _blankImage = [UIImage imageNamed:@"assets_placeholder_picture"];
+        _blankImage = [Utility getImgWithImageName:@"assets_placeholder_picture@2x"];
     }
     return _blankImage;
 }

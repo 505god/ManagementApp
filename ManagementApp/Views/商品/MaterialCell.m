@@ -37,13 +37,13 @@
         [self.contentView addSubview:self.titleLab];
         
         self.lineView = [[UIImageView alloc]initWithFrame:CGRectZero];
-        self.lineView.image = [UIImage imageNamed:@"line"];
+        self.lineView.image = [Utility getImgWithImageName:@"line@2x"];
         [self.contentView addSubview:self.lineView];
         
         self.accessView = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.accessView.contentMode = UIViewContentModeScaleAspectFit;
         [self.accessView setHidden:YES];
-        [self.accessView setImage:[UIImage imageNamed:@"uncheck"]];
+        [self.accessView setImage:[Utility getImgWithImageName:@"uncheck@2x"]];
         [self.contentView addSubview:self.accessView];
         
         WQCellSelectedBackground *selectedBackgroundView = [[WQCellSelectedBackground alloc] initWithFrame:CGRectZero];
@@ -69,7 +69,7 @@
 -(UIImageView*)deleteGreyImageView {
     if (!_deleteGreyImageView) {
         _deleteGreyImageView = [[UIImageView alloc] initWithFrame:CGRectMake(CGRectGetMaxX(self.contentView.frame), (self.height-40)/2, 40, 40)];
-        [_deleteGreyImageView setImage:[UIImage imageNamed:@"DeleteGrey"]];
+        [_deleteGreyImageView setImage:[Utility getImgWithImageName:@"DeleteGrey@2x"]];
         [_deleteGreyImageView setContentMode:UIViewContentModeCenter];
         [self.backView addSubview:_deleteGreyImageView];
     }
@@ -79,7 +79,7 @@
 -(UIImageView*)deleteRedImageView {
     if (!_deleteRedImageView) {
         _deleteRedImageView = [[UIImageView alloc] initWithFrame:self.deleteGreyImageView.bounds];
-        [_deleteRedImageView setImage:[UIImage imageNamed:@"DeleteRed"]];
+        [_deleteRedImageView setImage:[Utility getImgWithImageName:@"DeleteRed@2x"]];
         [_deleteRedImageView setContentMode:UIViewContentModeCenter];
         [self.deleteGreyImageView addSubview:_deleteRedImageView];
     }
@@ -96,9 +96,9 @@
     }else {
         [self.accessView setHidden:NO];
         if (selectedType==1) {
-            [self.accessView setImage:[UIImage imageNamed:@"uncheck"]];
+            [self.accessView setImage:[Utility getImgWithImageName:@"uncheck2x"]];
         }else {
-            [self.accessView setImage:[UIImage imageNamed:@"check"]];
+            [self.accessView setImage:[Utility getImgWithImageName:@"check@2x"]];
             self.titleLab.textColor = COLOR(12, 96, 254, 1);
         }
     }

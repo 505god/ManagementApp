@@ -40,7 +40,7 @@
 "addmaterial" = "添加材质";
 
 //价格
-"price" = "商品价格";
+"price" = "价格";
 "sale_price" = "销售价";
 "purchase_price" = "进货价";
 "column" = "栏";
@@ -65,6 +65,7 @@
 "not_classified" = "未分类";
 "best_sellers" = "热卖";
 "off_the_shelf" = "下架";
+"product_sale" = "销量";
 
 //库存预警
 "stock_all" = "当总库存低于";
