@@ -28,6 +28,12 @@
 ///进货价
 @property (nonatomic, assign) CGFloat purchaseprice;
 
+///盈利状态 －1=未设置进货价 0=亏本  1= 盈利
+@property (nonatomic, assign) NSInteger profitStatus;
+
+///盈利
+@property (nonatomic, assign) CGFloat profit;
+
 ///包装数
 @property (nonatomic, assign) NSInteger packageNum;
 

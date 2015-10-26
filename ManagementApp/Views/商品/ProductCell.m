@@ -17,9 +17,9 @@
 ///正在修改的cell
 static ProductCell *_editingCell;
 
-@interface ProductCell ()<UIGestureRecognizerDelegate>
+@interface ProductCell ()<UIGestureRecognizerDelegate,UIScrollViewDelegate>
 
-@property (nonatomic, strong) UIView *topView;
+@property (nonatomic, strong) UIView *cellContentView;
 
 @property (nonatomic, strong) UIButton *hotBtn;
 @property (nonatomic, strong) UIButton *saleBtn;
@@ -37,16 +37,22 @@ static ProductCell *_editingCell;
 
 @property (nonatomic, strong) UIImageView *picImg;
 @property (nonatomic, strong) UIImageView *lineImg;
+@property (nonatomic, strong) UIImageView *profitImg;
 
 @property (nonatomic, assign) NSInteger type;
 
-@property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, strong) UIScrollView* scrollView;
+@property (nonatomic, strong) UIView* buttonsView;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 @property (nonatomic) CGPoint startingPoint;
 @end
 
 @implementation ProductCell
 
 -(void)dealloc {
+    SafeRelease(_hotBtn);
+    SafeRelease(_saleBtn);
+    SafeRelease(_deleteBtn);
     SafeRelease(_proCode);
     SafeRelease(_proPrice);
     SafeRelease(_proSale);
@@ -54,6 +60,15 @@ static ProductCell *_editingCell;
     SafeRelease(_saleImg);
     SafeRelease(_productModel);
     SafeRelease(_idxPath);
+    SafeRelease(_cellContentView);
+    SafeRelease(_lineImg);
+    SafeRelease(_picImg);
+    SafeRelease(_profitImg);
+    SafeRelease(_scrollView);
+    SafeRelease(_buttonsView);
+    SafeRelease(_panGesture);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier type:(NSInteger)type inTableView:(UITableView *)tableView{
@@ -62,17 +77,39 @@ static ProductCell *_editingCell;
         self.type = type;
         self.tableView=tableView;
         
-        self.topView = [[UIView alloc]initWithFrame:CGRectZero];
-        self.topView.backgroundColor = [UIColor whiteColor];
-        [self.contentView addSubview:self.topView];
+        self.scrollView=[[UIScrollView alloc]initWithFrame:self.bounds];
+        self.scrollView.contentSize=CGSizeMake(self.bounds.size.width+180, self.bounds.size.height);
+        self.scrollView.showsHorizontalScrollIndicator=NO;
+        self.scrollView.showsVerticalScrollIndicator=NO;
+        self.scrollView.delegate=self;
+        self.scrollView.backgroundColor=[UIColor clearColor];
+        [self.contentView addSubview:self.scrollView];
+        
+        self.buttonsView=[[UIView alloc]initWithFrame:CGRectZero];
+        [self.scrollView addSubview:self.buttonsView];
+        
+        self.hotBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.hotBtn.backgroundColor = COLOR(81, 81, 81, 81);
+        [self.hotBtn addTarget:self action:@selector(hotBtnTap) forControlEvents:UIControlEventTouchUpInside];
+        [self.buttonsView addSubview:self.hotBtn];
+        
+        self.saleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.saleBtn.backgroundColor = COLOR(81, 81, 81, 81);
+        [self.saleBtn addTarget:self action:@selector(saleBtnTap) forControlEvents:UIControlEventTouchUpInside];
+        [self.buttonsView addSubview:self.saleBtn];
+        
+        self.deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.deleteBtn.backgroundColor = COLOR(81, 81, 81, 81);
+        [self.deleteBtn addTarget:self action:@selector(deleteBtnTap) forControlEvents:UIControlEventTouchUpInside];
+        [self.deleteBtn setImage:[Utility getImgWithImageName:@"delete_bt@2x"] forState:UIControlStateNormal];
+        [self.buttonsView addSubview:self.deleteBtn];
+        
+        self.cellContentView = [[UIView alloc]initWithFrame:CGRectZero];
+        self.cellContentView.backgroundColor = [UIColor whiteColor];
+        [self.scrollView addSubview:self.cellContentView];
         
         UITapGestureRecognizer* tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapGesture:)];
-        [self.topView addGestureRecognizer:tapGesture];
-        
-        _panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandler:)];
-        _panGestureRecognizer.delegate = self;
-        [self.topView addGestureRecognizer:_panGestureRecognizer];
-        
+        [self.cellContentView addGestureRecognizer:tapGesture];
         
         self.proCode = [[UILabel alloc]initWithFrame:CGRectZero];
         self.proPrice = [[UILabel alloc]initWithFrame:CGRectZero];
@@ -95,38 +132,27 @@ static ProductCell *_editingCell;
         self.picImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.picImg.contentMode = UIViewContentModeScaleAspectFill;
         
-        [self.topView addSubview:self.picImg];
-        [self.topView addSubview:self.proCode];
-        [self.topView addSubview:self.proPrice];
-        [self.topView addSubview:self.proSale];
-        [self.topView addSubview:self.proStock];
-        [self.topView addSubview:self.saleImg];
-        [self.topView addSubview:self.lineImg];
+        self.profitImg = [[UIImageView alloc]initWithFrame:CGRectZero];
+        self.profitImg.image = [Utility getImgWithImageName:@"profit_list_flag@2x"];
+        self.profitImg.hidden = YES;
         
-        self.hotBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.hotBtn.backgroundColor = COLOR(81, 81, 81, 81);
-        self.hotBtn.hidden = YES;
-        [self.hotBtn addTarget:self action:@selector(hotBtnTap) forControlEvents:UIControlEventTouchUpInside];
-        [self.contentView insertSubview:self.hotBtn belowSubview:self.topView];
-        
-        self.saleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.saleBtn.backgroundColor = COLOR(81, 81, 81, 81);
-        self.saleBtn.hidden = YES;
-        [self.saleBtn addTarget:self action:@selector(saleBtnTap) forControlEvents:UIControlEventTouchUpInside];
-        [self.contentView insertSubview:self.saleBtn belowSubview:self.topView];
-        
-        self.deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.deleteBtn.backgroundColor = COLOR(81, 81, 81, 81);
-        self.deleteBtn.hidden = YES;
-        [self.deleteBtn addTarget:self action:@selector(deleteBtnTap) forControlEvents:UIControlEventTouchUpInside];
-        [self.deleteBtn setImage:[Utility getImgWithImageName:@"delete_bt@2x"] forState:UIControlStateNormal];
-        [self.contentView insertSubview:self.deleteBtn belowSubview:self.topView];
+        [self.cellContentView addSubview:self.profitImg];
+        [self.cellContentView addSubview:self.picImg];
+        [self.cellContentView addSubview:self.proCode];
+        [self.cellContentView addSubview:self.proPrice];
+        [self.cellContentView addSubview:self.proSale];
+        [self.cellContentView addSubview:self.proStock];
+        [self.cellContentView addSubview:self.saleImg];
+        [self.contentView addSubview:self.lineImg];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationUnenableScroll:) name:TableViewCellNotificationUnenableScroll object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notificationEnableScroll:) name:TableViewCellNotificationEnableScroll object:nil];
     }
     return self;
 }
+
+#pragma mark - 
+#pragma mark - action
 
 -(void)hotBtnTap {
     
@@ -170,6 +196,8 @@ static ProductCell *_editingCell;
     [alert show];
 }
 
+#pragma mark - 
+#pragma mark - getter/setter
 
 -(void)setProductModel:(ProductModel *)productModel {
     _productModel = productModel;
@@ -199,6 +227,11 @@ static ProductCell *_editingCell;
     
     self.saleImg.hidden = !productModel.isHot;
     
+    self.profitImg.hidden = YES;
+    if (productModel.profitStatus==1) {
+        self.profitImg.hidden = NO;
+    }
+    
     [self.picImg sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
     
     [self.hotBtn setImage:[Utility getImgWithImageName:productModel.isHot?@"hot_bt@2x":@"hot_s_bt@2x"] forState:UIControlStateNormal];
@@ -209,9 +242,50 @@ static ProductCell *_editingCell;
     _idxPath = idxPath;
 }
 
+-(void)setState:(TableViewCellState)state{
+    _state=state;
+    
+    if (state==CellStateExpanded) {
+        _editingCell=self;
+        [self.scrollView setContentOffset:CGPointMake(180, 0.0f) animated:YES];
+        self.tableView.scrollEnabled=NO;
+        self.tableView.allowsSelection=NO;
+        ///通知所有的cell停止滚动(除自己这个)
+        [[NSNotificationCenter defaultCenter] postNotificationName:TableViewCellNotificationUnenableScroll object:nil];
+        ///往tableView上添加一个手势处理,使得在tableView上的拖动也只是影响当前这个cell的scrollView
+        if (!_panGesture){
+            _panGesture=[[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(onPanGesture:)];
+            [self.tableView addGestureRecognizer:_panGesture];
+        }
+    }else if(state==CellStateUnexpanded) {
+        ///停止tableView的手势
+        if (_panGesture){
+            [self.tableView removeGestureRecognizer:_panGesture];
+            _panGesture=nil;
+        }
+        
+        ///为了不让快速按下时鼓动状态固定在一半，一开始就先停止触摸
+        self.tableView.userInteractionEnabled=NO;
+        double delayInSeconds = 0.3;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            self.tableView.userInteractionEnabled=YES;
+        });
+        [self.scrollView setContentOffset:CGPointZero animated:YES];
+        ///tableView可以滚动了
+        _editingCell=nil;
+        self.tableView.scrollEnabled=YES;
+        self.tableView.allowsSelection=YES;
+        ///通知所有的cell可以滚动
+        [[NSNotificationCenter defaultCenter] postNotificationName:TableViewCellNotificationEnableScroll object:nil];
+    }
+}
+
+#pragma mark - 
+#pragma mark - UI
+
 -(void)prepareForReuse {
     [super prepareForReuse];
-    
     self.proCode.text = @"";
     self.proPrice.text = @"";
     self.proSale.text = @"";
@@ -223,7 +297,10 @@ static ProductCell *_editingCell;
 -(void)layoutSubviews {
     [super layoutSubviews];
     
-    self.topView.frame = (CGRect){0,0,self.width,self.height};
+    self.scrollView.frame = (CGRect){0,0,self.width,self.height};
+    self.scrollView.contentSize=CGSizeMake(self.width+180, self.height);
+    
+    self.cellContentView.frame = (CGRect){0,0,self.width,self.height};
     
     self.saleImg.frame = (CGRect){0,0,3,self.height};
     
@@ -235,6 +312,9 @@ static ProductCell *_editingCell;
     self.proCode.frame = (CGRect){self.picImg.right+10,(self.height-self.proCode.height-self.proPrice.height-5)/2,self.proCode.width,self.proCode.height};
     self.proPrice.frame = (CGRect){self.picImg.right+10,self.proCode.bottom+5,self.proPrice.width,self.proPrice.height};
     
+    self.profitImg.frame = (CGRect){self.proPrice.right+5,self.proPrice.top+(self.proPrice.height-10)/2 ,10,10};
+    
+    
     [self.proStock sizeToFit];
     self.proStock.frame = (CGRect){self.width-self.proStock.width-10,(self.height-self.proStock.height)/2,self.proStock.width,self.proStock.height};
     
@@ -245,69 +325,37 @@ static ProductCell *_editingCell;
     [self.proSale sizeToFit];
     self.proSale.frame = (CGRect){(self.width-10-rect.size.width)-40-self.proSale.width,(self.height-self.proSale.height)/2,self.proSale.width,self.proSale.height};
     
-    self.lineImg.frame = (CGRect){self.picImg.left,self.height-1,self.width-self.picImg.left,1};
+    self.lineImg.frame = (CGRect){self.picImg.left,self.height-0.5,self.width-self.picImg.left,1};
     
-    
-    
-    self.deleteBtn.frame = (CGRect){self.width-60,0,60,self.height};
-    self.saleBtn.frame = (CGRect){self.deleteBtn.left-60,0,60,self.height};
-    self.hotBtn.frame = (CGRect){self.saleBtn.left-60,0,60,self.height};
+    self.buttonsView.frame = (CGRect){self.width-180,0,180,self.height};
+    self.hotBtn.frame = (CGRect){0,0,60,self.height};
+    self.saleBtn.frame = (CGRect){self.hotBtn.right,0,60,self.height};
+    self.deleteBtn.frame = (CGRect){self.saleBtn.right,0,60,self.height};
 }
 
+#pragma mark -
+#pragma mark - 手势
 
-- (void)panHandler:(UIPanGestureRecognizer *)recognizer {
-    switch (recognizer.state) {
-        case UIGestureRecognizerStateBegan:
-            self.startingPoint = self.topView.frame.origin;
-            break;
-            
-        case UIGestureRecognizerStateChanged:{
-            
-            CGFloat currentX = [recognizer translationInView:self].x;
-            CGFloat newXOffset = self.startingPoint.x + currentX;
-            if (currentX>0) {
-            }else {
-                self.hotBtn.hidden= NO;
-                self.saleBtn.hidden= NO;
-                self.deleteBtn.hidden= NO;
-                if (fabs(currentX)<=180) {
-                    self.topView.frame = CGRectMake(newXOffset, self.startingPoint.y, CGRectGetWidth(self.topView.frame), CGRectGetHeight(self.topView.frame));
-                }
-            }
-        }
-            break;
-            
-        case UIGestureRecognizerStateEnded: {
-            CGFloat currentX = self.topView.frame.origin.x;
-            __weak __typeof(self)weakSelf = self;
-            if (fabs(currentX) > 90) {
-                self.state = CellStateExpanded;
-                [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-                    weakSelf.topView.frame = CGRectMake(-180, weakSelf.startingPoint.y, CGRectGetWidth(weakSelf.topView.frame), CGRectGetHeight(weakSelf.topView.frame));
-                } completion:nil];
-                
-            }else {
-                self.state = CellStateUnexpanded;
-                [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-                    weakSelf.topView.frame = CGRectMake(0, weakSelf.startingPoint.y, CGRectGetWidth(weakSelf.topView.frame), CGRectGetHeight(weakSelf.topView.frame));
-                } completion:nil];
-                self.hotBtn.hidden= YES;
-                self.saleBtn.hidden= YES;
-                self.deleteBtn.hidden= YES;
-            }
-        }
-            break;
-            
-        default:
-            break;
+- (void)onPanGesture:(UIPanGestureRecognizer *)recognizer {
+    if (!_editingCell)
+        return;
+    if (recognizer.state==UIGestureRecognizerStateChanged){
+        CGFloat translate_x=[recognizer translationInView:_editingCell.tableView].x;
+        CGFloat offset_x=self.buttonsView.frame.size.width;
+        CGFloat move_offset_x=offset_x-translate_x;
+        [_editingCell.scrollView setContentOffset:CGPointMake(move_offset_x, 0)];
+    }
+    else if (recognizer.state==UIGestureRecognizerStateEnded||
+             recognizer.state==UIGestureRecognizerStateCancelled ||
+             recognizer.state==UIGestureRecognizerStateFailed){
+        _editingCell.state=CellStateUnexpanded;
     }
 }
 
 -(void)onTapGesture:(UITapGestureRecognizer*)recognizer{
     if (_editingCell){
         _editingCell.state=CellStateUnexpanded;
-    }
-    else{
+    }else{
         if ([self.tableView.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]){
             NSIndexPath *cellIndexPath = [self.tableView indexPathForCell:self];
             [self.tableView.delegate tableView:self.tableView didSelectRowAtIndexPath:cellIndexPath];
@@ -315,46 +363,36 @@ static ProductCell *_editingCell;
     }
 }
 
--(void)setState:(TableViewCellState)state{
-    _state=state;
-    if (state==CellStateExpanded) {
-        self.tableView.scrollEnabled=NO;
-        self.tableView.allowsSelection=NO;
-        _editingCell=self;
-        ///通知所有的cell停止滚动(除自己这个)
-        [[NSNotificationCenter defaultCenter] postNotificationName:TableViewCellNotificationUnenableScroll object:nil];
-    }else if(state==CellStateUnexpanded) {
-        ///为了不让快速按下时鼓动状态固定在一半，一开始就先停止触摸
-        self.tableView.userInteractionEnabled=NO;
-        double delayInSeconds = 0.3;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            self.tableView.userInteractionEnabled=YES;
-        });
-        
-        __weak __typeof(self)weakSelf = self;
-        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            weakSelf.topView.frame = CGRectMake(0, 0, CGRectGetWidth(weakSelf.topView.frame), CGRectGetHeight(weakSelf.topView.frame));
-        } completion:nil];
-        
-        ///tableView可以滚动了
-        _editingCell=nil;
-        self.tableView.scrollEnabled=YES;
-        self.tableView.allowsSelection=YES;
-        ///通知所有的cell可以滚动
-        [[NSNotificationCenter defaultCenter] postNotificationName:TableViewCellNotificationEnableScroll object:nil];
+#pragma mark -
+#pragma mark - UIScrollViewDelegate
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    self.buttonsView.transform=CGAffineTransformMakeTranslation(scrollView.contentOffset.x, 0.0f);
+}
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    self.tableView.scrollEnabled=NO;
+    self.tableView.allowsSelection=NO;
+}
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
+    self.tableView.allowsSelection=YES;
+    self.tableView.scrollEnabled=YES;
+    if (scrollView.contentOffset.x>=(self.buttonsView.frame.size.width/2)){
+        self.state=CellStateExpanded;
+    }else{
+        self.state=CellStateUnexpanded;
     }
 }
-
+#pragma mark -
+#pragma mark - 通知
 
 ///内部通知所有的cell可以滚动scrollView了
 -(void)notificationEnableScroll:(NSNotification*)notification{
-    [self.topView addGestureRecognizer:_panGestureRecognizer];
+    self.scrollView.scrollEnabled=YES;
 }
 ///内部通知所有的cell不可以滚动scrollView(除当前编辑的这个外)
 -(void)notificationUnenableScroll:(NSNotification*)notification{
-    if (_editingCell!=self)
-        [self.topView removeGestureRecognizer:_panGestureRecognizer];
-    
+    if (_editingCell!=self) {
+        self.scrollView.scrollEnabled=NO;
+    }
 }
 @end

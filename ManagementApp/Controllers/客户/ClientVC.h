@@ -16,4 +16,6 @@
 
 @property (nonatomic, weak) MainVC *mainVC;
 
+///区分  0=ABCD  1=私密客户  2=供货商
+@property (nonatomic, assign) NSInteger type;
 @end

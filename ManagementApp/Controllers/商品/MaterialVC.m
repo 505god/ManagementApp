@@ -79,7 +79,15 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    if (!self.view.window){
+        SafeRelease(_tableView);
+        SafeRelease(_dataArray);
+        SafeRelease(_selectedMaterialModel);
+        SafeRelease(_hasSelectedMaterial);
+        SafeRelease(_completedBlock);
+        self.view=nil;
+    }
 }
 
 #pragma mark - getter/setter
@@ -106,7 +114,7 @@
 -(void)setNavBarView {
     [self.navBarView setTitle:SetTitle(@"material") image:nil];
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
-    [self.navBarView setRightWithArray:@[@"add"]];
+    [self.navBarView setRightWithArray:@[@"add"] type:0];
     [self.view addSubview:self.navBarView];
 }
 

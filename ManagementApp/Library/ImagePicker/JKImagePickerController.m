@@ -87,7 +87,7 @@ ALAssetsFilter * ALAssetsFilterFromJKImagePickerControllerFilterType(JKImagePick
     
     //导航栏
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
-    [self.navBarView setRightWithArray:@[@"ok_bt"]];
+    [self.navBarView setRightWithArray:@[@"ok_bt"] type:0];
     [self.view addSubview:self.navBarView];
     
     //导航栏设置

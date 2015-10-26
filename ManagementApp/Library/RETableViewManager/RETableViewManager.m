@@ -110,6 +110,8 @@
     self[@"REInlinePickerItem"] = @"RETableViewInlinePickerCell";
     
     self[@"REProductItem"] = @"REProductItemCell";
+    self[@"RELevelItem"] = @"RELevelItemCell";
+    
 }
 
 - (void)registerClass:(NSString *)objectClass forCellWithReuseIdentifier:(NSString *)identifier

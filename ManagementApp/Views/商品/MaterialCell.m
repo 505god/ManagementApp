@@ -7,7 +7,6 @@
 //
 
 #import "MaterialCell.h"
-#import "WQCellSelectedBackground.h"
 
 @interface MaterialCell ()
 
@@ -46,24 +45,12 @@
         [self.accessView setImage:[Utility getImgWithImageName:@"uncheck@2x"]];
         [self.contentView addSubview:self.accessView];
         
-        WQCellSelectedBackground *selectedBackgroundView = [[WQCellSelectedBackground alloc] initWithFrame:CGRectZero];
-        [self setSelectedBackgroundView:selectedBackgroundView];
-        
-        NSMutableArray *colors = [NSMutableArray array];
-        [colors addObject:(id)[[UIColor colorWithRed:220/255. green:220/255. blue:220/255. alpha:1] CGColor]];
-        [self setSelectedBackgroundViewGradientColors:colors];
-        
         self.textLabel.font = [UIFont systemFontOfSize:15];
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.textLabel.textColor = [UIColor lightGrayColor];
     }
     return self;
 }
-
-- (void)setSelectedBackgroundViewGradientColors:(NSArray*)colors {
-    [(WQCellSelectedBackground*)self.selectedBackgroundView setSelectedBackgroundGradientColors:colors];
-}
-
 #pragma mark - getter/setter
 
 -(UIImageView*)deleteGreyImageView {

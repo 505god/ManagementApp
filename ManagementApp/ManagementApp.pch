@@ -22,7 +22,7 @@
 #endif
 
 
-#define AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES
+//#define AFNETWORKING_ALLOW_INVALID_SSL_CERTIFICATES
 
 
 #define PATH_OF_DOCUMENT    [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0]

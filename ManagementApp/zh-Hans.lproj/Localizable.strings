@@ -46,7 +46,7 @@
 "column" = "栏";
 "error_price" = "请在%@填写正确的价格。";
 "error_blank" = "%@ 不能为空。";
-"edit_price_error" = "价格设置存在错误，重新修改？";
+"edit_price_error" = "价格设置存在错误，重新编辑？";
 
 //商品
 "product" = "新商品";
@@ -66,11 +66,18 @@
 "best_sellers" = "热卖";
 "off_the_shelf" = "下架";
 "product_sale" = "销量";
+"product_edit" = "修改";
+"order_code" = "货号A-Z";
+"order_best_sell" = "最好卖";
+"order_worst_sell" = "30天内最不好卖";
+"order_stock_up" = "库存最多";
+"order_stock_down" = "库存最少";
+"day" = "天";
 
 //库存预警
 "stock_all" = "当总库存低于";
 "stock_one" = "当单款颜色库存低于";
-"edit_stock_error" = "库存数量设置存在错误，重新修改？";
+"edit_stock_error" = "库存数量设置存在错误，重新编辑？";
 
 
 //弹出框
@@ -87,6 +94,17 @@
 //客户
 "private_client" = "私密客户";
 "supplier" = "供货商";
+"customer" = "顾客";
+"detail" = "详情";
+"type" = "类型";
+"client_type" = "客户类型";
+"level" = "等级";
+"phone" = "号码";
+"email" = "邮箱";
+"name" = "名字";
+"order_maximum" = "交易金额最高";
+"order_up" = "交易次数最多";
+"order_arrears" = "欠款最多";
 
 //相册
 "title" = "选择相册";
@@ -96,3 +114,18 @@
 "SelectedMaxPhoto" = "最多选择%ld张照片";
 
 "connect_error" = "稍后再试...";
+
+
+"new_creat" = "最新创建";
+"new_update" = "最近更新";
+
+//下拉刷新
+"FooterPullToRefresh" = "上拉可以加载更多数据";
+"FooterReleaseToRefresh" = "松开立即加载更多数据";
+"Refreshing" = "正在努力加载中...";
+"HeaderPullToRefresh" = "下拉可以刷新";
+"HeaderReleaseToRefresh" = "松开立即刷新";
+"LastUpDate" = "最后更新:";
+
+//错误码
+"error_code_" = "稍后再试...";

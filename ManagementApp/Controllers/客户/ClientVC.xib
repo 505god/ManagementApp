@@ -7,6 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ClientVC">
             <connections>
+                <outlet property="filterBtn" destination="7kA-Xm-ylI" id="22y-jI-Vuq"/>
+                <outlet property="tableTopConstraint" destination="55y-BP-TYV" id="Acm-TG-I8W"/>
+                <outlet property="tableView" destination="PKX-ih-dJ9" id="U20-eB-mfc"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -14,8 +17,46 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kA-Xm-ylI">
+                    <rect key="frame" x="35" y="74" width="304" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="Y0v-zd-J6N"/>
+                        <constraint firstAttribute="width" constant="304" id="eZA-2c-TmF"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <state key="normal" backgroundImage="sort_bg.png">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="highlighted" backgroundImage="sort_bg.png"/>
+                    <connections>
+                        <action selector="filterBtnPressed:" destination="-1" eventType="touchUpInside" id="keU-Yu-MHn"/>
+                    </connections>
+                </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="PKX-ih-dJ9">
+                    <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <inset key="separatorInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="bSL-Zs-Slu"/>
+                        <outlet property="delegate" destination="-1" id="Txz-J9-ShW"/>
+                    </connections>
+                </tableView>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="PKX-ih-dJ9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="55y-BP-TYV"/>
+                <constraint firstItem="7kA-Xm-ylI" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="74" id="8sQ-GM-DJi"/>
+                <constraint firstItem="7kA-Xm-ylI" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Gq6-Ej-ixv"/>
+                <constraint firstItem="PKX-ih-dJ9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pWL-1X-yJM"/>
+                <constraint firstAttribute="bottom" secondItem="PKX-ih-dJ9" secondAttribute="bottom" id="wYX-G7-b3W"/>
+                <constraint firstAttribute="trailing" secondItem="PKX-ih-dJ9" secondAttribute="trailing" id="wdn-s9-rW0"/>
+            </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="203.5" y="215.5"/>
         </view>
     </objects>
+    <resources>
+        <image name="sort_bg.png" width="304" height="30"/>
+    </resources>
 </document>

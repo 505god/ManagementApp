@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="ClientCell">
+            <rect key="frame" x="0.0" y="0.0" width="369" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="369" height="43.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X2k-T7-hOl">
+                        <rect key="frame" x="10" y="8" width="27" height="27"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="27" id="Fhf-9u-dNL"/>
+                            <constraint firstAttribute="width" constant="27" id="uwT-t9-oPl"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="oyC-K7-R3m">
+                        <rect key="frame" x="45" y="11" width="178" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="lhV-CA-cDm"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" misplaced="YES" text="999999.99" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wbf-X7-Die">
+                        <rect key="frame" x="269" y="11" width="90" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="m5u-DE-wcU"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" misplaced="YES" image="premium_flag.png" translatesAutoresizingMaskIntoConstraints="NO" id="ASB-8c-fhE">
+                        <rect key="frame" x="233" y="9" width="26" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="26" id="b13-UO-UCT"/>
+                            <constraint firstAttribute="height" constant="26" id="uXH-0O-Z7O"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Wbf-X7-Die" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="3If-NU-CvL"/>
+                    <constraint firstItem="oyC-K7-R3m" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="7ND-3R-Fii"/>
+                    <constraint firstItem="X2k-T7-hOl" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="JwA-n4-1rC"/>
+                    <constraint firstItem="Wbf-X7-Die" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ASB-8c-fhE" secondAttribute="trailing" constant="8" id="Usk-qq-kNz"/>
+                    <constraint firstItem="X2k-T7-hOl" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="YTn-2a-6ra"/>
+                    <constraint firstItem="ASB-8c-fhE" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="bQC-7p-dkE"/>
+                    <constraint firstItem="ASB-8c-fhE" firstAttribute="leading" secondItem="oyC-K7-R3m" secondAttribute="trailing" constant="8" id="vpb-qY-319"/>
+                    <constraint firstAttribute="trailing" secondItem="Wbf-X7-Die" secondAttribute="trailing" constant="10" id="xhS-yz-b1b"/>
+                    <constraint firstItem="oyC-K7-R3m" firstAttribute="leading" secondItem="X2k-T7-hOl" secondAttribute="trailing" constant="8" id="xvv-yz-EsZ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="clientImg" destination="ASB-8c-fhE" id="Tb3-sg-pK9"/>
+                <outlet property="imgView" destination="X2k-T7-hOl" id="j20-LC-gMs"/>
+                <outlet property="imgViewLeftConstraint" destination="JwA-n4-1rC" id="hZd-qH-PEP"/>
+                <outlet property="nameLab" destination="oyC-K7-R3m" id="J8S-0c-RgR"/>
+                <outlet property="priceLab" destination="Wbf-X7-Die" id="XO0-en-q1v"/>
+            </connections>
+            <point key="canvasLocation" x="212.5" y="122"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="premium_flag.png" width="26" height="26"/>
+    </resources>
+</document>

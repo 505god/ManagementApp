@@ -227,7 +227,17 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    if (!self.view.window){
+        SafeRelease(_aItem);
+        SafeRelease(_bItem);
+        SafeRelease(_cItem);
+        SafeRelease(_dItem);
+        SafeRelease(_table);
+        SafeRelease(_manager);
+        SafeRelease(_productPriceModel);
+        self.view=nil;
+    }
 }
 
 #pragma mark - UI

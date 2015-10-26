@@ -121,7 +121,13 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    if (!self.view.window){
+        SafeRelease(_table);
+        SafeRelease(_manager);
+        SafeRelease(_stockWarningModel);
+        SafeRelease(_completedBlock);
+        self.view=nil;
+    }
 }
 
 #pragma mark - UI

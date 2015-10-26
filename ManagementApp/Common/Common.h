@@ -56,6 +56,6 @@ typedef NS_ENUM(NSInteger, MessageFrom) {
 #import "MJRefresh.h"
 
 ///登录接口
-static NSString *loginInterface = @"";
+static NSString *loginInterface = @"user";
 
 

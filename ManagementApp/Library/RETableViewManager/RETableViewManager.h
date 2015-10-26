@@ -53,7 +53,7 @@
 #import "NSString+RETableViewManagerAdditions.h"
 
 #import "REProductItemCell.h"
-
+#import "RELevelItemCell.h"
 @protocol RETableViewManagerDelegate;
 
 /**

@@ -15,14 +15,25 @@
 #import "ProductModel.h"
 
 #import "ProductHeader.h"
+#import "ProductDetailVC.h"
 
-@interface StockVC ()<UITableViewDelegate,UITableViewDataSource>
+#import "FilterView.h"
+
+typedef enum FilterType:NSUInteger{
+    ProductFilterType_code=0,//货号A-Z
+    ProductFilterType_ccreat=1,//最新创建
+    ProductFilterType_update=2,//最近更新
+    ProductFilterType_best_sell=3,//最好卖
+    ProductFilterType_worst_sell=4,//30天内最不好卖
+    ProductFilterType_stock_up=5,//库存最多
+    ProductFilterType_stock_down=6,//库存最少
+} ProductFilterType;
+
+@interface StockVC ()<UITableViewDelegate,UITableViewDataSource,FilterViewDelegate,FilterViewDataSourece>
 
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
-
-@property (nonatomic, assign) NSInteger type;
 
 ///当前页开始索引
 @property (nonatomic, assign) NSInteger start;
@@ -34,6 +45,18 @@
 ///加载更多
 @property (nonatomic, assign) BOOL isLoadingMore;
 
+///筛选
+@property (nonatomic, weak) IBOutlet UIButton *filterBtn;
+@property (nonatomic, strong) FilterView *filterView;
+@property (nonatomic, assign) BOOL isShowFilterView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableTopConstraint;
+
+///最好卖的天数选择
+@property (weak, nonatomic) IBOutlet UIView *filterDayView;
+@property (nonatomic, assign) NSInteger dayType;
+
+
+@property (nonatomic, assign) ProductFilterType filterType;
 @end
 
 @implementation StockVC
@@ -48,18 +71,8 @@
     //集成刷新控件
     [self addHeader];
     self.type=1;
-    
-    ProductModel *model = [[ProductModel alloc]init];
-    model.productCode = @"9001";
-    
-    ProductPriceModel *productPriceModel = [[ProductPriceModel alloc]init];
-    productPriceModel.aPrice = 9.99;
-    productPriceModel.selected = 0;
-    model.productPriceModel = productPriceModel;
-    
-    model.stockCount = 57;
-    
-    model.saleCount = 7;
+    self.filterType = 0;
+    self.dayType = 0;
     
     ProductModel *model2 = [[ProductModel alloc]init];
     model2.productCode = @"9001";
@@ -73,8 +86,25 @@
     model2.isHot = YES;
     model2.saleCount = 17;
     
-    [self.dataArray addObject:model];
+    
     [self.dataArray addObject:model2];
+    for (int i=0; i<20; i++) {
+        ProductModel *model = [[ProductModel alloc]init];
+        model.productCode = @"9001";
+        model.profitStatus = 1;
+        ProductPriceModel *productPriceModel = [[ProductPriceModel alloc]init];
+        productPriceModel.aPrice = 9.99;
+        productPriceModel.selected = 0;
+        model.productPriceModel = productPriceModel;
+        
+        model.stockCount = 57;
+        
+        model.saleCount = 7;
+        [self.dataArray addObject:model];
+    }
+    
+    
+    
     
     [self.tableView reloadData];
     
@@ -129,17 +159,73 @@
     return _dataArray;
 }
 
+-(FilterView *)filterView {
+    if (!_filterView) {
+        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.height} dataSource:self];
+        _filterView.delegate=self;
+        [self.view addSubview:_filterView];
+    }
+    return _filterView;
+}
 
+-(void)setType:(NSInteger)type {
+    _type = type;
+    
+    if (type==1) {
+        self.tableTopConstraint.constant = 64+50;
+    }else {
+        self.tableTopConstraint.constant = 64;
+    }
+}
+
+-(void)setFilterType:(ProductFilterType)filterType {
+    _filterType = filterType;
+    
+    if (filterType==ProductFilterType_best_sell) {
+        self.dayType = 0;
+        self.tableTopConstraint.constant = 64+50+44;
+    }else {
+        if (self.type==0) {
+            self.tableTopConstraint.constant = 64;
+        }else {
+            self.tableTopConstraint.constant = 64+50;
+        }
+    }
+    
+    NSArray *array = @[SetTitle(@"order_code"),SetTitle(@"new_creat"),SetTitle(@"new_update"),SetTitle(@"order_best_sell"),SetTitle(@"order_worst_sell"),SetTitle(@"order_stock_up"),SetTitle(@"order_stock_down")];
+    [self.filterBtn setTitle:array[filterType] forState:UIControlStateNormal];
+}
+
+-(void)setDayType:(NSInteger)dayType {
+    _dayType = dayType;
+    
+    for (int i=0; i<4; i++) {
+        UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
+        if (i==dayType) {
+            [btn setTitleColor:COLOR(12, 96, 254, 1) forState:UIControlStateNormal];
+        }else {
+            [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
+    }
+    
+}
 #pragma mark - UI
 
 -(void)setNavBarView {
     
     //左侧名称显示的分类名称
     [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"navicon_all")];
-    [self.navBarView setRightWithArray:@[@"add_bt",@"search_icon"]];
+    [self.navBarView setRightWithArray:@[@"add_bt",@"search_icon"] type:0];
     [self.view addSubview:self.navBarView];
     
      [self.tableView registerClass:[ProductHeader class] forHeaderFooterViewReuseIdentifier:@"ProductHeader"];
+    
+    ///最好卖的天数选择
+    NSArray *array = @[[NSString stringWithFormat:@"7 %@",SetTitle(@"day")],[NSString stringWithFormat:@"15 %@",SetTitle(@"day")],[NSString stringWithFormat:@"30 %@",SetTitle(@"day")],SetTitle(@"navicon_all")];
+    for (int i=0; i<4; i++) {
+        UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
+        [btn setTitle:array[i] forState:UIControlStateNormal];
+    }
 }
 
 #pragma mark - 导航栏代理
@@ -155,6 +241,7 @@
     if (tag==0) {//添加
         ProductVC *productVC = [[ProductVC alloc]init];
         [self.navigationController pushViewController:productVC animated:YES];
+        SafeRelease(productVC);
     }else if(tag==1){//搜索
         
     }
@@ -258,6 +345,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    ProductDetailVC *detailVC = LOADVC(@"ProductDetailVC");
+    detailVC.productModel = self.dataArray[indexPath.row];
+    [self.navigationController pushViewController:detailVC animated:YES];
+    SafeRelease(detailVC);
 }
 
 #pragma mark -
@@ -360,5 +452,49 @@
         [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
 }
+
+#pragma mark -
+
+-(IBAction)filterBtnPressed:(id)sender {
+    [self.filterView reloadData];
+    [self.filterView show];
+    self.isShowFilterView = YES;
+    [self.view bringSubviewToFront:self.filterView];
+}
+
+-(IBAction)dayFilterBtnPressed:(id)sender {
+    UIButton *btn = (UIButton *)sender;
+    
+    if ((btn.tag-100)==self.dayType) {
+        return;
+    }else {
+        self.dayType = btn.tag-100;
+    }
+}
+
+#pragma mark - FilterViewDelegate/FilterViewDataSourece
+
+- (NSInteger)filterView:(FilterView *)filterView numberOfRowsInSection:(NSInteger)section {
+    return 7;
+}
+
+- (NSString *)filterView:(FilterView *)filterView titleForBtnAtIndexPath:(NSIndexPath *)indexPath {
+    NSArray *array = @[SetTitle(@"order_code"),SetTitle(@"new_creat"),SetTitle(@"new_update"),SetTitle(@"order_best_sell"),SetTitle(@"order_worst_sell"),SetTitle(@"order_stock_up"),SetTitle(@"order_stock_down")];
+    return array[indexPath.row];
+}
+
+- (NSInteger)filterView:(FilterView *)filterView selectedIndexInSection:(NSInteger)section {
+    return self.filterType;
+}
+
+- (void)filterView:(FilterView *)filterView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.filterType = indexPath.row;
+    [self.filterView hide];
+}
+
+- (void)filterHide {
+    self.isShowFilterView = NO;
+}
+
 
 @end

@@ -77,18 +77,26 @@
 }
 
 ///设置右侧按钮
--(void)setRightWithArray:(NSArray *)array {
+-(void)setRightWithArray:(NSArray *)array type:(NSInteger)type{
     for (int i=0; i<array.count; i++) {
         [self removeViewWithTag:30000+i];
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",array[i]]] forState:UIControlStateNormal];
-        [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@_highlighted@2x",array[i]]] forState:UIControlStateHighlighted];
+        
+        if (type==0) {
+            [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",array[i]]] forState:UIControlStateNormal];
+            [btn setImage:[Utility getImgWithImageName:[NSString stringWithFormat:@"%@_highlighted@2x",array[i]]] forState:UIControlStateHighlighted];
+        }else {
+            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [btn setTitleColor:COLOR(212, 212, 212, 1) forState:UIControlStateHighlighted];
+            [btn setTitle:array[i] forState:UIControlStateNormal];
+        }
+        
         btn.tag = i+30000;
         btn.enabled = self.rightEnable;
         
         [btn addTarget:self action:@selector(tapRight:) forControlEvents:UIControlEventTouchUpInside];
         
-        btn.frame = (CGRect){self.width-5-40*(i+1),20+(NavgationHeight-40)/2,40,40};
+        btn.frame = (CGRect){self.width-5-50*(i+1),20+(NavgationHeight-40)/2,50,40};
         [self addSubview:btn];
         btn = nil;
     }

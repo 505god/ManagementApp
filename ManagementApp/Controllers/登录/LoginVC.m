@@ -67,7 +67,8 @@
             ///接口请求
             [MBProgressHUD showHUDAddedTo:self.view animated:YES];
             __weak __typeof(self)weakSelf = self;
-            [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
+            
+            [[APIClient sharedClient] GET:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
                 __strong __typeof(weakSelf)strongSelf = weakSelf;
                 if (!strongSelf) {
                     return;

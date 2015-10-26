@@ -40,6 +40,8 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     
+    [self setupAppearance];
+    
     InitVC *initVC = LOADVC(@"InitVC");
     
     self.window.rootViewController = initVC;
@@ -105,4 +107,23 @@
         self.window.rootViewController = logVC;
     }
 }
+
+
+- (void)setupAppearance {
+    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"nav_bg"] forBarMetrics:UIBarMetricsDefault];
+    
+    NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
+    [[UINavigationBar appearance] setBarStyle:UIBarStyleDefault];
+    [attributesDictionary setValue:[UIFont systemFontOfSize:18]                 forKey:NSFontAttributeName];
+    [attributesDictionary setValue:[UIColor darkGrayColor]                             forKey:NSForegroundColorAttributeName];
+    [[UINavigationBar appearance] setTitleTextAttributes:attributesDictionary];
+    
+    [[UINavigationBar appearance] setTintColor:[UIColor darkGrayColor]];
+    
+    UIImage *backButtonImage = [[UIImage imageNamed:@"navBar_back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 23, 0)];
+    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60) forBarMetrics:UIBarMetricsDefault];
+}
+
 @end

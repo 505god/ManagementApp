@@ -8,14 +8,14 @@
 
 
 //底部tabBar
-"navicon_stock" = "product";
-"navicon_client" = "client";
-"navicon_order" = "order";
-"navicon_options" = "options";
+"navicon_stock" = "Product";
+"navicon_client" = "Client";
+"navicon_order" = "Order";
+"navicon_options" = "Options";
 
 //登录
-"log_account" = "account";
-"log_pwd" = "password";
+"log_account" = "Account";
+"log_pwd" = "Password";
 "log_in" = "Login";
 "logInNameError" = "Please enter account";
 "logInPwdError" = "Please enter password";
@@ -40,37 +40,43 @@
 
 //价格
 "price" = "Price";
-"sale_price" = "sale price";
-"purchase_price" = "purchase price";
+"sale_price" = "Sale price";
+"purchase_price" = "Purchase price";
 "column" = "column";
-"error_price" = "please enter %@ the correct price.";
+"error_price" = "Please enter %@ the correct price.";
 "error_blank" = "%@ can't be blank.";
-"edit_price_error" = "prices fill in an error, return to re-edit?";
+"edit_price_error" = "Prices fill in an error, return to re-edit?";
 
 //商品
 "product" = "New Product";
 "Description" = "description";
-"stock" = "stock";
-"product_code" = "code";
-"product_required" = "required";
-"product_set" = "not set";
-"product_package" = "package number";
-"product_name" = "name";
-"product_mark" = "remark";
-"product_display" = "retail side display";
-"product_promotion" = "retail side promotion";
+"stock" = "Stock";
+"product_code" = "Code";
+"product_required" = "Required";
+"product_set" = "Not set";
+"product_package" = "Package number";
+"product_name" = "Name";
+"product_mark" = "Remark";
+"product_display" = "Retail side display";
+"product_promotion" = "Retail side promotion";
 "stock_warning" = "Stock warning";
-"navicon_all" = "all";
 "not_classified" = "Not classified";
 "best_sellers" = "Hot";
 "off_the_shelf" = "Off the shelf";
 "navicon_all" = "All";
-"product_sale" = "sales";
+"product_sale" = "Sales";
+"product_edit" = "Edit";
+"order_code" = "Product code A-Z";
+"order_best_sell" = "Best selling";
+"order_worst_sell" = "The worst sell within 30 days";
+"order_stock_up" = "Up to stock";
+"order_stock_down" = "Minimum stock";
+"day" = "days";
 
 //库存预警
-"stock_all" = "the total stock";
-"stock_one" = "a single color stock";
-"edit_stock_error" = "stock fill in an error, return to re-edit?";
+"stock_all" = "The total stock";
+"stock_one" = "A single color stock";
+"edit_stock_error" = "Stock fill in an error, return to re-edit?";
 
 //弹出框
 "ConfirmDelete" = "Confirm delete?";
@@ -80,20 +86,44 @@
 "Next" = "Next";
 
 //搜索框
-"Search" = "search";
-"cancel" = "cancel";
+"Search" = "Search";
+"cancel" = "Cancel";
 
 //客户
 "private_client" = "Private client";
 "supplier" = "Supplier";
-
+"customer" = "Customer";
+"detail" = "Detail";
+"type" = "Type";
+"level" = "Level";
+"phone" = "Phone";
+"email" = "Email";
+"name" = "Name";
+"client_type" = "Client type";
+"order_maximum" = "Up to amount";
+"order_up" = "Up to transactions";
+"order_arrears" = "Up to arrears";
 
 //相册
 "title" = "Select Album";
 "Format_photo" = "%ld Photo";
 "Format_photos" = "%ld Photos";
-"PhotoSelectedError" = "select a picture errors";
-"SelectedMaxPhoto" = "select up a photo";
+"PhotoSelectedError" = "Select a picture errors";
+"SelectedMaxPhoto" = "Select up a photo";
 
 
 "connect_error" = "Try again later...";
+
+"new_creat" = "Newly created";
+"new_update" = "Last updated";
+
+//下拉刷新
+"FooterPullToRefresh" = "Pull-up to refresh";
+"FooterReleaseToRefresh" = "Release to load more data";
+"Refreshing" = "Refreshing...";
+"HeaderPullToRefresh" = "Pull-down to refresh";
+"HeaderReleaseToRefresh" = "Release to refresh";
+"LastUpDate" = "Last update:";
+
+//错误码
+"error_code_" = "稍后再试...";

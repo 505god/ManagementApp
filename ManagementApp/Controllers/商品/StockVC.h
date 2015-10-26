@@ -15,4 +15,7 @@
 @interface StockVC : BaseVC
 
 @property (nonatomic, weak) MainVC *mainVC;
+
+///商品VC的类型
+@property (nonatomic, assign) NSInteger type;
 @end

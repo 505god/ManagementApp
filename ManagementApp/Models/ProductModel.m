@@ -26,8 +26,9 @@
               @"productStockArray": mts_key(productStockArray),
               @"saleCount": mts_key(saleCount),
               @"stockCount": mts_key(stockCount),
-              @"picHeader": mts_key(picHeader)
-              
+              @"picHeader": mts_key(picHeader),
+              @"profitStatus": mts_key(profitStatus),
+              @"profit": mts_key(profit)
               };
 }
 

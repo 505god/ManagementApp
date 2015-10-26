@@ -10,11 +10,30 @@
 
 @interface ClientModel : NSObject
 
-///客户等级id
+///客户id
 @property (nonatomic, assign) NSInteger clientId;
-///客户等级名称
+
+///客户类型 0=顾客  1=供货商
+@property (nonatomic, assign) NSInteger clientType;
+
+///客户等级
+@property (nonatomic, assign) NSInteger clientLevel;
+
+///客户名称
 @property (nonatomic, strong) NSString *clientName;
-///各等级客户数量
-@property (nonatomic, assign) NSInteger clientCount;
+
+///客户电话
+@property (nonatomic, strong) NSString *clientPhone;
+
+///客户邮箱
+@property (nonatomic, strong) NSString *clientEmail;
+
+///客户备注
+@property (nonatomic, strong) NSString *clientRemark;
+
+///私密客户
+@property (nonatomic, assign) BOOL isPrivate;
+
+@property (nonatomic, assign) CGFloat totalPrice;
 
 @end

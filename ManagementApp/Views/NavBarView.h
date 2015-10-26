@@ -20,7 +20,7 @@
 -(void)setLeftWithImage:(NSString *)imageString title:(NSString *)title;
 
 ///设置右侧按钮
--(void)setRightWithArray:(NSArray *)array;
+-(void)setRightWithArray:(NSArray *)array type:(NSInteger)type;
 
 ///设置标题
 -(void)setTitle:(NSString *)title image:(NSString *)imageString;

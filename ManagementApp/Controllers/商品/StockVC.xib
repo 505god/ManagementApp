@@ -7,6 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StockVC">
             <connections>
+                <outlet property="filterBtn" destination="Xro-9o-DWH" id="M9b-JU-tyO"/>
+                <outlet property="filterDayView" destination="IwO-1Z-6Tz" id="1mR-JH-2OP"/>
+                <outlet property="tableTopConstraint" destination="knP-qY-glb" id="iXw-H7-8zx"/>
                 <outlet property="tableView" destination="ko3-Wh-Kkg" id="naX-vY-vlC"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -16,8 +19,99 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="ko3-Wh-Kkg">
-                    <rect key="frame" x="0.0" y="44" width="375" height="623"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Rectangle210.png" translatesAutoresizingMaskIntoConstraints="NO" id="voe-R5-s07">
+                    <rect key="frame" x="0.0" y="114" width="375" height="1"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="RUc-Z4-gZy"/>
+                    </constraints>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IwO-1Z-6Tz">
+                    <rect key="frame" x="33" y="114" width="310" height="44"/>
+                    <subviews>
+                        <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JpE-ua-aWn">
+                            <rect key="frame" x="10" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="65" id="S7Q-KZ-DOs"/>
+                                <constraint firstAttribute="height" constant="34" id="jsx-D0-asj"/>
+                            </constraints>
+                            <state key="normal" title="7 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="4Wt-PQ-uQp"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ecv-7G-FGz">
+                            <rect key="frame" x="85" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="65" id="Amc-5D-w7l"/>
+                                <constraint firstAttribute="height" constant="34" id="PLD-LI-f9Q"/>
+                            </constraints>
+                            <state key="normal" title="7 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="Ftr-MC-SKM"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LvV-O3-CEC">
+                            <rect key="frame" x="160" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="34" id="bGw-4y-XLN"/>
+                                <constraint firstAttribute="width" constant="65" id="f4D-Qa-tcc"/>
+                            </constraints>
+                            <state key="normal" title="30 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="Rv3-JS-8uW"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="103" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VqB-vi-PYp">
+                            <rect key="frame" x="235" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="34" id="6HM-vY-R2U"/>
+                                <constraint firstAttribute="width" constant="65" id="fB3-gG-IiI"/>
+                            </constraints>
+                            <state key="normal" title="30 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="gwc-bh-uRC"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="4dp-im-qoc"/>
+                        <constraint firstItem="ecv-7G-FGz" firstAttribute="centerY" secondItem="IwO-1Z-6Tz" secondAttribute="centerY" id="7Ui-R2-1Jf"/>
+                        <constraint firstAttribute="width" constant="310" id="CeP-hK-ANE"/>
+                        <constraint firstItem="LvV-O3-CEC" firstAttribute="centerY" secondItem="IwO-1Z-6Tz" secondAttribute="centerY" id="b0N-es-2sj"/>
+                        <constraint firstItem="VqB-vi-PYp" firstAttribute="leading" secondItem="LvV-O3-CEC" secondAttribute="trailing" constant="10" id="kIm-fo-abU"/>
+                        <constraint firstItem="VqB-vi-PYp" firstAttribute="centerY" secondItem="IwO-1Z-6Tz" secondAttribute="centerY" id="mf0-mv-Mq8"/>
+                        <constraint firstItem="LvV-O3-CEC" firstAttribute="leading" secondItem="ecv-7G-FGz" secondAttribute="trailing" constant="10" id="nZa-Uj-ed6"/>
+                        <constraint firstItem="JpE-ua-aWn" firstAttribute="leading" secondItem="IwO-1Z-6Tz" secondAttribute="leading" constant="10" id="pRP-lv-yRB"/>
+                        <constraint firstItem="ecv-7G-FGz" firstAttribute="leading" secondItem="JpE-ua-aWn" secondAttribute="trailing" constant="10" id="sTD-2m-iCY"/>
+                        <constraint firstItem="JpE-ua-aWn" firstAttribute="centerY" secondItem="IwO-1Z-6Tz" secondAttribute="centerY" id="tf3-ML-vMT"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xro-9o-DWH">
+                    <rect key="frame" x="35" y="74" width="304" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="OgZ-Tl-8Lh"/>
+                        <constraint firstAttribute="width" constant="304" id="sJq-lW-Huj"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <state key="normal" backgroundImage="sort_bg.png">
+                        <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="highlighted" backgroundImage="sort_bg.png"/>
+                    <connections>
+                        <action selector="filterBtnPressed:" destination="-1" eventType="touchUpInside" id="Xrl-0l-YUn"/>
+                    </connections>
+                </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="1" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="ko3-Wh-Kkg">
+                    <rect key="frame" x="0.0" y="336" width="375" height="331"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="5XU-RF-Sy2"/>
@@ -27,13 +121,24 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="IwO-1Z-6Tz" firstAttribute="top" secondItem="Xro-9o-DWH" secondAttribute="bottom" constant="10" id="1Md-gH-moY"/>
+                <constraint firstItem="voe-R5-s07" firstAttribute="top" secondItem="Xro-9o-DWH" secondAttribute="bottom" constant="10" id="6f7-uR-yBo"/>
+                <constraint firstItem="Xro-9o-DWH" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="8lx-F0-nNx"/>
+                <constraint firstItem="Xro-9o-DWH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="74" id="I5B-Us-3hp"/>
                 <constraint firstAttribute="trailing" secondItem="ko3-Wh-Kkg" secondAttribute="trailing" id="M8w-HK-bzy"/>
+                <constraint firstItem="voe-R5-s07" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Pgi-cG-taa"/>
                 <constraint firstItem="ko3-Wh-Kkg" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="a7i-9K-xPs"/>
+                <constraint firstAttribute="trailing" secondItem="voe-R5-s07" secondAttribute="trailing" id="dFC-e9-XzZ"/>
                 <constraint firstAttribute="bottom" secondItem="ko3-Wh-Kkg" secondAttribute="bottom" id="diq-tf-Zpo"/>
                 <constraint firstItem="ko3-Wh-Kkg" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="44" id="knP-qY-glb"/>
+                <constraint firstItem="IwO-1Z-6Tz" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="n2K-Lf-55g"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="208.5" y="123.5"/>
         </view>
     </objects>
+    <resources>
+        <image name="Rectangle210.png" width="768" height="1"/>
+        <image name="sort_bg.png" width="304" height="30"/>
+    </resources>
 </document>

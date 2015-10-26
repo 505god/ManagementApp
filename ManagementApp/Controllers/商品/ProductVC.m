@@ -94,7 +94,16 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    if (!self.view.window){
+        SafeRelease(_productModel);
+        SafeRelease(_segmentView);
+        SafeRelease(_descriptionTable);
+        SafeRelease(_descriptionManager);
+        SafeRelease(_stockTable);
+        SafeRelease(_stockManager);
+        self.view=nil;
+    }
 }
 
 #pragma mark - getter/setter
@@ -107,7 +116,7 @@
     
     //左侧名称显示的分类名称
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
-    [self.navBarView setRightWithArray:@[@"ok_bt"]];
+    [self.navBarView setRightWithArray:@[@"ok_bt"] type:0];
     [self.navBarView setTitle:self.isNew?SetTitle(@"product"):self.productModel.productCode image:nil];
     [self.view addSubview:self.navBarView];
 }
@@ -200,6 +209,7 @@
             }
         };
         [weakSelf.navigationController pushViewController:priceVC animated:YES];
+        SafeRelease(priceVC);
         
     }];
     radioItem.infoImg = infoImage;
@@ -252,6 +262,7 @@
             [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         };
         [weakSelf.navigationController pushViewController:materialVC animated:YES];
+        SafeRelease(materialVC);
         
     }];
     [section addItem:materialItem];
@@ -271,12 +282,13 @@
             [item reloadRowWithAnimation:UITableViewRowAnimationNone];
         };
         [weakSelf.navigationController pushViewController:classifyVC animated:YES];
+        SafeRelease(classifyVC);
         
     }];
     [section addItem:classifyItem];
     
     //备注
-    RETextItem *markItem = [RETextItem itemWithTitle:SetTitle(@"product_mark") value:@"" placeholder:SetTitle(@"product_set")];
+    RETextItem *markItem = [RETextItem itemWithTitle:SetTitle(@"product_mark") value:self.productModel.productMark?self.productModel.productMark:@"" placeholder:SetTitle(@"product_set")];
     markItem.onChange = ^(RETextItem *item){
         weakSelf.productModel.productMark = item.value;
     };
@@ -310,6 +322,7 @@
             }
         };
         [weakSelf.navigationController pushViewController:stockVC animated:YES];
+        SafeRelease(stockVC);
         
     }];
     [section addItem:stockItem];
@@ -328,10 +341,7 @@
     RETableViewSection *section = [RETableViewSection section];
     [_stockManager addSection:section];
     
-    __block RETableViewSection *sectionTemp = section;
     // Add Item
-    
-    
     //选择颜色后保存的item数组
     NSMutableArray *expandedItems = [NSMutableArray array];
     NSMutableArray *collapsedItems = [NSMutableArray array];
@@ -400,6 +410,7 @@
 
         };
         [weakSelf.navigationController pushViewController:colorVC animated:YES];
+        SafeRelease(colorVC);
     }];
     buttonItem.textAlignment = NSTextAlignmentCenter;
     [section addItem:buttonItem];

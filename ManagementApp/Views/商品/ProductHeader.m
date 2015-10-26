@@ -15,6 +15,9 @@
 @property (nonatomic, strong) UILabel *stockLab;
 
 @property (nonatomic, strong) UIImageView *lineImg;
+@property (nonatomic, strong) UIImageView *lineImg1;
+
+@property (nonatomic, strong) UIView *customView;
 @end
 
 @implementation ProductHeader
@@ -23,6 +26,10 @@
 - (instancetype)initWithReuseIdentifier:(nullable NSString *)reuseIdentifier {
     self = [super initWithReuseIdentifier:reuseIdentifier];
     if (self) {
+        self.customView = [[UIView alloc]initWithFrame:CGRectZero];
+        self.customView.backgroundColor = [UIColor whiteColor];
+        [self addSubview:self.customView];
+        
         self.priceLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.priceLab.backgroundColor = [UIColor clearColor];
         self.priceLab.font = [UIFont systemFontOfSize:14];
@@ -47,6 +54,10 @@
         self.lineImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.lineImg.image = [Utility getImgWithImageName:@"Rectangle210@2x"];
         [self addSubview:self.lineImg];
+        
+        self.lineImg1 = [[UIImageView alloc]initWithFrame:CGRectZero];
+        self.lineImg1.image = [Utility getImgWithImageName:@"Rectangle210@2x"];
+        [self addSubview:self.lineImg1];
     }
     return self;
 }
@@ -63,6 +74,10 @@
 
 -(void)layoutSubviews {
     [super layoutSubviews];
+    
+    self.customView.frame = (CGRect){0,0,self.width,self.height};
+    
+    self.lineImg1.frame = (CGRect){0,0,self.width,1};
     
     [self.priceLab sizeToFit];
     [self.saleLab sizeToFit];
