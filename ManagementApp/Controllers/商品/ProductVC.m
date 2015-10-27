@@ -122,7 +122,7 @@
 }
 
 -(void)setSegmentControl {
-    self.segmentView = [[RFSegmentView alloc] initWithFrame:(CGRect){(self.view.width-300)/2,self.navBarView.bottom+10,300,40} items:@[SetTitle(@"Description"),SetTitle(@"stock")]];
+    self.segmentView = [[RFSegmentView alloc] initWithFrame:(CGRect){10,self.navBarView.bottom+10,self.view.width-20,40} items:@[SetTitle(@"Description"),SetTitle(@"stock")]];
     self.segmentView.tintColor       = COLOR(80, 80, 80, 1);
     self.segmentView.delegate        = self;
     self.segmentView.selectedIndex   = 0;

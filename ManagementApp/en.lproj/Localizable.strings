@@ -72,6 +72,10 @@
 "order_stock_up" = "Up to stock";
 "order_stock_down" = "Minimum stock";
 "day" = "days";
+"pro_sale" = "Product sales";
+"client_buy" = "Buy clients";
+"stock_num" = "Stock number";
+"date" = "Date";
 
 //库存预警
 "stock_all" = "The total stock";

@@ -25,6 +25,8 @@
 		5D13D1971BCCF66200C8A430 /* WQIndexedCollationWithSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D13D1961BCCF66200C8A430 /* WQIndexedCollationWithSearch.m */; settings = {ASSET_TAGS = (); }; };
 		5D13D1991BCD034200C8A430 /* flotageBackgroud@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D13D1981BCD034200C8A430 /* flotageBackgroud@2x.png */; settings = {ASSET_TAGS = (); }; };
 		5D13D19B1BCD0C0C00C8A430 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D13D19A1BCD0C0C00C8A430 /* Assets.xcassets */; settings = {ASSET_TAGS = (); }; };
+		5D1DC8211BDF0BAF005134BB /* sale_tag_l@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D1DC8201BDF0BAF005134BB /* sale_tag_l@2x.png */; settings = {ASSET_TAGS = (); }; };
+		5D1DC8251BDF519B005134BB /* ProductDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1DC8231BDF519B005134BB /* ProductDetailCell.m */; settings = {ASSET_TAGS = (); }; };
 		5D3F05E81BCB558200849DA8 /* nav_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3F05E71BCB558200849DA8 /* nav_bg@2x.png */; settings = {ASSET_TAGS = (); }; };
 		5D3F05EB1BCB562F00849DA8 /* TabBarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3F05EA1BCB562F00849DA8 /* TabBarItem.m */; settings = {ASSET_TAGS = (); }; };
 		5D3F05EE1BCB571E00849DA8 /* TabbarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3F05ED1BCB571E00849DA8 /* TabbarView.m */; settings = {ASSET_TAGS = (); }; };
@@ -488,6 +490,9 @@
 		5D13D1961BCCF66200C8A430 /* WQIndexedCollationWithSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQIndexedCollationWithSearch.m; sourceTree = "<group>"; };
 		5D13D1981BCD034200C8A430 /* flotageBackgroud@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flotageBackgroud@2x.png"; sourceTree = "<group>"; };
 		5D13D19A1BCD0C0C00C8A430 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5D1DC8201BDF0BAF005134BB /* sale_tag_l@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sale_tag_l@2x.png"; sourceTree = "<group>"; };
+		5D1DC8221BDF519B005134BB /* ProductDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductDetailCell.h; sourceTree = "<group>"; };
+		5D1DC8231BDF519B005134BB /* ProductDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductDetailCell.m; sourceTree = "<group>"; };
 		5D3F05E71BCB558200849DA8 /* nav_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_bg@2x.png"; sourceTree = "<group>"; };
 		5D3F05E91BCB562F00849DA8 /* TabBarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabBarItem.h; sourceTree = "<group>"; };
 		5D3F05EA1BCB562F00849DA8 /* TabBarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarItem.m; sourceTree = "<group>"; };
@@ -1395,6 +1400,8 @@
 				5D41C48F1BD765F80023BE90 /* ProductHeader.m */,
 				5DC98BF91BD9C91F0062D7A2 /* ProductDetailHeader.h */,
 				5DC98BFA1BD9C91F0062D7A2 /* ProductDetailHeader.m */,
+				5D1DC8221BDF519B005134BB /* ProductDetailCell.h */,
+				5D1DC8231BDF519B005134BB /* ProductDetailCell.m */,
 			);
 			path = "商品";
 			sourceTree = "<group>";
@@ -2849,6 +2856,7 @@
 		5DFE00F41BC8DED9009A35C3 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				5D1DC8201BDF0BAF005134BB /* sale_tag_l@2x.png */,
 				5DB898AE1BDDF63C00CB4A25 /* profit_list_flag@2x.png */,
 				5DA9C66E1BDBE9BF00791E34 /* item_detail_tab_bg@2x.png */,
 				5DC98BF51BD9C8D10062D7A2 /* profit_down@2x.png */,
@@ -3111,6 +3119,7 @@
 				745B46F01BCE3F5100095E4D /* vendor_drawer_icon@2x.png in Resources */,
 				5DAA2D2D1BD0BC1400FBCA24 /* Card_Back@2x.png in Resources */,
 				5DAA2D391BD0BC1400FBCA24 /* UIButtonBarArrowLeft.png in Resources */,
+				5D1DC8211BDF0BAF005134BB /* sale_tag_l@2x.png in Resources */,
 				5D3F063B1BCB7BA500849DA8 /* menu_icon_highlighted@2x.png in Resources */,
 				5DAA2D3C1BD0BC1400FBCA24 /* UIButtonBarArrowRight@2x.png in Resources */,
 				5DAA2D381BD0BC1400FBCA24 /* Transparent@2x.png in Resources */,
@@ -3317,6 +3326,7 @@
 				5DF5468D1BC8E34C00DF5295 /* AFNetworkReachabilityManager.m in Sources */,
 				5DF547031BC8E34C00DF5295 /* XMPPvCardTemp.m in Sources */,
 				5DF546B91BC8E34C00DF5295 /* UIScrollView+MJRefresh.m in Sources */,
+				5D1DC8251BDF519B005134BB /* ProductDetailCell.m in Sources */,
 				5DF544981BC8E33200DF5295 /* UIButton+WebCache.m in Sources */,
 				5DAA2D131BD0BC1400FBCA24 /* RETableViewInlinePickerCell.m in Sources */,
 				5DF546921BC8E34C00DF5295 /* AFURLSessionManager.m in Sources */,

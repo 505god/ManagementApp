@@ -81,7 +81,10 @@ typedef enum FilterType:NSUInteger{
     productPriceModel2.aPrice = 19.99;
     productPriceModel2.selected = 0;
     model2.productPriceModel = productPriceModel2;
-    
+    model2.profitStatus = 1;
+    model2.profit = 1999;
+    model2.sortModel = [[SortModel alloc]init];
+    model2.sortModel.sortName = @"dsa";
     model2.stockCount = 157;
     model2.isHot = YES;
     model2.saleCount = 17;
@@ -91,7 +94,7 @@ typedef enum FilterType:NSUInteger{
     for (int i=0; i<20; i++) {
         ProductModel *model = [[ProductModel alloc]init];
         model.productCode = @"9001";
-        model.profitStatus = 1;
+        model.profitStatus = -1;
         ProductPriceModel *productPriceModel = [[ProductPriceModel alloc]init];
         productPriceModel.aPrice = 9.99;
         productPriceModel.selected = 0;

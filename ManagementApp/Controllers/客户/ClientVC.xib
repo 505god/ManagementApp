@@ -8,6 +8,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ClientVC">
             <connections>
                 <outlet property="filterBtn" destination="7kA-Xm-ylI" id="22y-jI-Vuq"/>
+                <outlet property="filterDayView" destination="d9u-TN-9Hc" id="nXa-Ke-8oC"/>
                 <outlet property="tableTopConstraint" destination="55y-BP-TYV" id="Acm-TG-I8W"/>
                 <outlet property="tableView" destination="PKX-ih-dJ9" id="U20-eB-mfc"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -18,6 +19,73 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Rectangle210.png" translatesAutoresizingMaskIntoConstraints="NO" id="nJC-Ql-bJT">
+                    <rect key="frame" x="0.0" y="157" width="375" height="1"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="RMx-fo-3nM"/>
+                    </constraints>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d9u-TN-9Hc">
+                    <rect key="frame" x="33" y="114" width="310" height="44"/>
+                    <subviews>
+                        <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gk9-2E-vIU">
+                            <rect key="frame" x="10" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="34" id="2Tc-78-0xz"/>
+                                <constraint firstAttribute="width" constant="65" id="z9i-KW-rjj"/>
+                            </constraints>
+                            <state key="normal" title="7 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="IGr-If-6Xs"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oc4-7o-KZV">
+                            <rect key="frame" x="237" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="65" id="Apn-v0-kr9"/>
+                                <constraint firstAttribute="height" constant="34" id="pX1-4F-DJJ"/>
+                            </constraints>
+                            <state key="normal" title="30 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="filterBtnPressed:" destination="-1" eventType="touchUpInside" id="1MC-Va-6SM"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLG-vH-sdO">
+                            <rect key="frame" x="122" y="5" width="65" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="65" id="0Go-Eo-dfd"/>
+                                <constraint firstAttribute="height" constant="34" id="olj-Dj-uH9"/>
+                            </constraints>
+                            <state key="normal" title="7 days">
+                                <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="U94-WB-Uc5"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="Myn-Pa-6Hk"/>
+                        <constraint firstItem="Oc4-7o-KZV" firstAttribute="centerY" secondItem="d9u-TN-9Hc" secondAttribute="centerY" id="TUZ-ii-FBy"/>
+                        <constraint firstItem="gk9-2E-vIU" firstAttribute="centerY" secondItem="d9u-TN-9Hc" secondAttribute="centerY" id="cyl-Fv-NDr"/>
+                        <constraint firstItem="gk9-2E-vIU" firstAttribute="leading" secondItem="d9u-TN-9Hc" secondAttribute="leading" constant="10" id="fLf-KH-UVC"/>
+                        <constraint firstItem="eLG-vH-sdO" firstAttribute="centerY" secondItem="d9u-TN-9Hc" secondAttribute="centerY" id="h6M-8k-3Cv"/>
+                        <constraint firstAttribute="trailing" secondItem="Oc4-7o-KZV" secondAttribute="trailing" constant="8" id="iA2-I7-FRi"/>
+                        <constraint firstAttribute="width" constant="310" id="k0l-MQ-Vfv"/>
+                        <constraint firstItem="eLG-vH-sdO" firstAttribute="centerX" secondItem="d9u-TN-9Hc" secondAttribute="centerX" id="ocd-UE-HIL"/>
+                    </constraints>
+                </view>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Rectangle210.png" translatesAutoresizingMaskIntoConstraints="NO" id="Dzf-Ru-gqO">
+                    <rect key="frame" x="0.0" y="113" width="375" height="1"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="QRg-f0-R9s"/>
+                    </constraints>
+                </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kA-Xm-ylI">
                     <rect key="frame" x="35" y="74" width="304" height="30"/>
                     <constraints>
@@ -33,8 +101,8 @@
                         <action selector="filterBtnPressed:" destination="-1" eventType="touchUpInside" id="keU-Yu-MHn"/>
                     </connections>
                 </button>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="PKX-ih-dJ9">
-                    <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" style="plain" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="PKX-ih-dJ9">
+                    <rect key="frame" x="0.0" y="309" width="375" height="358"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <inset key="separatorInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
                     <connections>
@@ -45,10 +113,18 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="nJC-Ql-bJT" secondAttribute="trailing" id="1i1-ez-trO"/>
                 <constraint firstItem="PKX-ih-dJ9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="55y-BP-TYV"/>
                 <constraint firstItem="7kA-Xm-ylI" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="74" id="8sQ-GM-DJi"/>
+                <constraint firstItem="nJC-Ql-bJT" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="AhH-RO-4b0"/>
+                <constraint firstItem="nJC-Ql-bJT" firstAttribute="top" secondItem="Dzf-Ru-gqO" secondAttribute="bottom" constant="43" id="G0l-bX-Jn1"/>
                 <constraint firstItem="7kA-Xm-ylI" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Gq6-Ej-ixv"/>
+                <constraint firstItem="Dzf-Ru-gqO" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Hmq-L8-DsM"/>
+                <constraint firstAttribute="trailing" secondItem="Dzf-Ru-gqO" secondAttribute="trailing" id="InY-2A-wFF"/>
+                <constraint firstItem="d9u-TN-9Hc" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="doR-4a-TwP"/>
+                <constraint firstItem="d9u-TN-9Hc" firstAttribute="top" secondItem="7kA-Xm-ylI" secondAttribute="bottom" constant="10" id="jSp-Ze-yzv"/>
                 <constraint firstItem="PKX-ih-dJ9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pWL-1X-yJM"/>
+                <constraint firstItem="Dzf-Ru-gqO" firstAttribute="top" secondItem="7kA-Xm-ylI" secondAttribute="bottom" constant="9" id="ubK-P3-Ndg"/>
                 <constraint firstAttribute="bottom" secondItem="PKX-ih-dJ9" secondAttribute="bottom" id="wYX-G7-b3W"/>
                 <constraint firstAttribute="trailing" secondItem="PKX-ih-dJ9" secondAttribute="trailing" id="wdn-s9-rW0"/>
             </constraints>
@@ -57,6 +133,7 @@
         </view>
     </objects>
     <resources>
+        <image name="Rectangle210.png" width="768" height="1"/>
         <image name="sort_bg.png" width="304" height="30"/>
     </resources>
 </document>

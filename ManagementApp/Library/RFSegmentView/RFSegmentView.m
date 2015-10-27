@@ -11,7 +11,7 @@
 #define RGB(r,g,b)    RGBA(r,g,b,1)
 #define RGBA(r,g,b,a) ([UIColor colorWithRed:r/255 green:g/255 blue:b/255 alpha:a])
 #define kDefaultTintColor   RGB(3, 116, 255)
-#define kLeftRightMargin    15
+#define kLeftRightMargin    0
 #define kItemHeight         30
 #define kBorderLineWidth    0.5
 #define kTitleSize         ([UIFont systemFontOfSize:14])

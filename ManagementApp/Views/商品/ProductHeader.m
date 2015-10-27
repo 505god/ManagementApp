@@ -57,7 +57,7 @@
         
         self.lineImg1 = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.lineImg1.image = [Utility getImgWithImageName:@"Rectangle210@2x"];
-        [self addSubview:self.lineImg1];
+//        [self addSubview:self.lineImg1];
     }
     return self;
 }
@@ -77,7 +77,7 @@
     
     self.customView.frame = (CGRect){0,0,self.width,self.height};
     
-    self.lineImg1.frame = (CGRect){0,0,self.width,1};
+//    self.lineImg1.frame = (CGRect){0,0,self.width,1};
     
     [self.priceLab sizeToFit];
     [self.saleLab sizeToFit];

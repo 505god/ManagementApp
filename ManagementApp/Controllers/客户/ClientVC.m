@@ -29,6 +29,7 @@ typedef enum FilterType:NSUInteger{
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *dataArray;
 
+
 ///当前页开始索引
 @property (nonatomic, assign) NSInteger start;
 @property (nonatomic, assign) NSInteger lastProductId;
@@ -46,6 +47,10 @@ typedef enum FilterType:NSUInteger{
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableTopConstraint;
 @property (nonatomic, assign) ClientFilterType filterType;
+
+///欠款最多的天数选择
+@property (weak, nonatomic) IBOutlet UIView *filterDayView;
+@property (nonatomic, assign) NSInteger dayType;
 @end
 
 @implementation ClientVC
@@ -62,6 +67,7 @@ typedef enum FilterType:NSUInteger{
     
     self.type = 1;
     self.filterType = 0;
+    self.dayType = 0;
     
     ClientModel *clientModel = [[ClientModel alloc]init];
     clientModel.clientName = @"testtesttest";
@@ -139,10 +145,37 @@ typedef enum FilterType:NSUInteger{
 -(void)setFilterType:(ClientFilterType)filterType {
     _filterType = filterType;
     
+    if (filterType==ClientFilterType_arrears) {
+        self.dayType = 0;
+        self.tableTopConstraint.constant = 64+50+44;
+    }else {
+        if (self.type==0) {
+            self.tableTopConstraint.constant = 64;
+        }else {
+            self.tableTopConstraint.constant = 64+50;
+        }
+    }
+    
     NSArray *array = @[SetTitle(@"new_creat"),SetTitle(@"new_update"),SetTitle(@"order_maximum"),SetTitle(@"order_up"),SetTitle(@"order_arrears")];
     [self.filterBtn setTitle:array[filterType] forState:UIControlStateNormal];
     
 }
+
+-(void)setDayType:(NSInteger)dayType {
+    _dayType = dayType;
+    
+    for (int i=0; i<3; i++) {
+        UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
+        if (i==dayType) {
+            [btn setTitleColor:COLOR(12, 96, 254, 1) forState:UIControlStateNormal];
+        }else {
+            [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
+    }
+    
+}
+
+
 #pragma mark - UI
 
 -(void)setNavBarView {
@@ -153,6 +186,14 @@ typedef enum FilterType:NSUInteger{
     [self.view addSubview:self.navBarView];
     
     [Utility setExtraCellLineHidden:self.tableView];
+    
+    ///欠款最多的天数选择
+    NSArray *array = @[[NSString stringWithFormat:@"7 %@",SetTitle(@"day")],[NSString stringWithFormat:@"15 %@",SetTitle(@"day")],[NSString stringWithFormat:@"30 %@",SetTitle(@"day")],SetTitle(@"navicon_all")];
+    for (int i=0; i<3; i++) {
+        UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
+        [btn setTitle:array[i] forState:UIControlStateNormal];
+    }
+
 }
 
 #pragma mark - 导航栏代理
@@ -260,6 +301,15 @@ typedef enum FilterType:NSUInteger{
     [self.view bringSubviewToFront:self.filterView];
 }
 
+-(IBAction)dayFilterBtnPressed:(id)sender {
+    UIButton *btn = (UIButton *)sender;
+    
+    if ((btn.tag-100)==self.dayType) {
+        return;
+    }else {
+        self.dayType = btn.tag-100;
+    }
+}
 #pragma mark - FilterViewDelegate/FilterViewDataSourece
 
 - (NSInteger)filterView:(FilterView *)filterView numberOfRowsInSection:(NSInteger)section {

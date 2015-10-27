@@ -14,7 +14,11 @@
     return  @{@"ProductStockId": mts_key(ProductStockId),
               @"picHeader": mts_key(picHeader),
               @"stockNum": mts_key(stockNum),
-              @"color": mts_key(colorModel)
+              @"color": mts_key(colorModel),
+              @"saleNum": mts_key(saleNum),
+              @"clientName": mts_key(clientName),
+              @"productPriceModel":mts_key(productPriceModel),
+              @"time": mts_key(time)
               };
 }
 
@@ -24,7 +28,8 @@
 
 + (NSDictionary*)mts_arrayClassMapping
 {
-    return @{mts_key(color) : ColorModel.class
+    return @{mts_key(color) : ColorModel.class,
+             mts_key(productPriceModel) : ProductPriceModel.class
              };
 }
 

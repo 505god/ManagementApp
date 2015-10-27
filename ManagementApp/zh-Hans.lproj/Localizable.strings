@@ -73,6 +73,10 @@
 "order_stock_up" = "库存最多";
 "order_stock_down" = "库存最少";
 "day" = "天";
+"pro_sale" = "商品销售";
+"client_buy" = "购买客户";
+"stock_num" = "库存数量";
+"date" = "日期";
 
 //库存预警
 "stock_all" = "当总库存低于";
@@ -125,7 +129,7 @@
 "Refreshing" = "正在努力加载中...";
 "HeaderPullToRefresh" = "下拉可以刷新";
 "HeaderReleaseToRefresh" = "松开立即刷新";
-"LastUpDate" = "最后更新:";
+"LastUpDate" = "最近更新:";
 
 //错误码
 "error_code_" = "稍后再试...";

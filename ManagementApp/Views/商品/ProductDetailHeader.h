@@ -14,5 +14,11 @@
 
 @property (nonatomic, strong) ProductModel *productModel;
 
+@property (nonatomic, assign) NSInteger selectedIndex;
+
 @property (nonatomic, copy) void (^segmentChange)(NSInteger index);
+
+@property (nonatomic, copy) void (^showProfit)(ProductModel *productModel);
+
++(CGFloat)returnHeightWithProductModel:(ProductModel *)productModel;
 @end
