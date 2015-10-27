@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ProductModel.h"
+
 @interface ProductDetailHeader : UITableViewHeaderFooterView
 
+@property (nonatomic, strong) ProductModel *productModel;
+
+@property (nonatomic, copy) void (^segmentChange)(NSInteger index);
 @end
