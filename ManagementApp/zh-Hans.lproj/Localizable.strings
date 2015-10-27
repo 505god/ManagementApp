@@ -109,6 +109,11 @@
 "order_maximum" = "交易金额最高";
 "order_up" = "交易次数最多";
 "order_arrears" = "欠款最多";
+"order_buy" = "交易历史";
+"client_detail" = "客户详情";
+"total_price" = "总金额";
+"total_num" = "总数量";
+"Order_code" = "#订单号";
 
 //相册
 "title" = "选择相册";

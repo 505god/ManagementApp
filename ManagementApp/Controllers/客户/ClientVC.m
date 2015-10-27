@@ -15,6 +15,7 @@
 #import "ClientCell.h"
 
 #import "FilterView.h"
+#import "ClientDetailVC.h"
 
 typedef enum FilterType:NSUInteger{
     ClientFilterType_ccreat=0,//最新创建
@@ -74,7 +75,7 @@ typedef enum FilterType:NSUInteger{
     clientModel.clientLevel = 2;
     clientModel.totalPrice = 1293.23;
     clientModel.isPrivate = YES;
-    clientModel.clientType = 1;
+    clientModel.clientType = 0;
     
     [self.dataArray addObject:clientModel];
 }
@@ -289,6 +290,11 @@ typedef enum FilterType:NSUInteger{
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    ClientDetailVC *detailVC = [[ClientDetailVC alloc]init];
+    detailVC.clientModel = self.dataArray[indexPath.row];
+    [self.navigationController pushViewController:detailVC animated:YES];
+    SafeRelease(detailVC);
 }
 
 

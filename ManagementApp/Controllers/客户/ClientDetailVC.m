@@ -1,51 +1,27 @@
 //
-//  ProductDetailVC.m
+//  ClientDetailVC.m
 //  ManagementApp
 //
-//  Created by 邱成西 on 15/10/23.
+//  Created by 邱成西 on 15/10/27.
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-#import "ProductDetailVC.h"
-#import "ProductDetailHeader.h"
-#import "ProductVC.h"
+#import "ClientDetailVC.h"
 
-#import "ProductDetailCell.h"
+#import "AddClientVC.h"
+#import "ClientDetailHeader.h"
 
-@interface ProductDetailVC ()<UITableViewDelegate,UITableViewDataSource>
-
-@property (nonatomic, strong) UITableView *tableView;
-
-@property (nonatomic, assign) NSInteger index;
-
-@property (nonatomic, strong) NSMutableArray *dataArray1;
-@property (nonatomic, strong) NSMutableArray *dataArray2;
-@property (nonatomic, strong) NSMutableArray *dataArray3;
-
-//-------------当为客户的时候分页---------------------------------------
-///当前页开始索引
-@property (nonatomic, assign) NSInteger start;
-@property (nonatomic, assign) NSInteger lastProductId;
-///分页基数---默认10
-@property (nonatomic, assign) NSInteger limit;
-///总页数
-@property (nonatomic, assign) NSInteger pageCount;
-///加载更多
-@property (nonatomic, assign) BOOL isLoadingMore;
+@interface ClientDetailVC ()
 
 @end
 
-@implementation ProductDetailVC
--(void)dealloc {
-    SafeRelease(_tableView);
-    SafeRelease(_dataArray1);
-    SafeRelease(_dataArray2);
-    SafeRelease(_dataArray3);
-}
+@implementation ClientDetailVC
+
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.index = 0;
     [self setNavBarView];
     
@@ -82,7 +58,7 @@
     self.tableView.dataSource = self;
     [Utility setExtraCellLineHidden:self.tableView];
     [self.view addSubview:self.tableView];
-    [self.tableView registerClass:[ProductDetailHeader class] forHeaderFooterViewReuseIdentifier:@"ProductDetailHeader"];
+    [self.tableView registerClass:[ClientDetailHeader class] forHeaderFooterViewReuseIdentifier:@"ClientDetailHeader"];
 }
 
 #pragma mark - private
@@ -90,49 +66,8 @@
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
     [self.tableView addHeaderWithCallback:^{
-        
-        weakSelf.start = 0;
-        weakSelf.lastProductId = 0;
-        weakSelf.pageCount = -1;
-        weakSelf.isLoadingMore = NO;
-        [weakSelf.tableView removeFooter];
-        
         [weakSelf getDataFromSever];
-    } dateKey:@"ProductDetailVC"];
-}
-
-- (void)addFooter {
-    __weak __typeof(self)weakSelf = self;
-    [self.tableView addFooterWithCallback:^{
-        weakSelf.start += weakSelf.limit;
-        if (weakSelf.dataArray2.count>0) {
-            //            ProductModel *proObj = (ProductModel *)[weakSelf.dataArray lastObject];
-            //            weakSelf.lastProductId = proObj.productId;
-        }
-        weakSelf.isLoadingMore = YES;
-        [weakSelf getDataFromSever];
-    }];
-}
-
-#pragma mark - getter/setter
-
--(NSMutableArray *)dataArray1 {
-    if (!_dataArray1) {
-        _dataArray1 = [[NSMutableArray alloc]init];
-    }
-    return _dataArray1;
-}
--(NSMutableArray *)dataArray2 {
-    if (!_dataArray2) {
-        _dataArray2 = [[NSMutableArray alloc]init];
-    }
-    return _dataArray2;
-}
--(NSMutableArray *)dataArray3 {
-    if (!_dataArray3) {
-        _dataArray3 = [[NSMutableArray alloc]init];
-    }
-    return _dataArray3;
+    } dateKey:@"ClientDetailVC"];
 }
 
 #pragma mark - 导航栏代理
@@ -142,8 +77,8 @@
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    ProductVC *proVC = [[ProductVC alloc]init];
-    proVC.productModel = self.productModel;
+    AddClientVC *proVC = [[AddClientVC alloc]init];
+    proVC.clientModel = self.clientModel;
     [self.navigationController pushViewController:proVC animated:YES];
     SafeRelease(proVC);
 }
@@ -153,12 +88,12 @@
 #pragma mark - table代理
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return [ProductDetailHeader returnHeightWithProductModel:self.productModel];
+    return [ClientDetailHeader returnHeightWithIndex:self.index];
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    ProductDetailHeader *header = (ProductDetailHeader*)[tableView dequeueReusableHeaderFooterViewWithIdentifier:@"ProductDetailHeader"];
-    header.productModel = self.productModel;
+    ClientDetailHeader *header = (ClientDetailHeader*)[tableView dequeueReusableHeaderFooterViewWithIdentifier:@"ClientDetailHeader"];
+    header.clientModel = self.clientModel;
     header.selectedIndex = self.index;
     
     __weak __typeof(self)weakSelf = self;
@@ -166,11 +101,11 @@
         weakSelf.index = index;
         [weakSelf.tableView reloadData];
     };
-    header.showProfit = ^(ProductModel *productModel){
+    header.showPrivate = ^(ClientModel *clientModel){
         
     };
     
-
+    
     return header;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -183,15 +118,12 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString * identifier = @"product_cell";
     
-    ProductDetailCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
+    UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell=[[ProductDetailCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
-    
-    cell.productModel = self.productModel;
-    cell.selectedIndex = self.index;
-    
+    cell.textLabel.text = [NSString stringWithFormat:@"%d",(int)indexPath.row];
     
     return cell;
 }
@@ -199,7 +131,12 @@
 //去掉UItableview headerview黏性(sticky)
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (scrollView == self.tableView) {
-        CGFloat sectionHeaderHeight = [ProductDetailHeader returnHeightWithProductModel:self.productModel]-80;
+        CGFloat sectionHeaderHeight = [ClientDetailHeader returnHeightWithIndex:self.index];
+        if (self.index==0) {
+            sectionHeaderHeight -= 80;
+        }else {
+            sectionHeaderHeight -= 52;
+        }
         if (scrollView.contentOffset.y<=sectionHeaderHeight&&scrollView.contentOffset.y>=0) {
             scrollView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0);
         } else if (scrollView.contentOffset.y>=sectionHeaderHeight) {
@@ -225,35 +162,19 @@
         NSDictionary *jsonData=(NSDictionary *)responseObject;
         
         if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
-            NSInteger proNumber = [[aDic objectForKey:@"totalProduct"]integerValue];
-            if (strongSelf.pageCount<0) {
-                strongSelf.pageCount = proNumber;
-            }
             
-            if ((strongSelf.start+strongSelf.limit)<strongSelf.pageCount) {
-                if (strongSelf.isLoadingMore == NO) {
-                    [strongSelf addFooter];
-                }
-            }else {
-                [strongSelf.tableView removeFooter];
-            }
             
         }else {
-            strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
             [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
         }
         
         [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         __strong __typeof(weakSelf)strongSelf = weakSelf;
         if (!strongSelf) {
             return;
         }
-        strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
         [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
         
         [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
         

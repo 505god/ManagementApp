@@ -107,6 +107,11 @@
 "order_maximum" = "Up to amount";
 "order_up" = "Up to transactions";
 "order_arrears" = "Up to arrears";
+"order_buy" = "Buy history";
+"client_detail" = "Client details";
+"total_price" = "Total amount";
+"total_num" = "Total num";
+"Order_code" = "# code";
 
 //相册
 "title" = "Select Album";
