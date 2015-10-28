@@ -219,6 +219,22 @@
 		5DDB201E1BCB87EC0051E30E /* APIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB201D1BCB87EC0051E30E /* APIClient.m */; settings = {ASSET_TAGS = (); }; };
 		5DDB20211BCB88410051E30E /* LocalDataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB20201BCB88410051E30E /* LocalDataBase.m */; settings = {ASSET_TAGS = (); }; };
 		5DDB20241BCB889E0051E30E /* LocalDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB20231BCB889E0051E30E /* LocalDB.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24741BE0626800CB63D1 /* ClientDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24731BE0626800CB63D1 /* ClientDetailCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24781BE0627D00CB63D1 /* ClientInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24761BE0627D00CB63D1 /* ClientInfoCell.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24791BE0627D00CB63D1 /* ClientInfoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DDB24771BE0627D00CB63D1 /* ClientInfoCell.xib */; settings = {ASSET_TAGS = (); }; };
+		5DDB247C1BE062C000CB63D1 /* ClientDetailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB247B1BE062C000CB63D1 /* ClientDetailModel.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24801BE098A600CB63D1 /* PrivateClientVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB247E1BE098A600CB63D1 /* PrivateClientVC.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24811BE098A600CB63D1 /* PrivateClientVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DDB247F1BE098A600CB63D1 /* PrivateClientVC.xib */; settings = {ASSET_TAGS = (); }; };
+		5DDB24E21BE0B4BD00CB63D1 /* NSDate+Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24871BE0B4BD00CB63D1 /* NSDate+Utils.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24E31BE0B4BD00CB63D1 /* NSString+JSMessagesView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24891BE0B4BD00CB63D1 /* NSString+JSMessagesView.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24E81BE0B4BE00CB63D1 /* WQChatManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24921BE0B4BD00CB63D1 /* WQChatManager.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24F41BE0B4BE00CB63D1 /* WQDismissiveTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24AA1BE0B4BD00CB63D1 /* WQDismissiveTextView.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24F71BE0B4BE00CB63D1 /* WQInputFunctionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24B01BE0B4BD00CB63D1 /* WQInputFunctionView.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24F81BE0B4BE00CB63D1 /* WQInputText.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24B21BE0B4BD00CB63D1 /* WQInputText.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24FE1BE0B4BE00CB63D1 /* WQMessageContentButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24BD1BE0B4BD00CB63D1 /* WQMessageContentButton.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB24FF1BE0B4BE00CB63D1 /* WQMessageFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24BF1BE0B4BD00CB63D1 /* WQMessageFrame.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB25001BE0B4BE00CB63D1 /* WQMessageTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB24C11BE0B4BD00CB63D1 /* WQMessageTextView.m */; settings = {ASSET_TAGS = (); }; };
+		5DDB25121BE0B7F600CB63D1 /* MessageModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DDB25111BE0B7F600CB63D1 /* MessageModel.m */; settings = {ASSET_TAGS = (); }; };
 		5DF544671BC8E03100DF5295 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF544661BC8E03100DF5295 /* BaseVC.m */; settings = {ASSET_TAGS = (); }; };
 		5DF5446A1BC8E0CD00DF5295 /* NavBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF544691BC8E0CD00DF5295 /* NavBarView.m */; settings = {ASSET_TAGS = (); }; };
 		5DF5448F1BC8E33200DF5295 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF5446F1BC8E33200DF5295 /* MKAnnotationView+WebCache.m */; settings = {ASSET_TAGS = (); }; };
@@ -801,6 +817,37 @@
 		5DDB20221BCB889E0051E30E /* LocalDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDB.h; sourceTree = "<group>"; };
 		5DDB20231BCB889E0051E30E /* LocalDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalDB.m; sourceTree = "<group>"; };
 		5DDB20271BCB894C0051E30E /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		5DDB24711BE0608900CB63D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DDB24721BE0626800CB63D1 /* ClientDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDetailCell.h; sourceTree = "<group>"; };
+		5DDB24731BE0626800CB63D1 /* ClientDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientDetailCell.m; sourceTree = "<group>"; };
+		5DDB24751BE0627D00CB63D1 /* ClientInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientInfoCell.h; sourceTree = "<group>"; };
+		5DDB24761BE0627D00CB63D1 /* ClientInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientInfoCell.m; sourceTree = "<group>"; };
+		5DDB24771BE0627D00CB63D1 /* ClientInfoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ClientInfoCell.xib; sourceTree = "<group>"; };
+		5DDB247A1BE062C000CB63D1 /* ClientDetailModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDetailModel.h; sourceTree = "<group>"; };
+		5DDB247B1BE062C000CB63D1 /* ClientDetailModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientDetailModel.m; sourceTree = "<group>"; };
+		5DDB247D1BE098A600CB63D1 /* PrivateClientVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClientVC.h; sourceTree = "<group>"; };
+		5DDB247E1BE098A600CB63D1 /* PrivateClientVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivateClientVC.m; sourceTree = "<group>"; };
+		5DDB247F1BE098A600CB63D1 /* PrivateClientVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PrivateClientVC.xib; sourceTree = "<group>"; };
+		5DDB24861BE0B4BD00CB63D1 /* NSDate+Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Utils.h"; sourceTree = "<group>"; };
+		5DDB24871BE0B4BD00CB63D1 /* NSDate+Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Utils.m"; sourceTree = "<group>"; };
+		5DDB24881BE0B4BD00CB63D1 /* NSString+JSMessagesView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+JSMessagesView.h"; sourceTree = "<group>"; };
+		5DDB24891BE0B4BD00CB63D1 /* NSString+JSMessagesView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+JSMessagesView.m"; sourceTree = "<group>"; };
+		5DDB24911BE0B4BD00CB63D1 /* WQChatManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQChatManager.h; sourceTree = "<group>"; };
+		5DDB24921BE0B4BD00CB63D1 /* WQChatManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQChatManager.m; sourceTree = "<group>"; };
+		5DDB24A91BE0B4BD00CB63D1 /* WQDismissiveTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQDismissiveTextView.h; sourceTree = "<group>"; };
+		5DDB24AA1BE0B4BD00CB63D1 /* WQDismissiveTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQDismissiveTextView.m; sourceTree = "<group>"; };
+		5DDB24AF1BE0B4BD00CB63D1 /* WQInputFunctionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQInputFunctionView.h; sourceTree = "<group>"; };
+		5DDB24B01BE0B4BD00CB63D1 /* WQInputFunctionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQInputFunctionView.m; sourceTree = "<group>"; };
+		5DDB24B11BE0B4BD00CB63D1 /* WQInputText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQInputText.h; sourceTree = "<group>"; };
+		5DDB24B21BE0B4BD00CB63D1 /* WQInputText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQInputText.m; sourceTree = "<group>"; };
+		5DDB24BC1BE0B4BD00CB63D1 /* WQMessageContentButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQMessageContentButton.h; sourceTree = "<group>"; };
+		5DDB24BD1BE0B4BD00CB63D1 /* WQMessageContentButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQMessageContentButton.m; sourceTree = "<group>"; };
+		5DDB24BE1BE0B4BD00CB63D1 /* WQMessageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQMessageFrame.h; sourceTree = "<group>"; };
+		5DDB24BF1BE0B4BD00CB63D1 /* WQMessageFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQMessageFrame.m; sourceTree = "<group>"; };
+		5DDB24C01BE0B4BD00CB63D1 /* WQMessageTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WQMessageTextView.h; sourceTree = "<group>"; };
+		5DDB24C11BE0B4BD00CB63D1 /* WQMessageTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WQMessageTextView.m; sourceTree = "<group>"; };
+		5DDB25101BE0B7F600CB63D1 /* MessageModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageModel.h; sourceTree = "<group>"; };
+		5DDB25111BE0B7F600CB63D1 /* MessageModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageModel.m; sourceTree = "<group>"; };
 		5DF544651BC8E03100DF5295 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
 		5DF544661BC8E03100DF5295 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
 		5DF544681BC8E0CD00DF5295 /* NavBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavBarView.h; sourceTree = "<group>"; };
@@ -1367,6 +1414,9 @@
 				5DB4EE861BD8C1EE00DC2B79 /* ClientTypeVC.m */,
 				5D1DC8271BDF65C4005134BB /* ClientDetailVC.h */,
 				5D1DC8281BDF65C4005134BB /* ClientDetailVC.m */,
+				5DDB247D1BE098A600CB63D1 /* PrivateClientVC.h */,
+				5DDB247E1BE098A600CB63D1 /* PrivateClientVC.m */,
+				5DDB247F1BE098A600CB63D1 /* PrivateClientVC.xib */,
 			);
 			path = "客户";
 			sourceTree = "<group>";
@@ -1418,11 +1468,17 @@
 		5D3F06051BCB5D2100849DA8 /* 客户 */ = {
 			isa = PBXGroup;
 			children = (
+				5DDB24821BE0B4BD00CB63D1 /* 聊天 */,
 				5DA9C6621BDBBFF300791E34 /* ClientCell.h */,
 				5DA9C6631BDBBFF300791E34 /* ClientCell.m */,
 				5DA9C6641BDBBFF300791E34 /* ClientCell.xib */,
 				5D1DC82A1BDF6741005134BB /* ClientDetailHeader.h */,
 				5D1DC82B1BDF6741005134BB /* ClientDetailHeader.m */,
+				5DDB24721BE0626800CB63D1 /* ClientDetailCell.h */,
+				5DDB24731BE0626800CB63D1 /* ClientDetailCell.m */,
+				5DDB24751BE0627D00CB63D1 /* ClientInfoCell.h */,
+				5DDB24761BE0627D00CB63D1 /* ClientInfoCell.m */,
+				5DDB24771BE0627D00CB63D1 /* ClientInfoCell.xib */,
 			);
 			path = "客户";
 			sourceTree = "<group>";
@@ -1725,8 +1781,37 @@
 			children = (
 				745B46F31BCFA52D00095E4D /* ClientModel.h */,
 				745B46F41BCFA52D00095E4D /* ClientModel.m */,
+				5DDB247A1BE062C000CB63D1 /* ClientDetailModel.h */,
+				5DDB247B1BE062C000CB63D1 /* ClientDetailModel.m */,
+				5DDB25101BE0B7F600CB63D1 /* MessageModel.h */,
+				5DDB25111BE0B7F600CB63D1 /* MessageModel.m */,
 			);
 			name = "客户";
+			sourceTree = "<group>";
+		};
+		5DDB24821BE0B4BD00CB63D1 /* 聊天 */ = {
+			isa = PBXGroup;
+			children = (
+				5DDB24861BE0B4BD00CB63D1 /* NSDate+Utils.h */,
+				5DDB24871BE0B4BD00CB63D1 /* NSDate+Utils.m */,
+				5DDB24881BE0B4BD00CB63D1 /* NSString+JSMessagesView.h */,
+				5DDB24891BE0B4BD00CB63D1 /* NSString+JSMessagesView.m */,
+				5DDB24911BE0B4BD00CB63D1 /* WQChatManager.h */,
+				5DDB24921BE0B4BD00CB63D1 /* WQChatManager.m */,
+				5DDB24A91BE0B4BD00CB63D1 /* WQDismissiveTextView.h */,
+				5DDB24AA1BE0B4BD00CB63D1 /* WQDismissiveTextView.m */,
+				5DDB24AF1BE0B4BD00CB63D1 /* WQInputFunctionView.h */,
+				5DDB24B01BE0B4BD00CB63D1 /* WQInputFunctionView.m */,
+				5DDB24B11BE0B4BD00CB63D1 /* WQInputText.h */,
+				5DDB24B21BE0B4BD00CB63D1 /* WQInputText.m */,
+				5DDB24BC1BE0B4BD00CB63D1 /* WQMessageContentButton.h */,
+				5DDB24BD1BE0B4BD00CB63D1 /* WQMessageContentButton.m */,
+				5DDB24BE1BE0B4BD00CB63D1 /* WQMessageFrame.h */,
+				5DDB24BF1BE0B4BD00CB63D1 /* WQMessageFrame.m */,
+				5DDB24C01BE0B4BD00CB63D1 /* WQMessageTextView.h */,
+				5DDB24C11BE0B4BD00CB63D1 /* WQMessageTextView.m */,
+			);
+			path = "聊天";
 			sourceTree = "<group>";
 		};
 		5DF5446D1BC8E33200DF5295 /* SDWebImage */ = {
@@ -3196,10 +3281,12 @@
 				5DAA2D3C1BD0BC1400FBCA24 /* UIButtonBarArrowRight@2x.png in Resources */,
 				5DAA2D381BD0BC1400FBCA24 /* Transparent@2x.png in Resources */,
 				5D1DC8341BDF6F46005134BB /* charc_2_80@2x.png in Resources */,
+				5DDB24791BE0627D00CB63D1 /* ClientInfoCell.xib in Resources */,
 				74E358D71BCD321C00B0144C /* hot_dis_icon@2x.png in Resources */,
 				5DC4F1191BD72A37009A7F73 /* sale_tag@2x.png in Resources */,
 				5D13D1841BCCF0AC00C8A430 /* back_nav@2x.png in Resources */,
 				5D3F06301BCB798500849DA8 /* SortVC.xib in Resources */,
+				5DDB24811BE098A600CB63D1 /* PrivateClientVC.xib in Resources */,
 				5D8BD8261BCD1FF300FEC973 /* line@2x.png in Resources */,
 				5DAA2D341BD0BC1400FBCA24 /* Card_Visa.png in Resources */,
 				5D3F06101BCB5D7600849DA8 /* ClientVC.xib in Resources */,
@@ -3269,10 +3356,12 @@
 				5DF547251BC8E34C00DF5295 /* XMPPPresence+XEP_0172.m in Sources */,
 				5DF547261BC8E34C00DF5295 /* XMPPMessage+XEP_0184.m in Sources */,
 				5DF547471BC8E34C00DF5295 /* DDContextFilterLogFormatter.m in Sources */,
+				5DDB24FE1BE0B4BE00CB63D1 /* WQMessageContentButton.m in Sources */,
 				5DF546D41BC8E34C00DF5295 /* XMPPModule.m in Sources */,
 				5DFD858C1BCE300D007E6EAC /* StockWarningVC.m in Sources */,
 				5DF546D11BC8E34C00DF5295 /* XMPPIQ.m in Sources */,
 				BC20C5E81BDF1E9900DF06A1 /* OrderCell.m in Sources */,
+				5DDB24801BE098A600CB63D1 /* PrivateClientVC.m in Sources */,
 				5DF546D61BC8E34C00DF5295 /* XMPPPresence.m in Sources */,
 				5D3F05EB1BCB562F00849DA8 /* TabBarItem.m in Sources */,
 				5DF5477F1BC8E50900DF5295 /* NSDictionary-DeepMutableCopy.m in Sources */,
@@ -3281,6 +3370,7 @@
 				5DAA2D151BD0BC1400FBCA24 /* RETableViewNumberCell.m in Sources */,
 				5D3F05EE1BCB571E00849DA8 /* TabbarView.m in Sources */,
 				5DF5471C1BC8E34C00DF5295 /* XMPPCapsResourceCoreDataStorageObject.m in Sources */,
+				5DDB24E31BE0B4BD00CB63D1 /* NSString+JSMessagesView.m in Sources */,
 				5DF546D91BC8E34C00DF5295 /* XMPPCoreDataStorage.m in Sources */,
 				5DF547151BC8E34C00DF5295 /* XMPPMessage+XEP_0085.m in Sources */,
 				5DAA2D141BD0BC1400FBCA24 /* RETableViewLongTextCell.m in Sources */,
@@ -3294,6 +3384,7 @@
 				5DF5474B1BC8E34C00DF5295 /* NSString+DDXML.m in Sources */,
 				5DF546D81BC8E34C00DF5295 /* XMPPBandwidthMonitor.m in Sources */,
 				5DF547181BC8E34C00DF5295 /* NSString+XEP_0106.m in Sources */,
+				5DDB24F71BE0B4BE00CB63D1 /* WQInputFunctionView.m in Sources */,
 				5DF546BC1BC8E34C00DF5295 /* ChineseToPinyinResource.m in Sources */,
 				5D82E4621BD3CA16002CAF0A /* REProductItem.m in Sources */,
 				5DF546EF1BC8E34C00DF5295 /* XMPPPrivacy.m in Sources */,
@@ -3332,6 +3423,7 @@
 				5DF5472D1BC8E34C00DF5295 /* XMPPPing.m in Sources */,
 				5D41C4821BD73E320023BE90 /* TableViewWithBlock.m in Sources */,
 				5DF547001BC8E34C00DF5295 /* XMPPvCardCoreDataStorage.m in Sources */,
+				5DDB24F41BE0B4BE00CB63D1 /* WQDismissiveTextView.m in Sources */,
 				5DAA2D601BD0BC7600FBCA24 /* REFormattedNumberField.m in Sources */,
 				5DF546B61BC8E34C00DF5295 /* MJRefreshFooterView.m in Sources */,
 				5DF546FA1BC8E34C00DF5295 /* XMPPRoomOccupantMemoryStorageObject.m in Sources */,
@@ -3358,6 +3450,7 @@
 				5DF547491BC8E34C00DF5295 /* DDMultiFormatter.m in Sources */,
 				5D9E3C311BD48228009FE9A1 /* JKAssetsThumbnailView.m in Sources */,
 				5DF546931BC8E34C00DF5295 /* UIButton+AFNetworking.m in Sources */,
+				5DDB24741BE0626800CB63D1 /* ClientDetailCell.m in Sources */,
 				5DF5473B1BC8E34C00DF5295 /* GCDMulticastDelegate.m in Sources */,
 				5DAA2D411BD0BC1400FBCA24 /* RETableViewOptionsController.m in Sources */,
 				5DAA2D1C1BD0BC1400FBCA24 /* REDateTimeItem.m in Sources */,
@@ -3380,6 +3473,7 @@
 				5DF547091BC8E34C00DF5295 /* XMPPvCardTempModule.m in Sources */,
 				5DF546BF1BC8E34C00DF5295 /* PinyinFormatter.m in Sources */,
 				5D3F062F1BCB798500849DA8 /* SortVC.m in Sources */,
+				5DDB24781BE0627D00CB63D1 /* ClientInfoCell.m in Sources */,
 				5D41C4901BD765F80023BE90 /* ProductHeader.m in Sources */,
 				5DF547221BC8E34C00DF5295 /* XMPPMessageArchiving.m in Sources */,
 				5DF546991BC8E34C00DF5295 /* BlockTextPromptAlertView.m in Sources */,
@@ -3409,6 +3503,7 @@
 				5DF544981BC8E33200DF5295 /* UIButton+WebCache.m in Sources */,
 				5DAA2D131BD0BC1400FBCA24 /* RETableViewInlinePickerCell.m in Sources */,
 				5DF546921BC8E34C00DF5295 /* AFURLSessionManager.m in Sources */,
+				5DDB24E81BE0B4BE00CB63D1 /* WQChatManager.m in Sources */,
 				5DF546EB1BC8E34C00DF5295 /* XMPPIQ+JabberRPCResonse.m in Sources */,
 				5D9E3C351BD48228009FE9A1 /* PhotoAlbumManager.m in Sources */,
 				5DF5449A1BC8E33200DF5295 /* UIImage+MultiFormat.m in Sources */,
@@ -3446,6 +3541,7 @@
 				5DAA2D271BD0BC1400FBCA24 /* NSString+RETableViewManagerAdditions.m in Sources */,
 				5D3F06211BCB71D600849DA8 /* InitVC.m in Sources */,
 				5DF547351BC8E34C00DF5295 /* XMPPMessageCarbons.m in Sources */,
+				5DDB25121BE0B7F600CB63D1 /* MessageModel.m in Sources */,
 				5DF546CC1BC8E34C00DF5295 /* NSData+XMPP.m in Sources */,
 				5DF546961BC8E34C00DF5295 /* BlockActionSheet.m in Sources */,
 				5DF547301BC8E34C00DF5295 /* NSXMLElement+XEP_0203.m in Sources */,
@@ -3498,6 +3594,7 @@
 				5DAA2D1A1BD0BC1400FBCA24 /* REBoolItem.m in Sources */,
 				5DAA2D231BD0BC1400FBCA24 /* REPickerItem.m in Sources */,
 				5D3F060A1BCB5D5000849DA8 /* StockVC.m in Sources */,
+				5DDB24FF1BE0B4BE00CB63D1 /* WQMessageFrame.m in Sources */,
 				5DF546A61BC8E34C00DF5295 /* FMResultSet.m in Sources */,
 				5D3F06141BCB5D9000849DA8 /* OptionsVC.m in Sources */,
 				5D13D1941BCCF62C00C8A430 /* ChineseInclude.m in Sources */,
@@ -3513,8 +3610,10 @@
 				5DAA2D181BD0BC1400FBCA24 /* RETableViewSegmentedCell.m in Sources */,
 				5DF5472C1BC8E34C00DF5295 /* XMPPAutoPing.m in Sources */,
 				5DAA2D1D1BD0BC1400FBCA24 /* REFloatItem.m in Sources */,
+				5DDB25001BE0B4BE00CB63D1 /* WQMessageTextView.m in Sources */,
 				5DF546FB1BC8E34C00DF5295 /* XMPPMessage+XEP0045.m in Sources */,
 				5DAA2D101BD0BC1400FBCA24 /* RETableViewDateTimeCell.m in Sources */,
+				5DDB24F81BE0B4BE00CB63D1 /* WQInputText.m in Sources */,
 				5DF547211BC8E34C00DF5295 /* XMPPMessageArchivingCoreDataStorage.m in Sources */,
 				5DF547341BC8E34C00DF5295 /* XMPPMessage+XEP_0280.m in Sources */,
 				5DAA2D161BD0BC1400FBCA24 /* RETableViewOptionCell.m in Sources */,
@@ -3532,6 +3631,7 @@
 				5DF5472B1BC8E34C00DF5295 /* XMPPStreamManagement.m in Sources */,
 				5D13D17A1BCCEE7D00C8A430 /* ColorCell.m in Sources */,
 				5DF546C71BC8E34C00DF5295 /* XMPPDigestMD5Authentication.m in Sources */,
+				5DDB247C1BE062C000CB63D1 /* ClientDetailModel.m in Sources */,
 				5D9F701F1BCCA01300145CE8 /* LoginVC.m in Sources */,
 				5DF5474C1BC8E34C00DF5295 /* DDXMLDocument.m in Sources */,
 				5DF546B81BC8E34C00DF5295 /* UIScrollView+MJExtension.m in Sources */,
@@ -3562,6 +3662,7 @@
 				5DF544671BC8E03100DF5295 /* BaseVC.m in Sources */,
 				5DC98BFB1BD9C91F0062D7A2 /* ProductDetailHeader.m in Sources */,
 				5DF546971BC8E34C00DF5295 /* BlockAlertView.m in Sources */,
+				5DDB24E21BE0B4BD00CB63D1 /* NSDate+Utils.m in Sources */,
 				5DF5470A1BC8E34C00DF5295 /* XMPPvCardTempTel.m in Sources */,
 				5DA9C6721BDC903E00791E34 /* UserModel.m in Sources */,
 				5DF5471B1BC8E34C00DF5295 /* XMPPCapsCoreDataStorageObject.m in Sources */,
@@ -3593,6 +3694,7 @@
 			children = (
 				5DF547941BC8E72E00DF5295 /* en */,
 				5DF547951BC8E73000DF5295 /* zh-Hans */,
+				5DDB24711BE0608900CB63D1 /* Base */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -3701,6 +3803,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ManagementApp/Views/客户/聊天",
+				);
 				GCC_PREFIX_HEADER = ManagementApp/ManagementApp.pch;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = ManagementApp/Info.plist;
@@ -3721,6 +3827,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ManagementApp/Views/客户/聊天",
+				);
 				GCC_PREFIX_HEADER = ManagementApp/ManagementApp.pch;
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = ManagementApp/Info.plist;

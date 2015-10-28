@@ -36,6 +36,8 @@
 @property (nonatomic, strong) UILabel *priceLab;
 @property (nonatomic, strong) UILabel *numLab;
 @property (nonatomic, strong) UILabel *timeLab;
+
+@property (nonatomic, strong) UIButton *messageBtn;
 @end
 
 @implementation ClientDetailHeader
@@ -124,6 +126,17 @@
         self.lineImg3 = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.lineImg3.image = [Utility getImgWithImageName:@"Rectangle210@2x"];
         [self addSubview:self.lineImg3];
+        
+        self.messageBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.messageBtn.layer.cornerRadius = 4;
+        self.messageBtn.layer.masksToBounds = YES;
+        [self.messageBtn setTitle:SetTitle(@"send_message") forState:UIControlStateNormal];
+        [self.messageBtn setTitleColor:COLOR(252, 166, 0, 1) forState:UIControlStateNormal];
+        self.messageBtn.titleLabel.font = [UIFont systemFontOfSize:15];
+        self.messageBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        [self.messageBtn addTarget:self action:@selector(sendMessagePressed) forControlEvents:UIControlEventTouchUpInside];
+        self.messageBtn.hidden = YES;
+        [self addSubview:self.messageBtn];
     }
     return self;
 }
@@ -149,6 +162,8 @@
     [self.privateLab sizeToFit];
     self.privateLab.frame = (CGRect){self.privateImg.right+5,self.lineImg.bottom+5,self.privateLab.width,self.privateLab.height};
     
+    self.messageBtn.frame = (CGRect){self.levelImg.right+15,self.privateImg.bottom+10,130,20};
+    
     self.arrowImg .frame = (CGRect){self.width-50,self.lineImg.bottom+5,40,40};
     
     ///SegmentView
@@ -160,7 +175,7 @@
     ///标题
     if (self.selectedIndex==0) {
         [self.codeLab sizeToFit];
-        self.codeLab.frame = (CGRect){10,self.lineImg2.bottom+5,120,self.codeLab.height};
+        self.codeLab.frame = (CGRect){15,self.lineImg2.bottom+5,120,self.codeLab.height};
         
         [self.timeLab sizeToFit];
         self.timeLab.frame = (CGRect){self.width-60,self.lineImg2.bottom+5,50,self.timeLab.height};
@@ -218,9 +233,11 @@
     if (clientModel.isPrivate) {
         self.privateImg.image = [Utility getImgWithImageName:@"premium_flag@2x"];
         self.customControl.userInteractionEnabled = YES;
+        self.messageBtn.hidden = NO;
     }else {
         self.privateImg.image = [Utility getImgWithImageName:@"premium_flag_un@2x"];
         self.customControl.userInteractionEnabled = NO;
+        self.messageBtn.hidden = YES;
     }
     
     self.arrowImg.hidden = !clientModel.isPrivate;
@@ -258,6 +275,12 @@
 -(void)showPrivateClient {
     if (self.showPrivate) {
         self.showPrivate(self.clientModel);
+    }
+}
+
+-(void)sendMessagePressed {
+    if (self.sendMessage) {
+        self.sendMessage(self.clientModel);
     }
 }
 @end

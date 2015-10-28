@@ -94,7 +94,7 @@
             <connections>
                 <outlet property="label1" destination="eC2-YO-Dow" id="FYY-4D-LxK"/>
             </connections>
-            <point key="canvasLocation" x="394" y="309.5"/>
+            <point key="canvasLocation" x="286" y="254"/>
         </view>
     </objects>
     <resources>

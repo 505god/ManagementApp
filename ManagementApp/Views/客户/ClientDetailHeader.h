@@ -20,5 +20,8 @@
 
 @property (nonatomic, copy) void (^showPrivate)(ClientModel *clientModel);
 
+@property (nonatomic, copy) void (^sendMessage)(ClientModel *clientModel);
+
+
 +(CGFloat)returnHeightWithIndex:(NSInteger)index;
 @end

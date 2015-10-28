@@ -43,6 +43,18 @@ typedef NS_ENUM(NSInteger, MessageFrom) {
     WQMessageFromOther = 1    // 别人发得
 };
 
+//推送类型
+typedef enum{
+    WQPushTypeLogIn = 0,                //异地登陆
+    WQPushTypeOrderRemindPay = 1,       //订单提醒付款
+    WQPushTypeOrderRemindDelivery = 2,  //订单提醒发货
+    WQPushTypeOrderDelivery = 3,        //订单发货
+    WQPushTypeOrderFinish = 4,          //订单已完成
+    WQPushTypeCustomer = 5,             //客户
+    WQPushTypeProduct = 6,              //商品
+    WQPushTypeChat = 7,                 //聊天
+    WQPushTypeNone = 8
+}WQPushType;
 
 #import "PopView.h"
 #import "NSObject+Motis.h"

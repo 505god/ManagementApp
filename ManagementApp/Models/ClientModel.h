@@ -36,4 +36,15 @@
 
 @property (nonatomic, assign) CGFloat totalPrice;
 
+
+///口令
+@property (nonatomic, strong) NSString *command;
+
+///口令使用与否
+@property (nonatomic, assign) BOOL isCommand;
+
+///是否显示价格
+@property (nonatomic, assign) BOOL isShowPrice;
+
+@property (nonatomic, strong) NSString *userHead;
 @end

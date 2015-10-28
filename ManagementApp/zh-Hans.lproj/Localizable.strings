@@ -90,6 +90,7 @@
 "alert_cancel" = "取消";
 "Previous" = "上一项";
 "Next" = "下一项";
+"confirm" = "确认";
 
 //搜索框
 "Search" = "搜索";
@@ -114,6 +115,18 @@
 "total_price" = "总金额";
 "total_num" = "总数量";
 "Order_code" = "#订单号";
+"command" = "口令";
+"command_change" = "更改口令";
+"command_send" = "发送口令";
+"price_show" = "价格已显示";
+"price_unshow" = "价格未显示";
+"member_disable" = "停用会员资格";
+"member_enable" = "启用会员资格";
+"command_use" = "专属口令（使用中）";
+"command_unuse" = "专属口令（已停用）";
+"send_message" = "发送消息";
+"sheet_sms" = "短信";
+"sheet_message" = "消息";
 
 //相册
 "title" = "选择相册";
@@ -135,6 +148,20 @@
 "HeaderPullToRefresh" = "下拉可以刷新";
 "HeaderReleaseToRefresh" = "松开立即刷新";
 "LastUpDate" = "最近更新:";
+
+//时间
+"Night" = "晚上";
+"Dawn" = "凌晨";
+"Tomorrow" = "明天";
+"Today" = "今天";
+"Yesterday" = "昨天";
+"Monday" = "星期一";
+"Tuesday" = "星期二";
+"Wednesday" = "星期三";
+"Thursday" = "星期四";
+"Friday" = "星期五";
+"Saturday" = "星期六";
+"Sunday" = "星期日";
 
 //错误码
 "error_code_" = "稍后再试...";

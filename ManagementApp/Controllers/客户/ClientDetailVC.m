@@ -11,11 +11,24 @@
 #import "AddClientVC.h"
 #import "ClientDetailHeader.h"
 
+#import "ClientDetailCell.h"
+#import "ClientInfoCell.h"
+
+#import "PrivateClientVC.h"
+
 @interface ClientDetailVC ()
+
+@property (nonatomic, strong) NSMutableArray *dataArray;
 
 @end
 
 @implementation ClientDetailVC
+
+-(void)dealloc {
+    SafeRelease(_tableView);
+    SafeRelease(_clientModel);
+    SafeRelease(_dataArray);
+}
 
 #pragma mark - lifeStyle
 
@@ -70,6 +83,15 @@
     } dateKey:@"ClientDetailVC"];
 }
 
+#pragma mark - getter/setter
+
+-(NSMutableArray *)dataArray {
+    if (!_dataArray) {
+        _dataArray = [[NSMutableArray alloc]init];
+    }
+    return _dataArray;
+}
+
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
@@ -99,9 +121,20 @@
     __weak __typeof(self)weakSelf = self;
     header.segmentChange = ^(NSInteger index){
         weakSelf.index = index;
+        
+        if (weakSelf.index==1) {
+            weakSelf.tableView.contentInset = UIEdgeInsetsMake(0,0,0,0);
+        }
         [weakSelf.tableView reloadData];
     };
     header.showPrivate = ^(ClientModel *clientModel){
+        PrivateClientVC *privateVC = LOADVC(@"PrivateClientVC");
+        privateVC.clientModel = weakSelf.clientModel;
+        [weakSelf.navigationController pushViewController:privateVC animated:YES];
+        SafeRelease(privateVC);
+    };
+    
+    header.sendMessage = ^(ClientModel *clientModel){
         
     };
     
@@ -109,28 +142,49 @@
     return header;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 100;
+    if (self.index==0) {
+        return 100;
+    }
+    return 3;
 }
 
 - (CGFloat)tableView:(UITableView *)_tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 50;
+    return 44;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString * identifier = @"product_cell";
     
-    UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (self.index==0) {
+        static NSString * identifier = @"ClientDetailCell";
+        
+        ClientDetailCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell=[[ClientDetailCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        
+//        cell.clientDetailModel = self.dataArray[indexPath.row];
+        
+        return cell;
+        
+    }else if (self.index==1){
+        static NSString * identifier = @"ClientInfoCell";
+        
+        ClientInfoCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell=[[ClientInfoCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        cell.idxPath = indexPath;
+        cell.clientModel = self.clientModel;
+        
+        return cell;
     }
-    cell.textLabel.text = [NSString stringWithFormat:@"%d",(int)indexPath.row];
-    
-    return cell;
+    return nil;
 }
 
 //去掉UItableview headerview黏性(sticky)
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (scrollView == self.tableView) {
+    if (scrollView == self.tableView && self.index==0) {
         CGFloat sectionHeaderHeight = [ClientDetailHeader returnHeightWithIndex:self.index];
         if (self.index==0) {
             sectionHeaderHeight -= 80;

@@ -88,7 +88,6 @@
 "alert_cancel" = "NO";
 "Previous" = "Previous";
 "Next" = "Next";
-"confirm" = "Confirm";
 
 //搜索框
 "Search" = "Search";
@@ -113,18 +112,6 @@
 "total_price" = "Total amount";
 "total_num" = "Total num";
 "Order_code" = "# code";
-"command" = "Command";
-"command_change" = "Change command";
-"command_send" = "Send command";
-"price_show" = "Price has been shown";
-"price_unshow" = "Price not shown";
-"member_disable" = "Disable membership";
-"member_enable" = "Enable membership";
-"command_use" = "Exclusive command（in use）";
-"command_unuse" = "Exclusive command（disabled）";
-"send_message" = "Send message";
-"sheet_sms" = "SMS";
-"sheet_message" = "Message";
 
 //相册
 "title" = "Select Album";
@@ -146,20 +133,6 @@
 "HeaderPullToRefresh" = "Pull-down to refresh";
 "HeaderReleaseToRefresh" = "Release to refresh";
 "LastUpDate" = "Last update:";
-
-//时间
-"Night" = "Night";
-"Dawn" = "Dawn";
-"Tomorrow" = "Tomorrow";
-"Today" = "Today";
-"Yesterday" = "Yesterday";
-"Monday" = "MON";
-"Tuesday" = "TUE";
-"Wednesday" = "WED";
-"Thursday" = "THU";
-"Friday" = "FRI";
-"Saturday" = "SAT";
-"Sunday" = "SUN";
 
 //错误码
 "error_code_" = "稍后再试...";

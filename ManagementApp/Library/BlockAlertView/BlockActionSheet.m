@@ -143,8 +143,8 @@ static UIFont *buttonFont = nil;
         NSString *title = [block objectAtIndex:1];
         NSString *color = [block objectAtIndex:2];
         
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"action-%@-button.png", color]];
-        image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width)>>1 topCapHeight:0];
+        UIImage *image = [Utility getImgWithImageName:@"stock_bg@2x"];
+        image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width+1)>>1 topCapHeight:0];
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.frame = CGRectMake(kActionSheetBorder, _height, _view.bounds.size.width-kActionSheetBorder*2, kActionSheetButtonHeight);
@@ -154,9 +154,15 @@ static UIFont *buttonFont = nil;
         button.backgroundColor = [UIColor clearColor];
         button.tag = i++;
         
-        [button setBackgroundImage:image forState:UIControlStateNormal];
-        [button setTitleColor:kActionSheetButtonTextColor forState:UIControlStateNormal];
-        [button setTitleShadowColor:kActionSheetButtonShadowColor forState:UIControlStateNormal];
+        button.layer.cornerRadius = 6;
+        button.layer.borderColor = COLOR(212, 212, 212, 1).CGColor;
+        button.layer.borderWidth = 0.5;
+        button.clipsToBounds = YES;
+        [button setBackgroundColor:[UIColor whiteColor]];
+        [button setBackgroundImage:nil forState:UIControlStateNormal];
+        [button setBackgroundImage:image forState:UIControlStateHighlighted];
+        
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [button setTitle:title forState:UIControlStateNormal];
         button.accessibilityLabel = title;
         
@@ -166,11 +172,7 @@ static UIFont *buttonFont = nil;
         _height += kActionSheetButtonHeight + kActionSheetBorder;
     }
     
-    UIImageView *modalBackground = [[UIImageView alloc] initWithFrame:_view.bounds];
-    modalBackground.image = background;
-    modalBackground.contentMode = UIViewContentModeScaleToFill;
-    [_view insertSubview:modalBackground atIndex:0];
-    [modalBackground release];
+//    _view.backgroundColor = [UIColor whiteColor];
     
     [BlockBackground sharedInstance].vignetteBackground = _vignetteBackground;
     [[BlockBackground sharedInstance] addToMainWindow:_view];
@@ -182,7 +184,7 @@ static UIFont *buttonFont = nil;
     __block CGPoint center = _view.center;
     center.y -= _height + kActionSheetBounce;
     
-    [UIView animateWithDuration:0.4
+    [UIView animateWithDuration:0.25f
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
@@ -216,7 +218,7 @@ static UIFont *buttonFont = nil;
     {
         CGPoint center = _view.center;
         center.y += _view.bounds.size.height;
-        [UIView animateWithDuration:0.4
+        [UIView animateWithDuration:0.25f
                               delay:0.0
                             options:UIViewAnimationOptionCurveEaseIn
                          animations:^{
@@ -241,14 +243,15 @@ static UIFont *buttonFont = nil;
 - (void)buttonClicked:(id)sender 
 {
     /* Run the button's block */
-//    int buttonIndex = [sender tag] - 1;
-//    [self dismissWithClickedButtonIndex:buttonIndex animated:YES];
+    UIButton *btn = (UIButton *)sender;
+    NSInteger buttonIndex = btn.tag - 1;
+    [self dismissWithClickedButtonIndex:buttonIndex animated:YES];
 }
 
 - (void)performDismissal {
     CGPoint center = _view.center;
     center.y += _view.bounds.size.height;
-    [UIView animateWithDuration:0.4
+    [UIView animateWithDuration:0.25f
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseIn
                      animations:^{

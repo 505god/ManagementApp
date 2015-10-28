@@ -7,6 +7,8 @@
 //
 
 #import "LocalDataBase.h"
+#import "ClientModel.h"
+#import "MessageModel.h"
 
 @interface LocalDB : LocalDataBase
 
@@ -17,16 +19,16 @@
 -(void)saveUserDataToLocal:(WQUserObj *)user completeBlock:(void (^)(BOOL finished))compleBlock;
 -(void)getLocalUserDataWithCompleteBlock:(void (^)(NSArray *array))compleBlock;
 -(void)deleteLocalUserWithCompleteBlock:(void (^)(BOOL finished))compleBlock;
-
+ */
 
 #pragma mark - 最近联系人列表
--(void)saveCustomerDataToLocal:(WQCustomerObj *)customerObj completeBlock:(void (^)(BOOL finished))compleBlock;
+-(void)saveCustomerDataToLocal:(ClientModel *)customerObj completeBlock:(void (^)(BOOL finished))compleBlock;
 -(void)getLocalCustomerWithCompleteBlock:(void (^)(NSArray *array))compleBlock;
 -(void)deleteLocalCustomerWithCustomerId:(NSString *)customerId completeBlock:(void (^)(BOOL finished))compleBlock;
 
 #pragma mark - 消息
--(void)saveMessageToLocal:(WQMessageObj *)messageObj completeBlock:(void (^)(BOOL finished))compleBlock;
+-(void)saveMessageToLocal:(MessageModel *)messageObj completeBlock:(void (^)(BOOL finished))compleBlock;
 -(void)getLocalMessageWithId:(NSString *)id1 Id:(NSString *)id2 start:(NSString *)start completeBlock:(void (^)(NSArray *array))compleBlock;
--(void)getLatestMessageWithId:(NSString *)id1 Id:(NSString *)id2 completeBlock:(void (^)(WQMessageObj *messageObj))compleBlock;
- */
+-(void)getLatestMessageWithId:(NSString *)id1 Id:(NSString *)id2 completeBlock:(void (^)(MessageModel *messageObj))compleBlock;
+
 @end

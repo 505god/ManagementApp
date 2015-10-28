@@ -8,45 +8,49 @@
 
 #import "LocalDB.h"
 
-/*
 @interface LocalDB (DBPrivate)
--(WQUserObj *)userModelFromLocal:(FMResultSet *)rs;
--(WQCustomerObj *)customerModelFromLocal:(FMResultSet *)rs;
--(WQMessageObj *)messageModelFromLocal:(FMResultSet *)rs;
+//-(WQUserObj *)userModelFromLocal:(FMResultSet *)rs;
+-(ClientModel *)customerModelFromLocal:(FMResultSet *)rs;
+-(MessageModel *)messageModelFromLocal:(FMResultSet *)rs;
 @end
 
 @implementation LocalDB (DBPrivate)
--(WQUserObj *)userModelFromLocal:(FMResultSet *)rs {
-    WQUserObj *userObj = [[WQUserObj alloc]init];
-    userObj.userId = [[rs stringForColumn:@"userId"] integerValue];
-    userObj.userHead = [rs stringForColumn:@"userHead"];
-    userObj.userName = [rs stringForColumn:@"userName"];
-    userObj.password = [rs stringForColumn:@"password"];
-    userObj.userPhone = [rs stringForColumn:@"userPhone"];
-    userObj.moneyType = [[rs stringForColumn:@"moneyType"]integerValue];
-    return userObj;
-}
--(WQCustomerObj *)customerModelFromLocal:(FMResultSet *)rs {
-    WQCustomerObj *customerObj = [[WQCustomerObj alloc]init];
-    customerObj.customerId = [[rs stringForColumn:@"customerId"] integerValue];
-    customerObj.customerName = [rs stringForColumn:@"customerName"];
-    customerObj.customerPhone = [rs stringForColumn:@"customerPhone"];
-    customerObj.customerHeader = [rs stringForColumn:@"customerHeader"];
-    customerObj.customerArea = [rs stringForColumn:@"customerArea"];
-    customerObj.customerDegree = [[rs stringForColumn:@"customerDegree"]integerValue];
-    customerObj.customerCode = [rs stringForColumn:@"customerCode"];
-    customerObj.customerShield = [[rs stringForColumn:@"customerShield"]integerValue];
+//-(WQUserObj *)userModelFromLocal:(FMResultSet *)rs {
+//    WQUserObj *userObj = [[WQUserObj alloc]init];
+//    userObj.userId = [[rs stringForColumn:@"userId"] integerValue];
+//    userObj.userHead = [rs stringForColumn:@"userHead"];
+//    userObj.userName = [rs stringForColumn:@"userName"];
+//    userObj.password = [rs stringForColumn:@"password"];
+//    userObj.userPhone = [rs stringForColumn:@"userPhone"];
+//    userObj.moneyType = [[rs stringForColumn:@"moneyType"]integerValue];
+//    return userObj;
+//}
+-(ClientModel *)customerModelFromLocal:(FMResultSet *)rs {
+    ClientModel *customerObj = [[ClientModel alloc]init];
+    customerObj.clientId = [[rs stringForColumn:@"clientId"] integerValue];
+    customerObj.clientType = [[rs stringForColumn:@"clientType"] integerValue];
+    customerObj.clientLevel = [[rs stringForColumn:@"clientLevel"]integerValue];
+    customerObj.clientName = [rs stringForColumn:@"clientName"];
+    customerObj.clientPhone = [rs stringForColumn:@"clientPhone"];
+    customerObj.clientEmail = [rs stringForColumn:@"clientEmail"];
+    customerObj.clientRemark = [rs stringForColumn:@"clientRemark"];
+    customerObj.isPrivate = [[rs stringForColumn:@"isPrivate"] boolValue];
+    
+    customerObj.command = [rs stringForColumn:@"customerCode"];
+    customerObj.isCommand = [[rs stringForColumn:@"isCommand"] boolValue];
+    customerObj.isShowPrice = [[rs stringForColumn:@"isShowPrice"] boolValue];
     return customerObj;
 }
--(WQMessageObj *)messageModelFromLocal:(FMResultSet *)rs {
-    WQMessageObj *messageObj = [[WQMessageObj alloc]init];
+-(MessageModel *)messageModelFromLocal:(FMResultSet *)rs {
+    MessageModel *messageObj = [[MessageModel alloc]init];
     messageObj.messageFrom = [[rs stringForColumn:@"messageFrom"] integerValue];
     messageObj.messageTo = [[rs stringForColumn:@"messageTo"] integerValue];
     messageObj.messageContent = [rs stringForColumn:@"messageContent"];
     messageObj.messageDate = [rs stringForColumn:@"messageDate"];
     messageObj.messageType = [[rs stringForColumn:@"messageType"]integerValue];
     messageObj.messageId = [rs stringForColumn:@"messageId"];
-    if (messageObj.messageFrom == [WQDataShare sharedService].userObj.userId) {
+
+    if (messageObj.messageFrom == [DataShare sharedService].userModel.userId) {
         messageObj.fromType = WQMessageFromMe;
     }else {
         messageObj.fromType = WQMessageFromOther;
@@ -56,7 +60,6 @@
 }
 
 @end
- */
 
 @implementation LocalDB
 
@@ -126,20 +129,20 @@
         compleBlock(res);
     }
 }
-
+*/
 
 #pragma mark - 最近联系人列表
 
--(void)saveCustomerDataToLocal:(WQCustomerObj *)customerObj completeBlock:(void (^)(BOOL finished))compleBlock {
+-(void)saveCustomerDataToLocal:(ClientModel *)customerObj completeBlock:(void (^)(BOOL finished))compleBlock {
     [self.db open];
     
-    FMResultSet * rs = [self.db executeQuery:@"select * from WQCustomer where customerId=?",[NSString stringWithFormat:@"%d",customerObj.customerId]];
+    FMResultSet * rs = [self.db executeQuery:@"select * from Client where clientId=?",[NSString stringWithFormat:@"%d",(int)customerObj.clientId]];
     
     BOOL isExit = NO;
-    WQCustomerObj *tempCustomer = [[WQCustomerObj alloc]init];
+    ClientModel *tempCustomer = [[ClientModel alloc]init];
     while ([rs next]) {
         tempCustomer = [self customerModelFromLocal:rs];
-        if (tempCustomer.customerId==customerObj.customerId) {
+        if (tempCustomer.clientId==customerObj.clientId) {
             isExit = YES;
             break;
         }
@@ -147,7 +150,7 @@
     [rs close];
     
     if (isExit==YES) {
-        BOOL res = [self.db executeUpdate:@"update WQCustomer set customerName=?,customerHeader=?,customerDegree=?,customerShield=? where customerId= ?",customerObj.customerName,customerObj.customerHeader,[NSString stringWithFormat:@"%d",customerObj.customerDegree],[NSString stringWithFormat:@"%d",customerObj.customerShield],[NSString stringWithFormat:@"%d",customerObj.customerId]];
+        BOOL res = [self.db executeUpdate:@"update Client set clientName=?,clientPhone=?,clientEmail=?,clientRemark=?,isPrivate=?,command=?,isCommand=?,isShowPrice=?,clientType=? where clientId= ?",customerObj.clientName,customerObj.clientPhone,customerObj.clientEmail,customerObj.clientRemark,[NSString stringWithFormat:@"%d",customerObj.isPrivate],customerObj.command,[NSString stringWithFormat:@"%d",customerObj.isCommand],[NSString stringWithFormat:@"%d",customerObj.isShowPrice],[NSString stringWithFormat:@"%d",(int)customerObj.clientType],[NSString stringWithFormat:@"%d",(int)customerObj.clientId]];
         
         [self.db close];
         
@@ -155,17 +158,20 @@
             compleBlock(res);
         }
     }else {
-        NSMutableArray *argumentsArray = [NSMutableArray arrayWithCapacity:9];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.customerId]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.customerName]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.customerPhone]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.customerHeader]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.customerArea]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.customerDegree]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.customerCode]];
-        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.customerShield]];
+        NSMutableArray *argumentsArray = [NSMutableArray arrayWithCapacity:11];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%d",(int)customerObj.clientId]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%ld",customerObj.clientType]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%ld",customerObj.clientLevel]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.clientName]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.clientPhone]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.clientEmail]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.clientRemark]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.isPrivate]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%@",customerObj.command]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.isCommand]];
+        [argumentsArray addObject:[NSString stringWithFormat:@"%d",customerObj.isShowPrice]];
         
-        BOOL res = [self.db executeUpdate:@"insert into WQCustomer (customerId,customerName,customerPhone,customerHeader,customerArea,customerDegree,customerCode,customerShield) values (?,?,?,?,?,?,?,?)" withArgumentsInArray:argumentsArray];
+        BOOL res = [self.db executeUpdate:@"insert into Client (clientId,clientType,clientLevel,clientName,clientPhone,clientEmail,clientRemark,isPrivate,command,isCommand,isShowPrice) values (?,?,?,?,?,?,?,?,?,?,?)" withArgumentsInArray:argumentsArray];
         
         [self.db close];
         
@@ -179,10 +185,10 @@
     
     NSMutableArray *mutableArray = [NSMutableArray array];
     
-    FMResultSet * rs = [self.db executeQuery:@"select * from WQCustomer"];
+    FMResultSet * rs = [self.db executeQuery:@"select * from Client"];
     
     while ([rs next]) {
-        WQCustomerObj *customerObj = [self customerModelFromLocal:rs];
+        ClientModel *customerObj = [self customerModelFromLocal:rs];
         [mutableArray addObject:customerObj];
         customerObj = nil;
     }
@@ -198,7 +204,7 @@
 -(void)deleteLocalCustomerWithCustomerId:(NSString *)customerId completeBlock:(void (^)(BOOL finished))compleBlock {
     [self.db open];
     
-    BOOL res = [self.db executeUpdate:@"delete from WQCustomer where customerId = ?",customerId];
+    BOOL res = [self.db executeUpdate:@"delete from Client where clientId = ?",customerId];
     
     [self.db close];
     
@@ -208,14 +214,14 @@
 }
 
 #pragma mark - 消息
--(void)saveMessageToLocal:(WQMessageObj *)messageObj completeBlock:(void (^)(BOOL finished))compleBlock {
+-(void)saveMessageToLocal:(MessageModel *)messageObj completeBlock:(void (^)(BOOL finished))compleBlock {
     [self.db open];
     
     //判断存在否messageId
     FMResultSet * rs = [self.db executeQuery:@"select * from WQMessage where messageId=?",messageObj.messageId];
     BOOL isExit = NO;
     while ([rs next]) {
-        WQMessageObj *message = [self messageModelFromLocal:rs];
+        MessageModel *message = [self messageModelFromLocal:rs];
         if (message != nil) {
             isExit = YES;
             break;
@@ -232,11 +238,11 @@
     }
     
     NSMutableArray *argumentsArray = [NSMutableArray arrayWithCapacity:6];
-    [argumentsArray addObject:[NSString stringWithFormat:@"%d",messageObj.messageFrom]];
-    [argumentsArray addObject:[NSString stringWithFormat:@"%d",messageObj.messageTo]];
+    [argumentsArray addObject:[NSString stringWithFormat:@"%ld",(long)messageObj.messageFrom]];
+    [argumentsArray addObject:[NSString stringWithFormat:@"%ld",(long)messageObj.messageTo]];
     [argumentsArray addObject:[NSString stringWithFormat:@"%@",messageObj.messageContent]];
     [argumentsArray addObject:[NSString stringWithFormat:@"%@",messageObj.messageDate]];
-    [argumentsArray addObject:[NSString stringWithFormat:@"%d",messageObj.messageType]];
+    [argumentsArray addObject:[NSString stringWithFormat:@"%ld",(long)messageObj.messageType]];
     [argumentsArray addObject:[NSString stringWithFormat:@"%@",messageObj.messageId]];
     BOOL res = [self.db executeUpdate:@"insert into WQMessage (messageFrom,messageTo,messageContent,messageDate,messageType,messageId) values (?,?,?,?,?,?)" withArgumentsInArray:argumentsArray];
     
@@ -259,7 +265,7 @@
     FMResultSet * rs = [self.db executeQuery:@"select * from WQMessage where (messageFrom=? and messageTo=?)|(messageFrom=? and messageTo=?) order by id desc limit ?,10",id1,id2,id2,id1,start];
     
     while ([rs next]) {
-        WQMessageObj *message = [self messageModelFromLocal:rs];
+        MessageModel *message = [self messageModelFromLocal:rs];
         [mutableArray addObject:message];
         message = nil;
     }
@@ -271,7 +277,7 @@
         compleBlock(mutableArray);
     }
 }
--(void)getLatestMessageWithId:(NSString *)id1 Id:(NSString *)id2 completeBlock:(void (^)(WQMessageObj *messageObj))compleBlock {
+-(void)getLatestMessageWithId:(NSString *)id1 Id:(NSString *)id2 completeBlock:(void (^)(MessageModel *messageObj))compleBlock {
     if(id1==nil || id2==nil){
         return;
     }
@@ -280,7 +286,7 @@
     
     FMResultSet * rs = [self.db executeQuery:@"select * from WQMessage where (messageFrom=? and messageTo=?)|(messageFrom=? and messageTo=?) order by id desc limit 0,1",id1,id2,id2,id1];
     
-    WQMessageObj *messageObj;
+    MessageModel *messageObj;
     while ([rs next]) {
         messageObj = [self messageModelFromLocal:rs];
     }
@@ -292,5 +298,5 @@
         compleBlock(messageObj);
     }
 }
-*/
+
 @end

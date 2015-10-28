@@ -22,7 +22,13 @@
               @"clientRemark": mts_key(clientRemark),
               
               @"isPrivate": mts_key(isPrivate),
-              @"totalPrice": mts_key(totalPrice)
+              @"totalPrice": mts_key(totalPrice),
+              
+              @"command": mts_key(command),
+              @"isCommand": mts_key(isCommand),
+              
+              @"isShowPrice": mts_key(isShowPrice)
+              
               
               };
 }
