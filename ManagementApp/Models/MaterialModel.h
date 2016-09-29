@@ -11,7 +11,7 @@
 @interface MaterialModel : NSObject
 
 ///材质id
-@property (nonatomic, assign) NSInteger materialId;
+@property (nonatomic, strong) NSString *materialId;
 ///材质名称
 @property (nonatomic, strong) NSString *materialName;
 ///材质下产品数量
@@ -21,4 +21,5 @@
 ///用于选择材质的时候纪录分类的位置
 @property (nonatomic, strong) NSIndexPath *indexPath;
 
++(MaterialModel *)initWithObject:(AVObject *)object;
 @end

@@ -10,15 +10,53 @@
 
 @implementation ProductStockModel
 
++(ProductStockModel *)initWithObject:(AVObject *)object {
+    
+    ProductStockModel *model = [[ProductStockModel alloc]init];
+    
+    AVFile *attachment = [object objectForKey:@"header"];
+    if (attachment != nil) {
+        model.picHeader = attachment.url;
+    }
+    
+    AVObject *object15 = [object objectForKey:@"color"];
+    if (object15 != nil) {
+        [object15 fetchIfNeededInBackgroundWithBlock:^(AVObject *object, NSError *error) {
+            ColorModel *model12 = [ColorModel initWithObject:object];
+            model.colorModel = model12;
+        }];
+    }
+    
+    NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
+    [model mts_setValuesForKeysWithDictionary:dic];
+    model.ProductStockId = object.objectId;
+    model.stockNum = model.num-model.saleANum-model.saleBNum-model.saleCNum-model.saleDNum;
+    
+    return model;
+}
+
+
 + (NSDictionary*)mts_mapping {
-    return  @{@"ProductStockId": mts_key(ProductStockId),
-              @"picHeader": mts_key(picHeader),
-              @"stockNum": mts_key(stockNum),
-              @"color": mts_key(colorModel),
+    return  @{
+              @"stockNum": mts_key(num),
+              @"saleA": mts_key(saleANum),
+              @"saleB": mts_key(saleBNum),
+              @"saleC": mts_key(saleCNum),
+              @"saleD": mts_key(saleDNum),
+              @"hot": mts_key(isHot),
+              @"sale": mts_key(isDisplay),
+              @"pcode": mts_key(pcode),
               @"saleNum": mts_key(saleNum),
-              @"clientName": mts_key(clientName),
-              @"productPriceModel":mts_key(productPriceModel),
-              @"time": mts_key(time)
+              @"a": mts_key(aPrice),
+              @"b": mts_key(bPrice),
+              @"c": mts_key(cPrice),
+              @"d": mts_key(dPrice),
+              @"selected": mts_key(selected),
+              @"colorName": mts_key(colorName),
+              @"isSetting": mts_key(isSetting),
+              @"singleNum": mts_key(singleNum),
+              @"purchasePrice": mts_key(purchaseprice),
+              @"isWarning": mts_key(isWarning)
               };
 }
 
@@ -28,8 +66,7 @@
 
 + (NSDictionary*)mts_arrayClassMapping
 {
-    return @{mts_key(color) : ColorModel.class,
-             mts_key(productPriceModel) : ProductPriceModel.class
+    return @{mts_key(color) : ColorModel.class
              };
 }
 

@@ -10,27 +10,17 @@
 
 ///单例
 
-#import "UserModel.h"
+#import <AVOSCloud/AVOSCloud.h>
 
 typedef void(^CompleteBlock)(NSArray *array);
 
 @interface DataShare : NSObject{
     CompleteBlock completeBlock;
 }
+@property (nonatomic, strong) AppDelegate *appDel;
 
-@property (nonatomic, strong) UserModel *userModel;
 
-///xmpp注册
-@property (nonatomic, assign) BOOL idRegister;//1＝注册，0=未注册
-
-@property (nonatomic, assign) BOOL isInMessageView;
-///当前聊天对象的JID
-@property (nonatomic, strong) NSString *otherJID;
-
-///聊天输入框获取键盘语言
-@property (nonatomic, strong) NSString *getLanguage;
-
-@property (nonatomic, strong) NSMutableArray *messageArray;
+@property (nonatomic, strong) NSMutableDictionary *unreadMessageDic;
 
 //判断是否是点击推送进来的
 @property (nonatomic, assign) BOOL isPushing;
@@ -49,4 +39,8 @@ typedef void(^CompleteBlock)(NSArray *array);
 ///材质
 @property (nonatomic, strong) NSMutableArray *materialArray;
 -(void)sortMaterial:(NSArray *)material CompleteBlock:(CompleteBlock)complet;
+
+//代理
+@property (nonatomic, strong) NSMutableArray *agentArray;
+-(void)sortAgent:(NSArray *)agent CompleteBlock:(CompleteBlock)complet;
 @end

@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 
 #import "ClientModel.h"
+#import "RKNotificationHub.h"
 
 @interface ClientCell : UITableViewCell
 
 @property (nonatomic, strong) ClientModel *clientModel;
+
+@property (nonatomic, strong) RKNotificationHub *notificationHub;
 
 @end

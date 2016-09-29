@@ -9,49 +9,7 @@
 #import "REProductItemCell.h"
 #import "RETableViewManager.h"
 #import "UIImageView+WebCache.h"
-
-@protocol TapImgDelegate;
-
-@interface TapImg : UIImageView
-
-@property (nonatomic, assign) id<TapImgDelegate> delegate;
-
-@end
-
-@protocol TapImgDelegate <NSObject>
-
-- (void)tappedWithObject:(id) sender;
-@end
-
-@implementation TapImg
-
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.frame = frame;
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(Tapped:)];
-        [self addGestureRecognizer:tap];
-        SafeRelease(tap);
-        
-        self.contentMode = UIViewContentModeScaleAspectFill;
-        self.userInteractionEnabled = YES;
-    }
-    return self;
-}
-
-- (void) Tapped:(UIGestureRecognizer *) gesture
-{
-    if ([self.delegate respondsToSelector:@selector(tappedWithObject:)])
-    {
-        [self.delegate tappedWithObject:self];
-    }
-}
-
-
-@end
-
+#import "TapImg.h"
 
 @interface REProductItemCell ()<TapImgDelegate>
 
@@ -156,6 +114,8 @@
     }
     
     self.enabled = self.item.enabled;
+    
+    self.deleteImg.hidden = self.item.isEditing;
 }
 
 - (UIResponder *)responder
@@ -167,9 +127,13 @@
 {
     [super layoutSubviews];
     
-    self.deleteImg.frame = (CGRect){15,(self.height-20.5)/2,20.5,20.5};
-    self.pictureImg.frame = (CGRect){self.deleteImg.right+10,(self.height-75)/2,75,75};
-    
+    if (self.item.isEditing) {
+
+        self.pictureImg.frame = (CGRect){15,(self.height-75)/2,75,75};
+    }else {
+        self.deleteImg.frame = (CGRect){15,(self.height-20.5)/2,20.5,20.5};
+        self.pictureImg.frame = (CGRect){self.deleteImg.right+10,(self.height-75)/2,75,75};
+    }
     
     self.textLabel.frame = (CGRect){self.width-20-150,self.pictureImg.top+5,150,20};
     

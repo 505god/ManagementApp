@@ -92,6 +92,7 @@
         
         self.codeLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.codeLab.backgroundColor = [UIColor clearColor];
+        self.codeLab.adjustsFontSizeToFitWidth = YES;
         self.codeLab.font = [UIFont systemFontOfSize:14];
         self.codeLab.textColor = [UIColor lightGrayColor];
         self.codeLab.text = SetTitle(@"Order_code");
@@ -109,7 +110,7 @@
         self.numLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.numLab.backgroundColor = [UIColor clearColor];
         self.numLab.font = [UIFont systemFontOfSize:14];
-        self.numLab.textAlignment = NSTextAlignmentRight;
+        self.numLab.textAlignment = NSTextAlignmentCenter;
         self.numLab.textColor = [UIColor lightGrayColor];
         self.numLab.text = SetTitle(@"total_num");
         [self addSubview:self.numLab];
@@ -137,6 +138,9 @@
         [self.messageBtn addTarget:self action:@selector(sendMessagePressed) forControlEvents:UIControlEventTouchUpInside];
         self.messageBtn.hidden = YES;
         [self addSubview:self.messageBtn];
+        
+        self.notificationHub = [[RKNotificationHub alloc]initWithView:self];
+        [self.notificationHub setCount:-1];
     }
     return self;
 }
@@ -172,19 +176,24 @@
     ///line2
     self.lineImg2.frame = (CGRect){0,self.segmentView.bottom+5,self.width,1};
     
+    
+    [self.notificationHub setCircleAtFrame:(CGRect){self.messageBtn.left-10,self.messageBtn.top-5,15,15}];
+    
     ///标题
     if (self.selectedIndex==0) {
         [self.codeLab sizeToFit];
-        self.codeLab.frame = (CGRect){15,self.lineImg2.bottom+5,120,self.codeLab.height};
+        
         
         [self.timeLab sizeToFit];
-        self.timeLab.frame = (CGRect){self.width-60,self.lineImg2.bottom+5,50,self.timeLab.height};
+        self.timeLab.frame = (CGRect){self.width-50,self.lineImg2.bottom+5,40,self.timeLab.height};
         
         [self.numLab sizeToFit];
-        self.numLab.frame = (CGRect){self.timeLab.left-80,self.lineImg2.bottom+5,70,self.numLab.height};
+        self.numLab.frame = (CGRect){self.timeLab.left-70,self.lineImg2.bottom+5,65,self.numLab.height};
         
         [self.priceLab sizeToFit];
-        self.priceLab.frame = (CGRect){self.numLab.left-120,self.lineImg2.bottom+5,100,self.priceLab.height};
+        self.priceLab.frame = (CGRect){self.numLab.left-80,self.lineImg2.bottom+5,75,self.priceLab.height};
+        
+        self.codeLab.frame = (CGRect){15,self.lineImg2.bottom+5,self.priceLab.left-20,self.codeLab.height};
         
         ///line3
         self.lineImg3.frame = (CGRect){0,self.height-0.5,self.width,1};
@@ -230,17 +239,34 @@
     
     self.nameLab.text = clientModel.clientName;
     
-    if (clientModel.isPrivate) {
-        self.privateImg.image = [Utility getImgWithImageName:@"premium_flag@2x"];
-        self.customControl.userInteractionEnabled = YES;
-        self.messageBtn.hidden = NO;
+    ///红点
+    NSArray *allkeys = [[DataShare sharedService].unreadMessageDic allKeys];
+    if ([allkeys containsObject:clientModel.clientName]) {
+         NSInteger value = [[[DataShare sharedService].unreadMessageDic objectForKey:clientModel.clientName] integerValue];
+        
+        [self.notificationHub setCount:value==0?-1:(int)value];
     }else {
-        self.privateImg.image = [Utility getImgWithImageName:@"premium_flag_un@2x"];
-        self.customControl.userInteractionEnabled = NO;
-        self.messageBtn.hidden = YES;
+        [self.notificationHub setCount:-1];
     }
     
-    self.arrowImg.hidden = !clientModel.isPrivate;
+    if (clientModel.clientType==1) {
+        self.arrowImg.hidden = YES;
+        self.privateImg.hidden = YES;
+        self.privateLab.text = SetTitle(@"supplier");
+    }else {
+        self.arrowImg.hidden = NO;
+        self.privateImg.hidden = NO;
+        self.privateLab.text = SetTitle(@"private_client");
+        if (clientModel.isPrivate) {
+            self.privateImg.image = [Utility getImgWithImageName:@"premium_flag@2x"];
+            self.customControl.userInteractionEnabled = YES;
+            self.messageBtn.hidden = NO;
+        }else {
+            self.privateImg.image = [Utility getImgWithImageName:@"premium_flag_un@2x"];
+            self.customControl.userInteractionEnabled = YES;
+            self.messageBtn.hidden = YES;
+        }
+    }
 }
 
 -(void)setSelectedIndex:(NSInteger)selectedIndex {
@@ -279,6 +305,8 @@
 }
 
 -(void)sendMessagePressed {
+    [self.notificationHub setCount:-1];
+    
     if (self.sendMessage) {
         self.sendMessage(self.clientModel);
     }

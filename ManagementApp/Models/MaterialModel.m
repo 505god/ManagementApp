@@ -10,15 +10,14 @@
 
 @implementation MaterialModel
 
-+ (NSDictionary*)mts_mapping {
-    return  @{@"sortId": mts_key(materialId),
-              @"sortName": mts_key(materialName),
-              @"sortProductCount": mts_key(productCount),
-              };
-}
-
-+ (BOOL)mts_shouldSetUndefinedKeys {
-    return NO;
++(MaterialModel *)initWithObject:(AVObject *)object {
+    MaterialModel *model = [[MaterialModel alloc]init];
+    
+    model.materialId = object.objectId;
+    model.materialName = [object objectForKey:@"materialName"];
+    model.productCount = [[object objectForKey:@"productCount"]integerValue];
+    
+    return model;
 }
 
 @end

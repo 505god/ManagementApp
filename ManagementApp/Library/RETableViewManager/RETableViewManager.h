@@ -54,6 +54,7 @@
 
 #import "REProductItemCell.h"
 #import "RELevelItemCell.h"
+#import "RECompanyDayItemCell.h"
 @protocol RETableViewManagerDelegate;
 
 /**
@@ -68,7 +69,6 @@
 ///-----------------------------
 /// @name Managing Table View and Sections
 ///-----------------------------
-
 /**
  The array of sections. See RETableViewSection reference for details.
  */

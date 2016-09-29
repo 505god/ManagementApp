@@ -57,18 +57,20 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-     ///第一次从服务器获取，后续从单例里面读取
-     if ([DataShare sharedService].materialArray.count>0) {
-     __weak __typeof(self)weakSelf = self;
-     [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-     weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-     [weakSelf.tableView setHeaderAnimated:YES];
-     [weakSelf.tableView reloadData];
-     }];
-     }else {
-     //自动刷新(一进入程序就下拉刷新)
-     [self.tableView.tableView headerBeginRefreshing];
-     }
+    [self.tableView.tableView headerBeginRefreshing];
+    
+//    ///第一次从服务器获取，后续从单例里面读取
+//    if ([DataShare sharedService].materialArray.count>0) {
+//        __weak __typeof(self)weakSelf = self;
+//        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+//            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+//            [weakSelf.tableView setHeaderAnimated:YES];
+//            [weakSelf.tableView reloadData];
+//        }];
+//    }else {
+//        //自动刷新(一进入程序就下拉刷新)
+//        [self.tableView.tableView headerBeginRefreshing];
+//    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -94,8 +96,10 @@
 
 -(SearchTable *)tableView {
     if (!_tableView) {
-        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.height}];
+        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height}];
         _tableView.delegate = self;
+        _tableView.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        [Utility setExtraCellLineHidden:_tableView.tableView];
         _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self.view addSubview:_tableView];
     }
@@ -134,8 +138,12 @@
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
     if (self.isSelectedMaterial) {
-        if (self.completedBlock && self.hasSelectedMaterial.count>0) {
-            self.completedBlock(self.hasSelectedMaterial[0]);
+        if (self.completedBlock) {
+            if (self.hasSelectedMaterial.count>0) {
+                self.completedBlock(self.hasSelectedMaterial[0]);
+            }else {
+                self.completedBlock(nil);
+            }
         }
     }
     [self.navigationController popViewControllerAnimated:YES];
@@ -156,41 +164,48 @@
         
         [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
         
-        [[APIClient sharedClient] POST:@"/rest/store/addColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-            __strong __typeof(weakSelf)strongSelf = weakSelf;
-            if (!strongSelf) {
-                return;
-            }
-            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-            
-            NSDictionary *jsonData=(NSDictionary *)responseObject;
-            
-            if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+        //保存对象
+        AVObject *post = [AVObject objectWithClassName:@"Material"];
+        post[@"materialName"] = textField.text;
+        
+        // 为颜色和卖家建立一对一关系
+        [post setObject:[AVUser currentUser] forKey:@"user"];
+        
+        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (!error) {
+                AVQuery *query = [AVQuery queryWithClassName:@"Material"];
+                //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
+                query.cachePolicy = kAVCachePolicyNetworkElseCache;
+                //设置缓存有效期
+                query.maxCacheAge = 24*3600;// 一天的总秒数
                 
-                NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
-                if ([aDic allKeys].count>0) {
-                    MaterialModel *materialModel = [[MaterialModel alloc] init];
-                    [materialModel mts_setValuesForKeysWithDictionary:aDic];
+                [query whereKey:@"user" equalTo:[AVUser currentUser]];
+                
+                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                     
-                    [[DataShare sharedService].materialArray addObject:materialModel];
-                    [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                        strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                        [strongSelf.tableView setHeaderAnimated:YES];
-                        [strongSelf.tableView reloadData];
-                    }];
-                    [strongSelf.tableView reloadData];
-                }
+                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                    
+                    if (!error) {
+                        [DataShare sharedService].materialArray = nil;
+                        for (int i=0; i<objects.count; i++) {
+                            AVObject *object = objects[i];
+                            
+                            MaterialModel *model = [MaterialModel initWithObject:object];
+                            [[DataShare sharedService].materialArray addObject:model];
+                        }
+                        
+                        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                            [weakSelf.tableView setHeaderAnimated:YES];
+                            [weakSelf.tableView reloadData];
+                        }];
+                    }else {
+                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                    }
+                }];
             }else {
-                [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
             }
-        } failure:^(NSURLSessionDataTask *task, NSError *error) {
-            __strong __typeof(weakSelf)strongSelf = weakSelf;
-            if (!strongSelf) {
-                return;
-            }
-            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-            
-            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
         }];
     }];
     [alert show];
@@ -200,36 +215,40 @@
 #pragma mark - 获取颜色列表
 
 -(void)getDataFromSever {
-    ///接口请求
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
+        AVQuery *query = [AVQuery queryWithClassName:@"Material"];
+        //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
+        query.cachePolicy = kAVCachePolicyNetworkElseCache;
+        //设置缓存有效期
+        query.maxCacheAge = 24*3600;// 一天的总秒数
         
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
-        }
-        
-        [strongSelf.tableView.tableView headerEndRefreshing];
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [strongSelf.tableView.tableView headerEndRefreshing];
-        
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-    }];
+        [query whereKey:@"user" equalTo:[AVUser currentUser]];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [weakSelf.tableView.tableView headerEndRefreshing];
+            if (!error) {
+                [DataShare sharedService].materialArray = nil;
+                for (int i=0; i<objects.count; i++) {
+                    AVObject *object = objects[i];
+                    
+                    MaterialModel *model = [MaterialModel initWithObject:object];
+                    [[DataShare sharedService].materialArray addObject:model];
+                }
+                
+                [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                    weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                    [weakSelf.tableView setHeaderAnimated:YES];
+                    [weakSelf.tableView reloadData];
+                }];
+                
+            } else {
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+            }
+        }];
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -293,11 +312,14 @@
     [cell setMaterialModel:materialModel];
     
     if (self.isSelectedMaterial) {
-        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
         NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedMaterial filteredArrayUsingPredicate:predicateString]];
         if (filteredArray.count>0) {
             ///已经选择
             [cell setSelectedType:2];
+            
+            MaterialModel *materialModelTemp = filteredArray[0];
+            materialModelTemp.indexPath = indexPath;
         }else {
             [cell setSelectedType:1];
         }
@@ -319,7 +341,7 @@
         if (self.hasSelectedMaterial.count>0) {
             MaterialModel *materialModelTemp = (MaterialModel *)self.hasSelectedMaterial[0];
             
-            if (materialModel.materialId == materialModelTemp.materialId) {
+            if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
                 ///已经选择,取消选择
                 [cell setSelectedType:1];
                 [self.hasSelectedMaterial removeAllObjects];
@@ -329,7 +351,7 @@
                 [cellTemp setSelectedType:1];
                 
                 [self.hasSelectedMaterial removeAllObjects];
-                if (self.selectedMaterialModel && (materialModel.materialId == self.selectedMaterialModel.materialId)){
+                if (self.selectedMaterialModel && ([materialModel.materialId isEqualToString:self.selectedMaterialModel.materialId])){
                     [self.hasSelectedMaterial addObject:self.selectedMaterialModel];
                 }else {
                     [self.hasSelectedMaterial addObject:materialModel];
@@ -437,9 +459,9 @@
         NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
         
         MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-        //        if (materialModel.productCount>0) {
-        //            [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
-        //        }else {
+        if (materialModel.productCount>0) {
+            [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
+        }else {
         swipeTableViewCell.shouldAnimateCellReset = YES;
         
         __weak __typeof(self)weakSelf = self;
@@ -451,23 +473,26 @@
             
             [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
             
-            [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-                __strong __typeof(weakSelf)strongSelf = weakSelf;
-                if (!strongSelf) {
-                    return;
-                }
-                [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
+            [post deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
                 
-                NSDictionary *jsonData=(NSDictionary *)responseObject;
-                
-                if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+                if (!error) {
+                    //已选择
+                    if ([materialModel.materialId isEqualToString:weakSelf.selectedMaterialModel.materialId]) {
+                        weakSelf.selectedMaterialModel = nil;
+                    }
+                    if (weakSelf.hasSelectedMaterial.count>0) {
+                        MaterialModel *materialModelTemp = (MaterialModel *)weakSelf.hasSelectedMaterial[0];
+                        if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
+                            [weakSelf.hasSelectedMaterial removeAllObjects];
+                        }
+                    }
                     
-                    
-                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
+                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
                     NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
                     
                     [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
-                    
                     
                     [UIView animateWithDuration:0.25
                                           delay:0
@@ -477,31 +502,23 @@
                                      }
                                      completion:^(BOOL finished) {
                                          [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                                             strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                                             [strongSelf.tableView setHeaderAnimated:YES];
-                                             [strongSelf.tableView reloadData];
+                                             weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                                             [weakSelf.tableView setHeaderAnimated:YES];
+                                             [weakSelf.tableView reloadData];
                                          }];
                                          
                                          [swipeTableViewCell setHidden:YES];
                                      }
                      ];
                 }else {
-                    [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+                    [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
                 }
-            } failure:^(NSURLSessionDataTask *task, NSError *error) {
                 
-                __strong __typeof(weakSelf)strongSelf = weakSelf;
-                if (!strongSelf) {
-                    return;
-                }
-                [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-                
-                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
             }];
             
         }];
         [alert show];
-        //        }
+        }
     }
 }
 
@@ -521,50 +538,52 @@
     [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
         
         [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-        
-        NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
-        
-        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-        
-        [[APIClient sharedClient] POST:@"/rest/store/updateColor" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
+    
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            __strong __typeof(weakSelf)strongSelf = weakSelf;
-            if (!strongSelf) {
-                return;
-            }
-            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
             
-            NSDictionary *jsonData=(NSDictionary *)responseObject;
-            if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-                
-                materialModel.materialName = textField.text;
-                
-                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %d", materialModel.materialId];
-                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
-                
-                [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
-                [[DataShare sharedService].materialArray addObject:materialModel];
-                
-                [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                    strongSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                    [strongSelf.tableView setHeaderAnimated:YES];
-                    [strongSelf.tableView reloadData];
-                }];
-                
-                
-                [strongSelf.tableView reloadData];
-            }else {
-                [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
-            }
-        } failure:^(NSURLSessionDataTask *task, NSError *error) {
-            __strong __typeof(weakSelf)strongSelf = weakSelf;
-            if (!strongSelf) {
-                return;
-            }
-            [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+            MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
             
-            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-        }];
+            AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
+            //更新属性
+            [post setObject:textField.text forKey:@"materialName"];
+            //保存
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                    
+                    if (!error) {
+                        //已选择
+                        if ([materialModel.materialId isEqualToString:weakSelf.selectedMaterialModel.materialId]) {
+                            weakSelf.selectedMaterialModel.materialName = textField.text;
+                        }
+                        if (weakSelf.hasSelectedMaterial.count>0) {
+                            MaterialModel *materialModelTemp = (MaterialModel *)weakSelf.hasSelectedMaterial[0];
+                            if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
+                                materialModelTemp.materialName = textField.text;
+                            }
+                        }
+                        
+                        materialModel.materialName = textField.text;
+                        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
+                        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
+                        
+                        [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
+                        [[DataShare sharedService].materialArray addObject:materialModel];
+                        
+                        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                            [weakSelf.tableView setHeaderAnimated:YES];
+                            [weakSelf.tableView reloadData];
+                        }];
+                    }else {
+                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                    }
+                });
+            }];
+        });
     }];
     [alert show];
 }

@@ -78,7 +78,13 @@
 - (void)cellWillAppear
 {
     [super cellWillAppear];
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    if (self.item.selectionType==1) {
+        self.selectionStyle = UITableViewCellSelectionStyleDefault;
+    }else {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    
     
     self.textLabel.text = self.item.title.length == 0 ? @" " : self.item.title;
     
@@ -115,6 +121,11 @@
     [super layoutSubviews];
     
     [self layoutDetailView:self.textField minimumWidth:0];
+
+    CGRect frame = self.textField.frame;
+    
+    frame.size.width = [UIScreen mainScreen].bounds.size.width-self.textField.left-10;
+    self.textField.frame = frame;
     
     if ([self.tableViewManager.delegate respondsToSelector:@selector(tableView:willLayoutCellSubviews:forRowAtIndexPath:)])
         [self.tableViewManager.delegate tableView:self.tableViewManager.tableView willLayoutCellSubviews:self forRowAtIndexPath:[self.tableViewManager.tableView indexPathForCell:self]];
@@ -140,9 +151,9 @@
 - (void)setEnabled:(BOOL)enabled {
     _enabled = enabled;
     
-    self.userInteractionEnabled = _enabled;
+//    self.userInteractionEnabled = _enabled;
     
-    self.textLabel.enabled = _enabled;
+//    self.textLabel.enabled = _enabled;
     self.textField.enabled = _enabled;
 }
 

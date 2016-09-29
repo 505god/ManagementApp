@@ -11,6 +11,8 @@
 
 @interface SortCell : UITableViewCell
 
+@property (nonatomic, strong) NSArray *resultArray;
+
 @property (nonatomic, strong) SortModel *sortModel;
 ///分类名称
 @property (nonatomic, weak) IBOutlet UILabel *nameLab;

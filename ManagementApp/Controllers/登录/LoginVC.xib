@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
@@ -22,7 +22,7 @@
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="launch1_5.png" translatesAutoresizingMaskIntoConstraints="NO" id="QLD-8o-Mom">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                 </imageView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wp9-tm-Pei">
+                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wp9-tm-Pei">
                     <rect key="frame" x="0.0" y="286" width="375" height="49"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="49" id="wrH-x5-KqD"/>
@@ -46,7 +46,7 @@
                         <constraint firstAttribute="width" secondItem="enn-HG-gCR" secondAttribute="height" multiplier="335:48" id="6sI-no-S7i"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done"/>
+                    <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done" secureTextEntry="YES"/>
                     <connections>
                         <outlet property="delegate" destination="-1" id="2f6-wf-B0J"/>
                     </connections>
@@ -80,11 +80,11 @@
                 <constraint firstItem="wp9-tm-Pei" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="lLm-rb-fV2"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="208" y="241"/>
+            <point key="canvasLocation" x="207.5" y="240.5"/>
         </view>
     </objects>
     <resources>
-        <image name="launch1_5.png" width="640" height="1137"/>
+        <image name="launch1_5.png" width="640" height="1009"/>
         <image name="login_background.png" width="320" height="99"/>
         <image name="login_bt.png" width="293" height="49"/>
         <image name="login_bt_dis.png" width="293" height="49"/>

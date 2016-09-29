@@ -23,22 +23,27 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.codeLab = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.codeLab.backgroundColor = [UIColor clearColor];
+        self.codeLab.adjustsFontSizeToFitWidth = YES;
+        self.codeLab.font = [UIFont systemFontOfSize:15];
         [self.contentView addSubview:self.codeLab];
         
         self.priceLab = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.priceLab.backgroundColor = [UIColor clearColor];
         self.priceLab.textAlignment = NSTextAlignmentRight;
+        self.priceLab.adjustsFontSizeToFitWidth = YES;
+        self.priceLab.font = [UIFont systemFontOfSize:15];
         [self.contentView addSubview:self.priceLab];
         
         self.numLab = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.numLab.backgroundColor = [UIColor clearColor];
-        self.numLab.textAlignment = NSTextAlignmentRight;
+        self.numLab.textAlignment = NSTextAlignmentCenter;
+        self.numLab.adjustsFontSizeToFitWidth = YES;
+        self.numLab.font = [UIFont systemFontOfSize:15];
         [self.contentView addSubview:self.numLab];
         
         self.timeLab = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.timeLab.backgroundColor = [UIColor clearColor];
         self.timeLab.textAlignment = NSTextAlignmentRight;
+        self.timeLab.textColor = [UIColor lightGrayColor];
+        self.timeLab.adjustsFontSizeToFitWidth = YES;
+        self.timeLab.font = [UIFont systemFontOfSize:15];
         [self.contentView addSubview:self.timeLab];
     }
     return self;
@@ -48,15 +53,14 @@
     [super layoutSubviews];
     
     [self.codeLab sizeToFit];
-    self.codeLab.frame = (CGRect){15,(self.height-self.codeLab.height)/2,120,self.codeLab.height};
-    
     [self.priceLab sizeToFit];
     [self.numLab sizeToFit];
     [self.timeLab sizeToFit];
     
-    self.timeLab.frame = (CGRect){self.width-60,(self.height-self.timeLab.height)/2,50,self.timeLab.height};
-    self.numLab.frame = (CGRect){self.timeLab.left-80,(self.height-self.numLab.height)/2,70,self.numLab.height};
-    self.priceLab.frame = (CGRect){self.numLab.left-120,(self.height-self.priceLab.height)/2,100,self.priceLab.height};
+    self.timeLab.frame = (CGRect){self.width-50,(self.height-self.timeLab.height)/2,40,self.timeLab.height};
+    self.numLab.frame = (CGRect){self.timeLab.left-70,(self.height-self.numLab.height)/2,65,self.numLab.height};
+    self.priceLab.frame = (CGRect){self.numLab.left-80,(self.height-self.priceLab.height)/2,75,self.priceLab.height};
+    self.codeLab.frame = (CGRect){15,(self.height-self.codeLab.height)/2,self.priceLab.left-20,self.codeLab.height};
 }
 
 -(void)prepareForReuse {
@@ -78,13 +82,23 @@
 #pragma mark -
 #pragma mark - getter/setter
 
--(void)setClientDetailModel:(ClientDetailModel *)clientDetailModel {
-    _clientDetailModel = clientDetailModel;
+-(void)setOrderModel:(OrderModel *)orderModel {
+    _orderModel = orderModel;
     
-    self.codeLab.text = clientDetailModel.clientDetailCode;
-    self.priceLab.text = [NSString stringWithFormat:@"%.2f",clientDetailModel.totalPrice];
-    self.numLab.text = [NSString stringWithFormat:@"%d",(int)clientDetailModel.totalNum];
-    self.timeLab.text = clientDetailModel.time;
+    self.codeLab.text = orderModel.orderCode;
+    
+    if (orderModel.orderStatus==0) {
+        self.priceLab.textColor = [UIColor blackColor];
+    }else if (orderModel.orderStatus==1) {
+        self.priceLab.textColor = COLOR(252, 166, 0, 1);
+    }else {
+        self.priceLab.textColor = COLOR(25, 216, 120, 1);
+    }
+    
+    self.priceLab.text = [NSString stringWithFormat:@"%.2f",orderModel.orderPrice];
+    self.numLab.text = [NSString stringWithFormat:@"%d",(int)orderModel.orderCount];
+    self.timeLab.text = orderModel.timeStr;
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

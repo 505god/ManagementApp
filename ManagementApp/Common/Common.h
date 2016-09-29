@@ -6,68 +6,48 @@
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
-//我的订单-------订单类型
-typedef enum{
-    WQOrderTypeAll = 0,     //全部
-    WQOrderTypeDeal = 1,    //交易单
-    WQOrderTypeNoPay = 2,   //未付款
-    WQOrderTypeNoUse=3,     //未使用
-    WQOrderTypeRefund=4,     //退款
-    WQOrderTypeFinish=6,     //已完成
-}WQOrderType;
 
-//语言-------系统当前语言
-typedef enum{
-    WQLanguageChinese = 0,   //汉语
-    WQLanguageEnglish = 1,   //英语
-    WQLanguageItalian = 2,   //意大利语
-}WQLanguageType;
-
-//货币-------
-typedef enum{
-    WQCoinCNY = 0,           //人民币
-    WQCoinUSD = 1,        //美元
-    WQCoinEUR = 2,          //欧元
-}WQCoinType;
-
-
-typedef NS_ENUM(NSInteger, MessageType) {
-    WQMessageTypeText     = 0 , // 文字
-    WQMessageTypePicture  = 1 , // 图片
-    WQMessageTypeVoice    = 2   // 语音
-};
-
-
-typedef NS_ENUM(NSInteger, MessageFrom) {
-    WQMessageFromMe    = 0,   // 自己发的
-    WQMessageFromOther = 1    // 别人发得
-};
 
 //推送类型
-typedef enum{
-    WQPushTypeLogIn = 0,                //异地登陆
-    WQPushTypeOrderRemindPay = 1,       //订单提醒付款
-    WQPushTypeOrderRemindDelivery = 2,  //订单提醒发货
-    WQPushTypeOrderDelivery = 3,        //订单发货
-    WQPushTypeOrderFinish = 4,          //订单已完成
-    WQPushTypeCustomer = 5,             //客户
-    WQPushTypeProduct = 6,              //商品
-    WQPushTypeChat = 7,                 //聊天
-    WQPushTypeNone = 8
-}WQPushType;
+typedef NS_ENUM(NSInteger, WQPushType) {
+    WQPushTypeNone = 0,
+    WQPushTypeClient = 1,      //新用户
+    WQPushTypeOrder = 2       //订单
+};
+
+typedef enum OrderFilterType:NSUInteger{
+    OrderFilterType_date=0,//时间
+    OrderFilterType_status=1,//状态
+    OrderFilterType_mark=2//标签
+} OrderFilterType;
+
+typedef enum DateFilterType:NSUInteger{
+    DateFilterType_today=0,//今天
+    DateFilterType_yesterday=1,//昨天
+    DateFilterType_week=2,//本周
+    DateFilterType_month=3,//本月
+    DateFilterType_latest=4,//最近3个月
+    DateFilterType_select=5//选择日期
+} DateFilterType;
+
+typedef enum StatusFilterType:NSUInteger{
+    StatusFilterType_pay_none=0,//未付款
+    StatusFilterType_pay_part=1,//部分付款
+    StatusFilterType_pay_all=2,//全部付款
+    StatusFilterType_deliver_none=3,//未发货
+    StatusFilterType_deliver_part=4,//部分发货
+    StatusFilterType_deliver_all=5//全部发货
+} StatusFilterType;
 
 #import "PopView.h"
 #import "NSObject+Motis.h"
 #import "UIView+Common.h"
 #import "MBProgressHUD.h"
-#import "XMPPManager.h"
-#import "APIClient.h"
-#import "LocalDB.h"
+#import "LeanChatManager.h"
 #import "DataShare.h"
 #import "Utility.h"
 #import "MJRefresh.h"
-
-///登录接口
-static NSString *loginInterface = @"user";
-
+#import "JSONKit.h"
+#import "NSDate+Utils.h"
+#import <AVOSCloud/AVOSCloud.h>
 

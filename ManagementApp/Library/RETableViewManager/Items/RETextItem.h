@@ -32,6 +32,7 @@
 @property (copy, readwrite, nonatomic) NSString *value;
 @property (copy, readwrite, nonatomic) NSString *placeholder;
 
+@property (nonatomic, assign) NSInteger selectionType;
 // TextField
 //
 @property (assign, readwrite, nonatomic) UITextFieldViewMode clearButtonMode;        // default is UITextFieldViewModeNever

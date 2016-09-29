@@ -15,8 +15,6 @@
 @property (nonatomic, weak) IBOutlet UITableView *table;
 @property (strong, nonatomic) RETableViewManager *manager;
 
-///根据stockWarningModel判断是新建还是修改
-@property (nonatomic, assign) BOOL isNew;
 @end
 
 @implementation StockWarningVC
@@ -32,14 +30,6 @@
     [super viewDidLoad];
     
     [self setNavBarView];
-    
-    if (self.stockWarningModel) {
-        self.isNew = NO;
-    }else {
-        self.isNew = YES;
-        self.stockWarningModel = [[StockWarningModel alloc]init];
-        self.stockWarningModel.isSetting=NO;
-    }
     
     // Create manager
     _manager = [[RETableViewManager alloc] initWithTableView:self.table];
@@ -83,7 +73,7 @@
     [collapsedItems addObject:promotionlItem];
     [expandedItems addObject:promotionlItem];
     
-    RETextItem *aItem = [RETextItem itemWithTitle:SetTitle(@"stock_all") value:self.isNew?@"":[NSString stringWithFormat:@"%d",(int)self.stockWarningModel.totalNum] placeholder:@"0"];
+    RETextItem *aItem = [RETextItem itemWithTitle:SetTitle(@"stock_all") value:self.stockWarningModel.totalNum==0?@"":[NSString stringWithFormat:@"%d",(int)self.stockWarningModel.totalNum] placeholder:@"0"];
     aItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]*$"]){
@@ -98,7 +88,7 @@
     aItem.keyboardType = UIKeyboardTypeNumberPad;
     [expandedItems addObject:aItem];
     
-    RETextItem *bItem = [RETextItem itemWithTitle:SetTitle(@"stock_one") value:self.isNew?@"":[NSString stringWithFormat:@"%d",(int)self.stockWarningModel.singleNum] placeholder:@"0"];
+    RETextItem *bItem = [RETextItem itemWithTitle:SetTitle(@"stock_one") value:self.stockWarningModel.singleNum==0?@"":[NSString stringWithFormat:@"%d",(int)self.stockWarningModel.singleNum] placeholder:@"0"];
     bItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]*$"]){
@@ -113,7 +103,7 @@
     bItem.keyboardType = UIKeyboardTypeNumberPad;
     [expandedItems addObject:bItem];
     
-    if (self.isNew==NO && self.stockWarningModel.isSetting) {
+    if (self.stockWarningModel.isSetting) {
         [section addItem:aItem];
         [section addItem:bItem];
     }

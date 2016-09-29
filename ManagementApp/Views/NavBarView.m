@@ -49,16 +49,21 @@
         
         if (title) {
             [self removeViewWithTag:10001];
-            UILabel *lab = [[UILabel alloc]initWithFrame:CGRectZero];
-            lab.font = [UIFont systemFontOfSize:16];
-            lab.text = title;
-            lab.textColor = [UIColor whiteColor];
-            [lab sizeToFit];
-            lab.tag = 10001;
-            lab.frame = (CGRect){btn.right,20+(NavgationHeight-lab.height)/2,lab.width,lab.height};
-            [self addSubview:lab];
+            NSDictionary *fontDic = @{NSFontAttributeName:[UIFont systemFontOfSize:16]};
+            CGRect rect = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, 40) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:fontDic context:nil];
             
-            lab = nil;
+            UIButton *btn2 = [UIButton buttonWithType:UIButtonTypeCustom];
+            btn2.titleLabel.font = [UIFont systemFontOfSize:16];
+            [btn2 setTitle:title forState:UIControlStateNormal];
+            [btn2 setTitle:title forState:UIControlStateHighlighted];
+            [btn2 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [btn2 setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
+            btn2.tag = 10001;
+            btn2.frame = (CGRect){btn.right,20+(NavgationHeight-40)/2,rect.size.width,40};
+            [btn2 addTarget:self action:@selector(tapLeft:) forControlEvents:UIControlEventTouchUpInside];
+            [self addSubview:btn2];
+            
+            btn2 = nil;
         }
         btn = nil;
     }else {

@@ -16,12 +16,13 @@
 
 #import "FilterView.h"
 #import "ClientDetailVC.h"
+#import "ClientSearchVC.h"
 
 typedef enum FilterType:NSUInteger{
     ClientFilterType_ccreat=0,//最新创建
     ClientFilterType_update=1,//最近更新
-    ClientFilterType_maximum=2,//交易金额最高
-    ClientFilterType_up=3,//交易次数最多
+    ClientFilterType_maximum=2,//交易次数最多
+    ClientFilterType_up=3,//交易金额最高
     ClientFilterType_arrears=4,//欠款最多
 } ClientFilterType;
 
@@ -33,11 +34,6 @@ typedef enum FilterType:NSUInteger{
 
 ///当前页开始索引
 @property (nonatomic, assign) NSInteger start;
-@property (nonatomic, assign) NSInteger lastProductId;
-///分页基数---默认10
-@property (nonatomic, assign) NSInteger limit;
-///总页数
-@property (nonatomic, assign) NSInteger pageCount;
 ///加载更多
 @property (nonatomic, assign) BOOL isLoadingMore;
 
@@ -52,10 +48,21 @@ typedef enum FilterType:NSUInteger{
 ///欠款最多的天数选择
 @property (weak, nonatomic) IBOutlet UIView *filterDayView;
 @property (nonatomic, assign) NSInteger dayType;
+
+@property (nonatomic, assign) NSInteger clientType;
+
 @end
 
 @implementation ClientVC
-
+-(void)dealloc {
+    SafeRelease(_dataArray);
+    SafeRelease(_tableView);
+    SafeRelease(_filterBtn);
+    SafeRelease(_filterView);
+    SafeRelease(_filterDayView);
+    
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
 #pragma mark - lifeStyle
 
 - (void)viewDidLoad {
@@ -70,14 +77,9 @@ typedef enum FilterType:NSUInteger{
     self.filterType = 0;
     self.dayType = 0;
     
-    ClientModel *clientModel = [[ClientModel alloc]init];
-    clientModel.clientName = @"testtesttest";
-    clientModel.clientLevel = 2;
-    clientModel.totalPrice = 1293.23;
-    clientModel.isPrivate = YES;
-    clientModel.clientType = 0;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fliterDataWithNotification:) name:@"fliterDataWithNotification" object:nil];
     
-    [self.dataArray addObject:clientModel];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unreadeMessage:) name:@"unreadeMessage" object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -85,6 +87,48 @@ typedef enum FilterType:NSUInteger{
     // Dispose of any resources that can be recreated.
 }
 
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    [self.tableView reloadData];
+}
+
+-(void)unreadeMessage:(NSNotification *)notification {
+    NSString *name = [notification object];
+    
+    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"%K == %@", @"clientName", name];
+    NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[self.dataArray filteredArrayUsingPredicate:predicateString]];
+    
+    if (filteredArray.count>0) {
+        ClientModel *model = (ClientModel *)[filteredArray firstObject];
+        model.redPoint ++;
+        NSInteger index = [self.dataArray indexOfObject:model];
+        
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    }
+}
+
+-(void)fliterDataWithNotification:(NSNotification *)notification {
+    self.clientType = [[notification object]integerValue];
+    
+    if (self.clientType==0) {
+        [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"navicon_all")];
+    }else if (self.clientType==1){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:@"A"];
+    }else if (self.clientType==2){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:@"B"];
+    }else if (self.clientType==3){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:@"C"];
+    }else if (self.clientType==4){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:@"D"];
+    }else if (self.clientType==5){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"private_client")];
+    }else if (self.clientType==6){
+        [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"supplier")];
+    }
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
+}
 #pragma mark - private
 
 - (void)addHeader {
@@ -92,23 +136,15 @@ typedef enum FilterType:NSUInteger{
     [self.tableView addHeaderWithCallback:^{
         
         weakSelf.start = 0;
-        weakSelf.lastProductId = 0;
-        weakSelf.pageCount = -1;
         weakSelf.isLoadingMore = NO;
-        [weakSelf.tableView removeFooter];
-        
         [weakSelf getDataFromSever];
-    } dateKey:@"StockVC"];
+    } dateKey:@"ClientVC"];
 }
 
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
     [self.tableView addFooterWithCallback:^{
-        weakSelf.start += weakSelf.limit;
-        if (weakSelf.dataArray.count>0) {
-//            ProductModel *proObj = (ProductModel *)[weakSelf.dataArray lastObject];
-//            weakSelf.lastProductId = proObj.productId;
-        }
+        weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
     }];
@@ -126,7 +162,7 @@ typedef enum FilterType:NSUInteger{
 
 -(FilterView *)filterView {
     if (!_filterView) {
-        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.height} dataSource:self];
+        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height} dataSource:self];
         _filterView.delegate=self;
         [self.view addSubview:_filterView];
     }
@@ -160,6 +196,8 @@ typedef enum FilterType:NSUInteger{
     NSArray *array = @[SetTitle(@"new_creat"),SetTitle(@"new_update"),SetTitle(@"order_maximum"),SetTitle(@"order_up"),SetTitle(@"order_arrears")];
     [self.filterBtn setTitle:array[filterType] forState:UIControlStateNormal];
     
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
 }
 
 -(void)setDayType:(NSInteger)dayType {
@@ -173,7 +211,6 @@ typedef enum FilterType:NSUInteger{
             [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         }
     }
-    
 }
 
 
@@ -194,7 +231,7 @@ typedef enum FilterType:NSUInteger{
         UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
         [btn setTitle:array[i] forState:UIControlStateNormal];
     }
-
+    
 }
 
 #pragma mark - 导航栏代理
@@ -211,7 +248,9 @@ typedef enum FilterType:NSUInteger{
         [self.navigationController pushViewController:clientVC animated:YES];
         SafeRelease(clientVC);
     }else if(tag==1){//搜索
-        
+        ClientSearchVC *vc = LOADVC(@"ClientSearchVC");
+        [self.navigationController pushViewController:vc animated:YES];
+        vc = nil;
     }
 }
 
@@ -219,53 +258,92 @@ typedef enum FilterType:NSUInteger{
 #pragma mark - 请求数据
 
 -(void)getDataFromSever {
-    ///接口请求
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
+        AVQuery *query1 = [AVQuery queryWithClassName:@"Client"];
+        //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
+        query1.cachePolicy = kAVCachePolicyNetworkElseCache;
+        //设置缓存有效期
+        query1.maxCacheAge = 24*3600;// 一天的总秒数
+        [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
         
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
-            NSInteger proNumber = [[aDic objectForKey:@"totalProduct"]integerValue];
-            if (strongSelf.pageCount<0) {
-                strongSelf.pageCount = proNumber;
-            }
-            
-            if ((strongSelf.start+strongSelf.limit)<strongSelf.pageCount) {
-                if (strongSelf.isLoadingMore == NO) {
-                    [strongSelf addFooter];
+        if (self.filterType==ClientFilterType_ccreat) {
+            [query1 orderByDescending:@"createdAt"];
+        }else if (self.filterType==ClientFilterType_update) {
+            [query1 orderByDescending:@"updatedAt"];
+        }else if (self.filterType==ClientFilterType_maximum) {
+            [query1 orderByDescending:@"tradeNum"];
+        }else if (self.filterType==ClientFilterType_up) {
+            [query1 orderByDescending:@"totalPrice"];
+        }else if (self.filterType==ClientFilterType_arrears) {
+            //根据已有日期创建日期
+            if (self.dayType != 3) {
+                NSDate *yesterDay;
+                if (self.dayType==0) {
+                    yesterDay = [NSDate returnDay:7];
+                }else if (self.dayType==1) {
+                    yesterDay = [NSDate returnDay:15];
+                }else if (self.dayType==2) {
+                    yesterDay = [NSDate returnDay:30];
                 }
-            }else {
-                [strongSelf.tableView removeFooter];
+                [query1 orderByDescending:@"arrearsPrice"];
+                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:yesterDay];
             }
-            
+        }
+        
+        if (self.clientType==0) {
+        }else if (self.clientType==5) {
+            [query1 whereKey:@"clientType" equalTo:@(0)];
+            [query1 whereKey:@"isPrivate" equalTo:[NSNumber numberWithBool:true]];
+        }else if (self.clientType==6) {
+            [query1 whereKey:@"clientType" equalTo:@(1)];
         }else {
-            strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            [query1 whereKey:@"clientType" equalTo:@(0)];
+            [query1 whereKey:@"clientLevel" equalTo:@(self.clientType-1)];
         }
         
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
+        query1.limit = 10;
+        query1.skip = 10*self.start;
         
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-    }];
+        [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            [weakSelf.tableView headerEndRefreshing];
+            [weakSelf.tableView footerEndRefreshing];
+            if (!error) {
+                if (!weakSelf.isLoadingMore) {
+                    weakSelf.dataArray = nil;
+                }
+                [weakSelf.tableView removeFooter];
+                if (objects.count==10) {
+                    [weakSelf addFooter];
+                }
+                for (int i=0; i<objects.count; i++) {
+                    AVObject *object = objects[i];
+                    
+                    NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
+                    
+                    ClientModel *model = [[ClientModel alloc]init];
+                    [model mts_setValuesForKeysWithDictionary:dic];
+                    model.clientId = object.objectId;
+                    
+                    [weakSelf.dataArray addObject:model];
+                    
+                    if (model.redPoint>0) {
+                        [object incrementKey:@"redPoint" byAmount:[NSNumber numberWithInt:-1]];
+                        [object saveInBackground];
+                    }
+                }
+                
+                [weakSelf.tableView reloadData];
+                
+            } else {
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+            }
+        }];
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
 }
 
 #pragma mark -
@@ -283,7 +361,15 @@ typedef enum FilterType:NSUInteger{
     if (!cell) {
         cell=[[ClientCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
-    cell.clientModel = self.dataArray[indexPath.row];
+    //红点判断
+    ClientModel *model = (ClientModel *)self.dataArray[indexPath.row];
+    
+    NSArray *allkeys = [[DataShare sharedService].unreadMessageDic allKeys];
+    if ([allkeys containsObject:model.clientName]) {//包含
+        model.redPoint ++;
+    }
+    
+    cell.clientModel = model;
     
     return cell;
 }
@@ -291,14 +377,27 @@ typedef enum FilterType:NSUInteger{
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    
+    __weak __typeof(self)weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:[(ClientModel *)weakSelf.dataArray[indexPath.row] clientId]];
+        [post setObject:[NSNumber numberWithInt:0] forKey:@"redPoint"];
+        [post saveInBackground];
+    });
+    
+    ClientModel *model = (ClientModel *)self.dataArray[indexPath.row];
+    model.redPoint = 0;
+    [self.dataArray replaceObjectAtIndex:indexPath.row withObject:model];
+    
     ClientDetailVC *detailVC = [[ClientDetailVC alloc]init];
-    detailVC.clientModel = self.dataArray[indexPath.row];
+    detailVC.clientModel = model;
     [self.navigationController pushViewController:detailVC animated:YES];
     SafeRelease(detailVC);
 }
 
 
-#pragma mark - 
+#pragma mark - action
 
 -(IBAction)filterBtnPressed:(id)sender {
     [self.filterView reloadData];
@@ -315,6 +414,9 @@ typedef enum FilterType:NSUInteger{
     }else {
         self.dayType = btn.tag-100;
     }
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
 }
 #pragma mark - FilterViewDelegate/FilterViewDataSourece
 
@@ -337,6 +439,6 @@ typedef enum FilterType:NSUInteger{
 }
 
 - (void)filterHide {
-     self.isShowFilterView = NO;
+    self.isShowFilterView = NO;
 }
 @end

@@ -2,7 +2,7 @@
 //  ProductDetailVC.m
 //  ManagementApp
 //
-//  Created by 邱成西 on 15/10/23.
+//  Created by 邱成西 on 15/v/23.
 //  Copyright © 2015年 suda_505. All rights reserved.
 //
 
@@ -11,6 +11,7 @@
 #import "ProductVC.h"
 
 #import "ProductDetailCell.h"
+#import "OrderStockModel.h"
 
 @interface ProductDetailVC ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -18,19 +19,11 @@
 
 @property (nonatomic, assign) NSInteger index;
 
-@property (nonatomic, strong) NSMutableArray *dataArray1;
-@property (nonatomic, strong) NSMutableArray *dataArray2;
-@property (nonatomic, strong) NSMutableArray *dataArray3;
+@property (nonatomic, strong) NSMutableArray *dataArray;
 
 //-------------当为客户的时候分页---------------------------------------
 ///当前页开始索引
 @property (nonatomic, assign) NSInteger start;
-@property (nonatomic, assign) NSInteger lastProductId;
-///分页基数---默认10
-@property (nonatomic, assign) NSInteger limit;
-///总页数
-@property (nonatomic, assign) NSInteger pageCount;
-///加载更多
 @property (nonatomic, assign) BOOL isLoadingMore;
 
 @end
@@ -38,9 +31,7 @@
 @implementation ProductDetailVC
 -(void)dealloc {
     SafeRelease(_tableView);
-    SafeRelease(_dataArray1);
-    SafeRelease(_dataArray2);
-    SafeRelease(_dataArray3);
+    SafeRelease(_dataArray);
 }
 #pragma mark - lifeStyle
 
@@ -51,6 +42,8 @@
     
     //集成刷新控件
     [self addHeader];
+    
+    [self.tableView headerBeginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,7 +69,7 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -92,11 +85,7 @@
     [self.tableView addHeaderWithCallback:^{
         
         weakSelf.start = 0;
-        weakSelf.lastProductId = 0;
-        weakSelf.pageCount = -1;
         weakSelf.isLoadingMore = NO;
-        [weakSelf.tableView removeFooter];
-        
         [weakSelf getDataFromSever];
     } dateKey:@"ProductDetailVC"];
 }
@@ -104,11 +93,7 @@
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
     [self.tableView addFooterWithCallback:^{
-        weakSelf.start += weakSelf.limit;
-        if (weakSelf.dataArray2.count>0) {
-            //            ProductModel *proObj = (ProductModel *)[weakSelf.dataArray lastObject];
-            //            weakSelf.lastProductId = proObj.productId;
-        }
+        weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
     }];
@@ -116,24 +101,13 @@
 
 #pragma mark - getter/setter
 
--(NSMutableArray *)dataArray1 {
-    if (!_dataArray1) {
-        _dataArray1 = [[NSMutableArray alloc]init];
+-(NSMutableArray *)dataArray {
+    if (!_dataArray) {
+        _dataArray = [[NSMutableArray alloc]init];
     }
-    return _dataArray1;
+    return _dataArray;
 }
--(NSMutableArray *)dataArray2 {
-    if (!_dataArray2) {
-        _dataArray2 = [[NSMutableArray alloc]init];
-    }
-    return _dataArray2;
-}
--(NSMutableArray *)dataArray3 {
-    if (!_dataArray3) {
-        _dataArray3 = [[NSMutableArray alloc]init];
-    }
-    return _dataArray3;
-}
+
 
 #pragma mark - 导航栏代理
 
@@ -143,6 +117,7 @@
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     ProductVC *proVC = [[ProductVC alloc]init];
+    proVC.isEditing = YES;
     proVC.productModel = self.productModel;
     [self.navigationController pushViewController:proVC animated:YES];
     SafeRelease(proVC);
@@ -170,14 +145,20 @@
         
     };
     
-
     return header;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 100;
+    
+    if (self.index==0 || self.index==1) {
+        return self.dataArray.count;
+    }
+    return self.productModel.productStockArray.count==0?0:(self.productModel.productStockArray.count+1);
 }
 
 - (CGFloat)tableView:(UITableView *)_tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.index==0 || self.index==1) {
+        return 44;
+    }
     return 50;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -188,10 +169,18 @@
         cell=[[ProductDetailCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
-    
-    cell.productModel = self.productModel;
     cell.selectedIndex = self.index;
+    cell.idxPath = indexPath;
     
+    if (self.index==0 || self.index==1) {
+        cell.orderStockModel = self.dataArray[indexPath.row];
+    }else {
+        cell.productModel = self.productModel;
+        
+        if (indexPath.row>0) {
+            cell.productStockModel = (ProductStockModel *)self.productModel.productStockArray[(indexPath.row-1)];
+        }
+    }
     
     return cell;
 }
@@ -212,52 +201,46 @@
 #pragma mark - 请求数据
 
 -(void)getDataFromSever {
-    ///接口请求
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+
+    AVQuery *query = [AVQuery queryWithClassName:@"OrderStock"];
+    query.cachePolicy = kAVCachePolicyNetworkElseCache;
+    query.maxCacheAge = 24*3600;
+    query.limit = 15;
+    query.skip = 15*self.start;
+    [query orderByDescending:@"updatedAt"];
+    [query whereKey:@"user" equalTo:[AVUser currentUser]];
+    [query whereKey:@"pcode" equalTo:self.productModel.productCode];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        [weakSelf.tableView headerEndRefreshing];
+        [weakSelf.tableView footerEndRefreshing];
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
-        
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
-            NSInteger proNumber = [[aDic objectForKey:@"totalProduct"]integerValue];
-            if (strongSelf.pageCount<0) {
-                strongSelf.pageCount = proNumber;
+        if (!error) {
+            if (!weakSelf.isLoadingMore) {
+                weakSelf.dataArray = nil;
+            }
+            [weakSelf.tableView removeFooter];
+            if (objects.count==15) {
+                [weakSelf addFooter];
             }
             
-            if ((strongSelf.start+strongSelf.limit)<strongSelf.pageCount) {
-                if (strongSelf.isLoadingMore == NO) {
-                    [strongSelf addFooter];
-                }
-            }else {
-                [strongSelf.tableView removeFooter];
+            for (int i=0; i<objects.count; i++) {
+                AVObject *object = objects[i];
+                
+                OrderStockModel *model = [[OrderStockModel alloc]init];
+                model.orderStockId = object.objectId;
+                model.creat = object.createdAt;
+                
+                NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
+                [model mts_setValuesForKeysWithDictionary:dic];
+                
+                [weakSelf.dataArray addObject:model];
             }
-            
+            [weakSelf.tableView reloadData];
         }else {
-            strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
         }
-        
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
-        
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
 }
 

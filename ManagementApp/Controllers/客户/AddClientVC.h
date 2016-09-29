@@ -16,4 +16,5 @@
 
 @property (nonatomic, strong) ClientModel *clientModel;
 
+@property (nonatomic, assign) BOOL isEditing;
 @end

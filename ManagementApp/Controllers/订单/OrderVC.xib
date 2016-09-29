@@ -7,31 +7,16 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OrderVC">
             <connections>
-                <outlet property="tableView" destination="7xe-tB-0px" id="JLS-z4-Lrx"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7xe-tB-0px">
-                    <rect key="frame" x="0.0" y="64" width="600" height="536"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <connections>
-                        <outlet property="dataSource" destination="-1" id="pgE-pk-oQJ"/>
-                        <outlet property="delegate" destination="-1" id="tRi-WM-i28"/>
-                    </connections>
-                </tableView>
-            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-            <constraints>
-                <constraint firstAttribute="trailing" secondItem="7xe-tB-0px" secondAttribute="trailing" id="9vu-YW-ixo"/>
-                <constraint firstAttribute="bottom" secondItem="7xe-tB-0px" secondAttribute="bottom" id="VQv-3W-iYH"/>
-                <constraint firstItem="7xe-tB-0px" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="thM-7W-5pn"/>
-                <constraint firstItem="7xe-tB-0px" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="uFH-Mv-ugO"/>
-            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="156.5" y="163"/>
         </view>
     </objects>
 </document>

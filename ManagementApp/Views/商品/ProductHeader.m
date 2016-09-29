@@ -87,7 +87,7 @@
     
     self.stockLab.frame = (CGRect){self.width-10-self.stockLab.width,(self.height-self.stockLab.height)/2,self.stockLab.width,self.stockLab.height};
     
-    self.saleLab.frame = (CGRect){self.stockLab.left-40-self.saleLab.width,(self.height-self.saleLab.height)/2,self.saleLab.width,self.saleLab.height};
+    self.saleLab.frame = (CGRect){self.stockLab.left-90-self.saleLab.width,(self.height-self.saleLab.height)/2,self.saleLab.width,self.saleLab.height};
     
     self.lineImg.frame = (CGRect){0,self.height-1,self.width,1};
 }

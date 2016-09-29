@@ -162,7 +162,12 @@ static UIFont *buttonFont = nil;
         [button setBackgroundImage:nil forState:UIControlStateNormal];
         [button setBackgroundImage:image forState:UIControlStateHighlighted];
         
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        if ([color isEqualToString:@"red"]) {
+            [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        }else {
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        }
+
         [button setTitle:title forState:UIControlStateNormal];
         button.accessibilityLabel = title;
         

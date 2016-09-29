@@ -8,6 +8,7 @@
 
 #import "LoginVC.h"
 //#import "PopView.h"
+#import "CALayer+color.h"
 
 @interface LoginVC ()<UITextFieldDelegate>
 
@@ -59,42 +60,75 @@
 
 -(IBAction)loginBtnPressed:(id)sender {
     
-    if ([Utility checkString:[NSString stringWithFormat:@"%@",self.userText.text]]) {
-        if ([Utility checkString:[NSString stringWithFormat:@"%@",self.passwordText.text]]){
-            
-            [self.view endEditing:YES];
-            
-            ///接口请求
-            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            __weak __typeof(self)weakSelf = self;
-            
-            [[APIClient sharedClient] GET:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-                __strong __typeof(weakSelf)strongSelf = weakSelf;
-                if (!strongSelf) {
-                    return;
-                }
-                [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    if ([DataShare sharedService].appDel.isReachable) {
+        if ([Utility checkString:[NSString stringWithFormat:@"%@",self.userText.text]]) {
+            if ([Utility checkString:[NSString stringWithFormat:@"%@",self.passwordText.text]]){
                 
-                NSDictionary *jsonData=(NSDictionary *)responseObject;
+                [self.view endEditing:YES];
                 
+                ///接口请求
+                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                __weak __typeof(self)weakSelf = self;
                 
-                ///登录成功
-                [[AppDelegate shareInstance]showRootVCWithType:1];
-            } failure:^(NSURLSessionDataTask *task, NSError *error) {
-                __strong __typeof(weakSelf)strongSelf = weakSelf;
-                if (!strongSelf) {
-                    return;
-                }
-                [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-                
-                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-            }];
-            
+                [AVUser logInWithMobilePhoneNumberInBackground:self.userText.text password:self.passwordText.text block:^(AVUser *user, NSError *error) {
+                    if (!error) {
+                        
+                        BOOL isCheck = NO;
+                        if ([user.objectId isEqualToString:MainId]) {
+                            
+                        }else {
+                            isCheck = YES;
+                        }
+                        
+                        BOOL expire = [[user objectForKey:@"expire"] boolValue];
+                        if (expire && isCheck) {
+                            [AVUser logOut];  //清除缓存用户对象
+                            [PopView showWithImageName:@"error" message:SetTitle(@"Company_expire")];
+                            return;
+                        }else {
+                            if (isCheck) {
+                                NSInteger dayNum = [[user objectForKey:@"day"] integerValue];
+                                
+                                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+                                NSDateComponents *components = [gregorian components:NSDayCalendarUnit fromDate:[AVUser currentUser].createdAt toDate:[NSDate date] options:0];
+                                
+                                NSInteger day = [components day];
+                                
+                                if (dayNum-day<=0) {
+                                    user[@"expire"] = [NSNumber numberWithBool:true];
+                                    [user saveInBackground];
+                                    [AVUser logOut];  //清除缓存用户对象
+                                    
+                                    [PopView showWithImageName:@"error" message:SetTitle(@"Company_expire")];
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        AVInstallation *installation = [AVInstallation currentInstallation];
+                        [installation setObject:user.objectId forKey:@"cid"];
+                        [installation saveInBackground];
+                        
+                        //登录成功---数据缓存到本地
+                        [AVUser changeCurrentUser:user save:YES];
+
+                        [[LeanChatManager manager] openSessionWithClientID:[AVUser currentUser].username completion:^(BOOL succeeded, NSError *error) {
+                            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                            [[AppDelegate shareInstance] showRootVCWithType:1];
+                        }];
+                    }else {
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        [PopView showWithImageName:@"error" message:SetTitle(@"log_error")];
+                    }
+                }];
+            }else {
+                [PopView showWithImageName:@"" message:SetTitle(@"logInPwdError")];
+            }
         }else {
-            [PopView showWithImageName:@"" message:SetTitle(@"logInPwdError")];
+            [PopView showWithImageName:@"" message:SetTitle(@"logInNameError")];
         }
     }else {
-        [PopView showWithImageName:@"" message:SetTitle(@"logInNameError")];
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
     }
 }
 @end

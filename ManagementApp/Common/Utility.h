@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 ///公共类方法
-
+#import "ClientModel.h"
 @interface Utility : NSObject
 
 #pragma mark - 判断字符串是否为空
@@ -29,4 +29,22 @@
 
 #pragma mark -  正则判断
 +(BOOL)predicateText:(NSString *)text regex:(NSString *)regex;
+
+#pragma mark - 显示大图
++(void)showImage:(UIImageView *)avatarImageView;
+
+#pragma mark - 返回document文件夹的路径
++(NSString *)returnPath;
+
+#pragma mark - 邀请码
++(NSString *)getPlateForm;
+
+#pragma mark - 清除数据
++(void)dataShareClear;
+
+#pragma mark - 返回销售类型 saleA,saleB..
++(NSString *)returnSale:(ClientModel *)model;
+
+#pragma mark - 返回价格类型 a,b..
++(NSString *)returnPrice:(ClientModel *)model;
 @end

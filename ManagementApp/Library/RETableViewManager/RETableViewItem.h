@@ -37,6 +37,8 @@
 ///图片是否高亮
 @property (nonatomic, assign) BOOL isHighlighted;
 
+@property (strong, readwrite, nonatomic) UIColor *titleColor;
+
 @property (assign, readwrite, nonatomic) NSTextAlignment textAlignment;
 @property (weak, readwrite, nonatomic) RETableViewSection *section;
 @property (copy, readwrite, nonatomic) NSString *detailLabelText;

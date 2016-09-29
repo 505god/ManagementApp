@@ -131,6 +131,7 @@ static ProductCell *_editingCell;
         
         self.picImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.picImg.contentMode = UIViewContentModeScaleAspectFill;
+        self.picImg.clipsToBounds = YES;
         
         self.profitImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.profitImg.image = [Utility getImgWithImageName:@"profit_list_flag@2x"];
@@ -205,14 +206,16 @@ static ProductCell *_editingCell;
     self.proCode.text = productModel.productCode;
     
     self.proPrice.text = @"";
-    if (productModel.productPriceModel && productModel.productPriceModel.selected==0) {
-        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.productPriceModel.aPrice];
-    }else if (productModel.productPriceModel && productModel.productPriceModel.selected==1) {
-        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.productPriceModel.bPrice];
-    }else if (productModel.productPriceModel && productModel.productPriceModel.selected==2) {
-        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.productPriceModel.cPrice];
-    }else if (productModel.productPriceModel && productModel.productPriceModel.selected==3) {
-        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.productPriceModel.dPrice];
+    if (productModel.selected==0) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.aPrice];
+    }else if (productModel.selected==1) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.bPrice];
+    }else if (productModel.selected==2) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.cPrice];
+    }else if (productModel.selected==3) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.dPrice];
+    }else {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.aPrice];
     }
     
     if (self.type==0) {
@@ -232,7 +235,11 @@ static ProductCell *_editingCell;
         self.profitImg.hidden = NO;
     }
     
-    [self.picImg sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    if (productModel.isDisplay) {
+        [self.picImg sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    }else {
+        [self.picImg gay_sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    }
     
     [self.hotBtn setImage:[Utility getImgWithImageName:productModel.isHot?@"hot_bt@2x":@"hot_s_bt@2x"] forState:UIControlStateNormal];
     [self.saleBtn setImage:[Utility getImgWithImageName:productModel.isDisplay?@"hide_bt@2x":@"hide_s_bt@2x"] forState:UIControlStateNormal];
@@ -323,7 +330,7 @@ static ProductCell *_editingCell;
     CGRect rect = [SetTitle(@"stock") boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, 20) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:fontDic context:nil];
     
     [self.proSale sizeToFit];
-    self.proSale.frame = (CGRect){(self.width-10-rect.size.width)-40-self.proSale.width,(self.height-self.proSale.height)/2,self.proSale.width,self.proSale.height};
+    self.proSale.frame = (CGRect){(self.width-10-rect.size.width)-90-self.proSale.width,(self.height-self.proSale.height)/2,self.proSale.width,self.proSale.height};
     
     self.lineImg.frame = (CGRect){self.picImg.left,self.height-0.5,self.width-self.picImg.left,1};
     

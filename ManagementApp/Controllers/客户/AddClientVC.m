@@ -10,6 +10,7 @@
 
 #import "RETableViewManager.h"
 #import "ClientTypeVC.h"
+#import "BlockAlertView.h"
 
 @interface AddClientVC ()<RETableViewManagerDelegate>
 
@@ -43,6 +44,10 @@
         self.clientModel = [[ClientModel alloc]init];
         self.clientModel.clientLevel = 0;
         self.clientModel.clientType = 0;
+        self.clientModel.isPrivate = NO;
+        self.clientModel.isCommand = NO;
+        self.clientModel.isShowPrice = YES;
+        self.clientModel.isShowStock = YES;
     }
     
     [self setNavBarView];
@@ -97,13 +102,13 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.bottom} style:UITableViewStyleGrouped];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStyleGrouped];
     [Utility setExtraCellLineHidden:self.tableView];
     [self.view addSubview:self.tableView];
     
     // Create manager
     _manager = [[RETableViewManager alloc] initWithTableView:self.tableView];
-    
+    _manager.delegate = self;
     // Add a section
     RETableViewSection *section1 = [RETableViewSection section];
     [_manager addSection:section1];
@@ -151,6 +156,18 @@
         [item reloadRowWithAnimation:UITableViewRowAnimationNone];
     };
     [expandedItems addObject:levelItem];
+    
+    //显示价格
+    REBoolItem *displayItem = [REBoolItem itemWithTitle:SetTitle(@"price_display") value:self.clientModel.isShowPrice switchValueChangeHandler:^(REBoolItem *item) {
+        weakSelf.clientModel.isShowPrice = item.value;
+    }];
+    [expandedItems addObject:displayItem];
+    
+    //显示库存
+    REBoolItem *stockItem = [REBoolItem itemWithTitle:SetTitle(@"stock_display") value:self.clientModel.isShowStock switchValueChangeHandler:^(REBoolItem *item) {
+        weakSelf.clientModel.isShowStock = item.value;
+    }];
+    [expandedItems addObject:stockItem];
     
     if (self.clientModel.clientType==0) {//顾客
         [section1 replaceItemsWithItemsFromArray:expandedItems];
@@ -212,6 +229,18 @@
     };
     markItem.alignment = NSTextAlignmentRight;
     [section3 addItem:markItem];
+    
+    
+    for (int i=0; i<10; i++) {
+        RETableViewSection *section21 = [RETableViewSection section];
+        [_manager addSection:section21];
+        //名字
+        RETextItem *nameItem1 = [RETextItem itemWithTitle:SetTitle(@"name") value:self.clientModel.clientName?self.clientModel.clientName:@"" placeholder:[NSString stringWithFormat:@"%@ %@",SetTitle(@"name"),SetTitle(@"product_required")]];
+        nameItem1.alignment = NSTextAlignmentRight;
+        nameItem1.validators = @[@"presence"];
+        [section21 addItem:nameItem1];
+    }
+    
 }
 
 -(void)checkData {
@@ -230,33 +259,86 @@
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    //保存
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self.view endEditing:YES];
     
     __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
-        
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+    
+    if ([Utility checkString:self.clientModel.clientId] && self.isEditing){//编辑客户
+        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"client_editing") message:nil];
+        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
             
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
-        }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+        }];
+        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+            [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:weakSelf.clientModel.clientId];
+                post[@"clientType"] = @(weakSelf.clientModel.clientType);
+                if (weakSelf.clientModel.clientType==0) {
+                    post[@"clientLevel"] = @(weakSelf.clientModel.clientLevel);
+                    post[@"isShowPrice"] = @(weakSelf.clientModel.isShowPrice);
+                    post[@"isShowStock"] = @(weakSelf.clientModel.isShowStock);
+                }
+                post[@"clientName"] = weakSelf.clientModel.clientName;
+                post[@"clientPhone"] = weakSelf.clientModel.clientPhone;
+                post[@"clientEmail"] = weakSelf.clientModel.clientEmail;
+                post[@"clientRemark"] = weakSelf.clientModel.clientRemark;
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [AVObject saveAllInBackground:@[post] block:^(BOOL succeeded, NSError *error){
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        if (!error) {
+                            [weakSelf.navigationController popViewControllerAnimated:YES];
+                        }
+                    }];
+                });
+            });
+        }];
+        [alert show];
+    }else {//创建客户
+        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"client_creat") message:nil];
+        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+            
+        }];
+        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+            [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                
+                AVObject *post = [AVObject objectWithClassName:@"Client"];
+
+                post[@"clientType"] = @(weakSelf.clientModel.clientType);
+                if (weakSelf.clientModel.clientType==0) {
+                    post[@"clientLevel"] = @(weakSelf.clientModel.clientLevel);
+                    post[@"isShowPrice"] = @(weakSelf.clientModel.isShowPrice);
+                    post[@"isShowStock"] = @(weakSelf.clientModel.isShowStock);
+                }
+                post[@"clientName"] = weakSelf.clientModel.clientName;
+                post[@"clientPhone"] = weakSelf.clientModel.clientPhone;
+                post[@"clientEmail"] = weakSelf.clientModel.clientEmail;
+                post[@"clientRemark"] = weakSelf.clientModel.clientRemark;
+                
+                NSString *code = [Utility getPlateForm];
+                post[@"command"] = code;
+                
+                [post setObject:[AVUser currentUser] forKey:@"user"];
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [AVObject saveAllInBackground:@[post] block:^(BOOL succeeded, NSError *error){
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        if (!error) {
+                            [weakSelf.navigationController popViewControllerAnimated:YES];
+                        }
+                    }];
+                });
+            });
+        }];
+        [alert show];
+    }
         
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-    }];
+    //保存
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 }
 
 
@@ -297,5 +379,7 @@
                          self.keyboardHeight = 0;
                      }];
 }
+
+
 
 @end

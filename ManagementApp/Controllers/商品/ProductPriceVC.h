@@ -11,9 +11,9 @@
 ///价格
 
 #import "RETableViewManager.h"
-#import "ProductPriceModel.h"
+#import "ProductModel.h"
 
-typedef void(^ProductPriceVCCompletedBlock)(ProductPriceModel *productPriceModel, BOOL editting);
+typedef void(^ProductPriceVCCompletedBlock)(ProductModel *productPriceModel, BOOL editting);
 
 
 @interface ProductPriceVC : BaseVC
@@ -25,5 +25,5 @@ typedef void(^ProductPriceVCCompletedBlock)(ProductPriceModel *productPriceModel
 @property (strong, readonly, nonatomic) RETableViewManager *manager;
 
 ///从上个页面传过来
-@property (nonatomic, strong) ProductPriceModel *productPriceModel;
+@property (nonatomic, strong) ProductModel *productPriceModel;
 @end

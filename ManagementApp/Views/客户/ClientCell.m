@@ -30,6 +30,8 @@
         }
         self = [arrayOfViews objectAtIndex:0];
         
+        self.notificationHub = [[RKNotificationHub alloc]initWithView:self];
+        [self.notificationHub setCount:-1];
     }
     return self;
 }
@@ -56,6 +58,12 @@
         self.imgViewLeftConstraint.constant = -27;
         self.clientImg.hidden = YES;
     }
+    
+    if (clientModel.redPoint>0) {
+        [self.notificationHub setCount:0];
+    }else {
+        [self.notificationHub setCount:-1];
+    }
 }
 
 
@@ -64,5 +72,12 @@
     
     self.nameLab.text = @"";
     self.priceLab.text = @"";
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    
+    
+    [self.notificationHub setCircleAtFrame:(CGRect){self.imgView.right-5,self.imgView.top-5,10,10}];
 }
 @end

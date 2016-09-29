@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ClientDetailModel.h"
+#import "OrderModel.h"
 
 @interface ClientDetailCell : UITableViewCell
 
-@property (nonatomic, strong) ClientDetailModel *clientDetailModel;
+@property (nonatomic, strong) OrderModel *orderModel;
 
 @end

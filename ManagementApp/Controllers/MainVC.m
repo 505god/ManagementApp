@@ -19,7 +19,20 @@
     
     //设置tabBarView
     [self.view addSubview:self.tabBarView];
-    self.tabBarView.currentPage = self.currentPage = 0;
+    
+    if ([DataShare sharedService].isPushing) {
+        if ([DataShare sharedService].pushType == WQPushTypeOrder) {
+            self.tabBarView.currentPage = self.currentPage = 2;
+        }else if ([DataShare sharedService].pushType == WQPushTypeClient) {
+            self.tabBarView.currentPage = self.currentPage = 1;
+        }else {
+            self.tabBarView.currentPage = self.currentPage = 0;
+        }
+    }else {
+        self.tabBarView.currentPage = self.currentPage = 0;
+    }
+    
+    
     //设置子controller
     self.currentViewController = [self.childenControllerArray objectAtIndex:self.currentPage];
     if (self.currentViewController) {
@@ -36,7 +49,7 @@
 
 -(TabbarView *)tabBarView {
     if (!_tabBarView) {
-        _tabBarView = [[TabbarView alloc]initWithFrame: (CGRect){0,self.view.height-TabbarHeight,self.view.width,TabbarHeight}];
+        _tabBarView = [[TabbarView alloc]initWithFrame: (CGRect){0,self.view.height-TabbarHeight,[UIScreen mainScreen].bounds.size.width,TabbarHeight}];
         _tabBarView.delegate = self;
         [_tabBarView defaultSelected];
     }

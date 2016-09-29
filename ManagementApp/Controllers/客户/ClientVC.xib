@@ -51,7 +51,7 @@
                                 <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
-                                <action selector="filterBtnPressed:" destination="-1" eventType="touchUpInside" id="1MC-Va-6SM"/>
+                                <action selector="dayFilterBtnPressed:" destination="-1" eventType="touchUpInside" id="Hj7-Kg-ptM"/>
                             </connections>
                         </button>
                         <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLG-vH-sdO">

@@ -576,7 +576,7 @@ static NSString *kJKAssetsFooterViewIdentifier = @"kJKAssetsFooterViewIdentifier
 
 - (JKAssetsGroupsView *)assetsGroupsView{
     if (!_assetsGroupsView) {
-        _assetsGroupsView = [[JKAssetsGroupsView alloc] initWithFrame:CGRectMake(0, -self.view.height, self.view.width, self.view.height-self.navBarView.height)];
+        _assetsGroupsView = [[JKAssetsGroupsView alloc] initWithFrame:CGRectMake(0, -self.view.height, [UIScreen mainScreen].bounds.size.width, self.view.height-self.navBarView.height)];
         _assetsGroupsView.delegate = self;
         _assetsGroupsView.hidden = YES;
         _assetsGroupsView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -587,7 +587,7 @@ static NSString *kJKAssetsFooterViewIdentifier = @"kJKAssetsFooterViewIdentifier
 
 - (UIView *)overlayView{
     if (!_overlayView) {
-        _overlayView = [[UIView alloc] initWithFrame:(CGRect){0,self.navBarView.height,self.view.width,self.view.height-self.navBarView.height}];
+        _overlayView = [[UIView alloc] initWithFrame:(CGRect){0,self.navBarView.height,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height}];
         _overlayView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.85f];
         [self.view insertSubview:_overlayView belowSubview:self.assetsGroupsView];
     }
@@ -597,7 +597,7 @@ static NSString *kJKAssetsFooterViewIdentifier = @"kJKAssetsFooterViewIdentifier
 - (UIButton *)touchButton{
     if (!_touchButton) {
         _touchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _touchButton.frame = CGRectMake(0, 0, self.view.width, self.navBarView.height);
+        _touchButton.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, self.navBarView.height);
         [_touchButton addTarget:self action:@selector(assetsGroupsDidDeselected) forControlEvents:UIControlEventTouchUpInside];
     }
     return _touchButton;
@@ -610,7 +610,7 @@ static NSString *kJKAssetsFooterViewIdentifier = @"kJKAssetsFooterViewIdentifier
         layout.minimumInteritemSpacing = 2.0;
         layout.scrollDirection = UICollectionViewScrollDirectionVertical;
         
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0,self.navBarView.bottom+10, self.view.width, self.view.height-self.navBarView.height-10) collectionViewLayout:layout];
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0,self.navBarView.bottom+10, [UIScreen mainScreen].bounds.size.width, self.view.height-self.navBarView.height-10) collectionViewLayout:layout];
         _collectionView.backgroundColor = [UIColor whiteColor];
         [_collectionView registerClass:[JKAssetsViewCell class] forCellWithReuseIdentifier:kJKImagePickerCellIdentifier];
         [_collectionView registerClass:[JKAssetsCollectionFooterView class]

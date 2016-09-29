@@ -12,7 +12,7 @@
 
 
 + (NSDictionary*)mts_mapping {
-    return  @{@"clientId": mts_key(clientId),
+    return  @{
               @"clientType": mts_key(clientType),
               @"clientLevel": mts_key(clientLevel),
               
@@ -27,9 +27,12 @@
               @"command": mts_key(command),
               @"isCommand": mts_key(isCommand),
               
-              @"isShowPrice": mts_key(isShowPrice)
-              
-              
+              @"isShowStock": mts_key(isShowStock),
+              @"isShowPrice": mts_key(isShowPrice),
+              @"redPoint": mts_key(redPoint),
+              @"tradeNum": mts_key(tradeNum),
+              @"disable": mts_key(disable),
+              @"arrearsPrice": mts_key(arrearsPrice)
               };
 }
 

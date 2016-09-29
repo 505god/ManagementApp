@@ -111,7 +111,7 @@
     
     self[@"REProductItem"] = @"REProductItemCell";
     self[@"RELevelItem"] = @"RELevelItemCell";
-    
+    self[@"RECompanyDayItem"] = @"RECompanyDayItemCell";
 }
 
 - (void)registerClass:(NSString *)objectClass forCellWithReuseIdentifier:(NSString *)identifier

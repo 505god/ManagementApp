@@ -16,9 +16,6 @@
 @property (strong, readwrite, nonatomic) RETextItem *cItem;
 @property (strong, readwrite, nonatomic) RETextItem *dItem;
 
-///根据self.productPriceModel判断是新建还是修改
-@property (nonatomic, assign) BOOL isNew;
-
 @end
 
 @implementation ProductPriceVC
@@ -37,16 +34,7 @@
     [super viewDidLoad];
     
     [self setNavBarView];
-    
-    if (self.productPriceModel) {
-        self.isNew = NO;
-    }else {
-        self.isNew = YES;
-        self.productPriceModel = [[ProductPriceModel alloc]init];
-        self.productPriceModel.selected=-1;
-    }
-    
-    
+
     // Create manager
     _manager = [[RETableViewManager alloc] initWithTableView:self.table];
     
@@ -58,7 +46,7 @@
     //－－－－－－－－－－－－－－－－－A
     __weak __typeof(self)weakSelf = self;
     
-    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:(self.productPriceModel.aPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.aItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -69,6 +57,7 @@
         }
         
     };
+    self.aItem.isHighlighted = self.productPriceModel.selected==0?YES:NO;
     self.aItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
         
@@ -100,7 +89,7 @@
     [section addItem:self.aItem];
     
     //－－－－－－－－－－－－－－－－－B
-    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:(self.productPriceModel.bPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.bItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -110,6 +99,7 @@
             item.textFieldColor = COLOR(251, 0, 41, 1);
         }
     };
+    self.bItem.isHighlighted = self.productPriceModel.selected==1?YES:NO;
     self.bItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
         
@@ -141,7 +131,7 @@
     [section addItem:self.bItem];
     
     //－－－－－－－－－－－－－－－－－C
-    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:(self.productPriceModel.cPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.cItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -151,6 +141,7 @@
             item.textFieldColor = COLOR(251, 0, 41, 1);
         }
     };
+    self.cItem.isHighlighted = self.productPriceModel.selected==2?YES:NO;
     self.cItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
         if (item.isHighlighted) {
@@ -182,7 +173,7 @@
     [section addItem:self.cItem];
     
     //－－－－－－－－－－－－－－－－－D
-    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:self.isNew?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice] placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:(self.productPriceModel.dPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.dItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
@@ -192,6 +183,7 @@
             item.textFieldColor = COLOR(251, 0, 41, 1);
         }
     };
+    self.dItem.isHighlighted = self.productPriceModel.selected==3?YES:NO;
     self.dItem.selectionHandler = ^(RETableViewItem *item){
         [item deselectRowAnimated:YES];
         

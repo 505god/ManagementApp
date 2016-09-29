@@ -87,7 +87,7 @@
     [super layoutSubviews];
     [self layoutDetailView:self.valueLabel minimumWidth:[self.valueLabel.text re_sizeWithFont:self.valueLabel.font].width];
     CGRect frame = self.valueLabel.frame;
-    frame.size.width += 10.0;
+    frame.size.width -= 10.0;
     self.valueLabel.frame = frame;
     
     if (self.item.infoImg) {

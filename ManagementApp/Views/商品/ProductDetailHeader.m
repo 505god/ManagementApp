@@ -9,6 +9,7 @@
 #import "ProductDetailHeader.h"
 #import "UIImageView+WebCache.h"
 #import "RFSegmentView.h"
+#import "UIImageView+Addition.h"
 
 @interface ProductDetailHeader ()<RFSegmentViewDelegate>
 ///货号
@@ -63,6 +64,8 @@
         ///图片
         self.picImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.picImg.contentMode = UIViewContentModeScaleAspectFill;
+        self.picImg.clipsToBounds = YES;
+        [self.picImg addDetailShow];
         [self addSubview:self.picImg];
         
         ///货号
@@ -123,7 +126,7 @@
         self.saleLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.saleLab.backgroundColor = [UIColor clearColor];
         self.saleLab.font = [UIFont systemFontOfSize:14];
-        self.saleLab.textAlignment = NSTextAlignmentRight;
+        self.saleLab.textAlignment = NSTextAlignmentCenter;
         self.saleLab.textColor = [UIColor lightGrayColor];
         self.saleLab.text = SetTitle(@"product_sale");
         [self addSubview:self.saleLab];
@@ -195,28 +198,28 @@
         self.timeLab.frame = (CGRect){self.width-60,self.lineImg2.bottom+5,50,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-80,self.timeLab.top,60,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,self.timeLab.top,90,self.saleLab.height};
         
         [self.label sizeToFit];////100
-        self.label.frame = (CGRect){self.saleLab.left-120,self.timeLab.top,100,self.label.height};
+        self.label.frame = (CGRect){self.saleLab.left-120,self.timeLab.top,110,self.label.height};
         
         [self.titleLab sizeToFit];
-        self.titleLab.frame = (CGRect){65,self.timeLab.top,self.label.left-65,self.titleLab.height};
+        self.titleLab.frame = (CGRect){15,self.timeLab.top,self.label.left-25,self.titleLab.height};
     }else if (self.selectedIndex==1) {
         [self.timeLab sizeToFit];/////50
-        self.timeLab.frame = (CGRect){self.width-70,self.lineImg2.bottom+5,60,self.timeLab.height};
+        self.timeLab.frame = (CGRect){self.width-80,self.lineImg2.bottom+5,70,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-120,self.timeLab.top,100,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,self.timeLab.top,90,self.saleLab.height};
 
         [self.titleLab sizeToFit];
         self.titleLab.frame = (CGRect){15,self.timeLab.top,self.saleLab.left-25,self.titleLab.height};
     }else {
         [self.timeLab sizeToFit];/////50
-        self.timeLab.frame = (CGRect){self.width-80,self.lineImg2.bottom+5,60,self.timeLab.height};
+        self.timeLab.frame = (CGRect){self.width-80,self.lineImg2.bottom+5,70,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-80,self.timeLab.top,60,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,self.timeLab.top,90,self.saleLab.height};
         
         [self.titleLab sizeToFit];
         self.titleLab.frame = (CGRect){65,self.timeLab.top,self.saleLab.left-65,self.titleLab.height};
@@ -286,10 +289,16 @@
     self.profitLab.text = [NSString stringWithFormat:@"%.2f",productModel.profit];
     
     ///图片
-    [self.picImg sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    if (productModel.isDisplay) {
+        [self.picImg sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    }else {
+        [self.picImg gay_sd_setImageWithURL:[NSURL URLWithString:productModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    }
+    
+    
     
     ///货号
-    self.proCode.text = productModel.productCode;
+    self.proCode.text = [NSString stringWithFormat:@"%@:%@",productModel.productCode,productModel.productName];
     
     ///热卖
     self.saleImg.hidden = !productModel.isHot;
@@ -298,8 +307,15 @@
     self.proSort.text = productModel.sortModel.sortName;
     
     ///价格
-    self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.productPriceModel.aPrice];
-    
+    if (productModel.selected==1) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.bPrice];
+    }else if (productModel.selected==2) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.cPrice];
+    }else if (productModel.selected==3) {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.dPrice];
+    }else {
+        self.proPrice.text = [NSString stringWithFormat:@"%.2f",productModel.aPrice];
+    }
 }
 
 -(void)setSelectedIndex:(NSInteger)selectedIndex {

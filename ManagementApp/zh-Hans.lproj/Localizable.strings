@@ -14,11 +14,26 @@
 "navicon_options" = "更多";
 
 //登录
+"log_error" = "帐号有误...";
 "log_account" = "帐号";
 "log_pwd" = "密码";
 "log_in" = "登录";
+"log_out" = "退出登录";
 "logInNameError" = "请输入帐号";
 "logInPwdError" = "请输入密码";
+"logInExit" = "用户不存在";
+"Company_info" = "公司名称";
+"Company_time" = "使用期限";
+"Company_expire" = "帐号已过期";
+"Company_day" = "日";
+"agent" = "代理";
+"new_agent" = "添加新代理";
+"agent_day" = "剩余天数";
+"editPwd" = "修改密码";
+"OriginalPwd" = "原密码";
+"NewPwd" = "新密码";
+"NewAgainPwd" = "再次输入新密码";
+
 
 //颜色
 "color" = "颜色";
@@ -31,7 +46,7 @@
 "classifyDelete" = "该分类下包含商品不能被删除";
 "EditClassify" = "编辑分类";
 "addClassify" = "添加分类";
-
+"ClassifyExit" = "未选择分类。";
 
 //材质
 "material" = "材质";
@@ -49,6 +64,7 @@
 "edit_price_error" = "价格设置存在错误，重新编辑？";
 
 //商品
+"product_statistics" = "总计";
 "product" = "新商品";
 "Description" = "描述";
 "stock" = "库存";
@@ -67,6 +83,7 @@
 "off_the_shelf" = "下架";
 "product_sale" = "销量";
 "product_edit" = "修改";
+"order_delete_error" = "订单已付款或者已发货，无法删除";
 "order_code" = "货号A-Z";
 "order_best_sell" = "最好卖";
 "order_worst_sell" = "30天内最不好卖";
@@ -77,6 +94,7 @@
 "client_buy" = "购买客户";
 "stock_num" = "库存数量";
 "date" = "日期";
+"productError" = "货号已存在";
 
 //库存预警
 "stock_all" = "当总库存低于";
@@ -91,13 +109,19 @@
 "Previous" = "上一项";
 "Next" = "下一项";
 "confirm" = "确认";
+"product_creat" = "确认创建商品?";
+"product_editing" = "确认修改商品?";
+"client_creat" = "确认创建客户?";
+"client_editing" = "确认修改客户?";
 
 //搜索框
 "Search" = "搜索";
 "cancel" = "取消";
+"search_name" = "请输入名称";
 
 //客户
 "private_client" = "私密客户";
+"unprivate_client" = "非私密客户";
 "supplier" = "供货商";
 "customer" = "顾客";
 "detail" = "详情";
@@ -107,8 +131,8 @@
 "phone" = "号码";
 "email" = "邮箱";
 "name" = "名字";
-"order_maximum" = "交易金额最高";
-"order_up" = "交易次数最多";
+"order_maximum" = "交易次数最多";
+"order_up" = "交易金额最高";
 "order_arrears" = "欠款最多";
 "order_buy" = "交易历史";
 "client_detail" = "客户详情";
@@ -120,27 +144,87 @@
 "command_send" = "发送口令";
 "price_show" = "价格已显示";
 "price_unshow" = "价格未显示";
+"stock_show" = "库存已显示";
+"stock_unshow" = "库存未显示";
+"price_display" = "显示价格";
+"stock_display" = "显示库存";
 "member_disable" = "停用会员资格";
 "member_enable" = "启用会员资格";
 "command_use" = "专属口令（使用中）";
-"command_unuse" = "专属口令（已停用）";
+"command_unuse" = "专属口令（未使用）";
+"command_disabled" = "专属口令（已停用）";
 "send_message" = "发送消息";
 "sheet_sms" = "短信";
 "sheet_message" = "消息";
-
+"order_items" = "项数:";
+"order_count" = "总数量:";
+"order_totall" = "总价";
+"order_creat" = "创建";
+"order_deliver" = "设置发货状态";
+"order_pay" = "设置付款状态";
+"order_delete" = "删除";
+"order_zhekou" = "折扣优惠:";
+"order_jine" = "价格优惠:";
+"order_info" = "完整统计";
+"print" = "打印";
+//订单
+"new_order" = "有新的订单了～";
+"Statistics" = "完整统计";
+"status" = "状态";
+"mark" = "标签";
+"week" = "本周";
+"month" = "本月";
+"latest_month" = "最近3个月";
+"select_date" = "选择日期";
+"pay_none" = "未付款";
+"pay_part" = "部分付款";
+"pay_part_price" = "部分付款金额";
+"pay_all" = "全部付款";
+"deliver_none" = "未发货";
+"deliver_part" = "部分发货";
+"deliver_all" = "全部发货";
+"qingchu" = "清除";
+"green" = "绿色";
+"orange" = "橙色";
+"brown" = "褐色";
+"red" = "红色";
+"violet" = "紫色";
+"blue" = "蓝色";
+"sureBtn" = "完成";
+"company_tax" = "税";
+"company_taxinfo" = "输入20代表税20%";
+"order_tax" = "税:";
+"order_total" = "总金额(含税):";
+"order_profit" = "利润:";
+"order_num" = "订单数:";
+"order_edit_zhekou" = "折扣优惠";
+"order_edit_jine" = "价格优惠";
+"jianzhekou" = "减折扣";
+"jianzhekou_info" = "输入20表示订单总金额－20%";
+"jianjine" = "减金额";
+"jianjine_info" = "输入200表示订单总金额－200";
+"order_edit_count" = "修改商品数量";
+"order_edit_count_error" = "数量超过限额";
+"order_edit_count_info" = "输入2表示商品数量－2";
 //相册
 "title" = "选择相册";
 "Format_photo" = "%ld 张照片";
 "Format_photos" = "%ld 张照片";
 "PhotoSelectedError" = "选择图片失败";
 "SelectedMaxPhoto" = "最多选择%ld张照片";
+"Photo" = "照片";
+"camera" = "拍摄";
+"TextDetail" = "文本消息";
+"recentMessage" = "聊天记录";
 
+"no_connect" = "网络不给力";
+"product_push" = "新品、潮品上架了～";
 "connect_error" = "稍后再试...";
-
+"new_client" = "有新的私密客户了～";
 
 "new_creat" = "最新创建";
 "new_update" = "最近更新";
-
+"update_success" = "修改成功";
 //下拉刷新
 "FooterPullToRefresh" = "上拉可以加载更多数据";
 "FooterReleaseToRefresh" = "松开立即加载更多数据";
@@ -148,6 +232,12 @@
 "HeaderPullToRefresh" = "下拉可以刷新";
 "HeaderReleaseToRefresh" = "松开立即刷新";
 "LastUpDate" = "最近更新:";
+
+
+//消息
+"NewMessage" = "新消息";
+"sendMessageError" = "说点什么吧";
+"copy" = "复制";
 
 //时间
 "Night" = "晚上";
@@ -162,6 +252,9 @@
 "Friday" = "星期五";
 "Saturday" = "星期六";
 "Sunday" = "星期日";
+
+//公司
+"Company" = "公司详情";
 
 //错误码
 "error_code_" = "稍后再试...";

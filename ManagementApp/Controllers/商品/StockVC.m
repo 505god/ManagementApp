@@ -16,8 +16,10 @@
 
 #import "ProductHeader.h"
 #import "ProductDetailVC.h"
-
+#import "ProductSearchVC.h"
 #import "FilterView.h"
+
+#import "BlockAlertView.h"
 
 typedef enum FilterType:NSUInteger{
     ProductFilterType_code=0,//货号A-Z
@@ -37,11 +39,6 @@ typedef enum FilterType:NSUInteger{
 
 ///当前页开始索引
 @property (nonatomic, assign) NSInteger start;
-@property (nonatomic, assign) NSInteger lastProductId;
-///分页基数---默认10
-@property (nonatomic, assign) NSInteger limit;
-///总页数
-@property (nonatomic, assign) NSInteger pageCount;
 ///加载更多
 @property (nonatomic, assign) BOOL isLoadingMore;
 
@@ -55,6 +52,8 @@ typedef enum FilterType:NSUInteger{
 @property (weak, nonatomic) IBOutlet UIView *filterDayView;
 @property (nonatomic, assign) NSInteger dayType;
 
+@property (nonatomic, assign) NSInteger productType;
+@property (nonatomic, strong) SortModel *filterModel;
 
 @property (nonatomic, assign) ProductFilterType filterType;
 @end
@@ -65,58 +64,66 @@ typedef enum FilterType:NSUInteger{
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.productType = 1;
     [self setNavBarView];
 
     //集成刷新控件
     [self addHeader];
+
     self.type=1;
     self.filterType = 0;
     self.dayType = 0;
     
-    ProductModel *model2 = [[ProductModel alloc]init];
-    model2.productCode = @"9001";
-    
-    ProductPriceModel *productPriceModel2 = [[ProductPriceModel alloc]init];
-    productPriceModel2.aPrice = 19.99;
-    productPriceModel2.selected = 0;
-    model2.productPriceModel = productPriceModel2;
-    model2.profitStatus = 1;
-    model2.profit = 1999;
-    model2.sortModel = [[SortModel alloc]init];
-    model2.sortModel.sortName = @"dsa";
-    model2.stockCount = 157;
-    model2.isHot = YES;
-    model2.saleCount = 17;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fliterProductDataWithNotification:) name:@"fliterProductDataWithNotification" object:nil];
     
     
-    [self.dataArray addObject:model2];
-    for (int i=0; i<20; i++) {
-        ProductModel *model = [[ProductModel alloc]init];
-        model.productCode = @"9001";
-        model.profitStatus = -1;
-        ProductPriceModel *productPriceModel = [[ProductPriceModel alloc]init];
-        productPriceModel.aPrice = 9.99;
-        productPriceModel.selected = 0;
-        model.productPriceModel = productPriceModel;
-        
-        model.stockCount = 57;
-        
-        model.saleCount = 7;
-        [self.dataArray addObject:model];
-    }
-    
-    
-    
-    
-    [self.tableView reloadData];
-    
+    AVQuery *queryquery = [AVInstallation query];
+    [queryquery whereKey:@"user" equalTo:[AVUser currentUser]];
+    [queryquery whereKey:@"cid" equalTo:@"56a84ac1c1406100527947a6"];
+    AVPush *push = [[AVPush alloc] init];
+    [push setQuery:queryquery];
+    NSDictionary *data = @{
+                           @"alert": @"dsdasasdasd",
+                           @"type": @"3"
+                           };
+    [push setData:data];
+    [AVPush setProductionMode:YES];
+    [push sendPushInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        DLog(@"s");
+    }];
 }
 
+-(void)fliterProductDataWithNotification:(NSNotification *)notification {
+    id object = [notification object];
+    
+    if ([object isKindOfClass:[NSString class]]) {
+        self.productType = [[notification object]integerValue];
+        
+        if (self.productType==0) {
+            [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"stock_warning")];
+        }else if (self.productType==1) {
+            [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"navicon_all")];
+        }else if (self.productType==2) {
+            [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"not_classified")];
+        }else if (self.productType==-2) {
+            [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"best_sellers")];
+        }else if (self.productType==-1) {
+            [self.navBarView setLeftWithImage:@"menu_icon" title:SetTitle(@"off_the_shelf")];
+        }
+    }else if ([object isKindOfClass:[NSArray class]]) {
+        NSArray *array = [notification object];
+        
+        self.productType = [array[0] integerValue];
+        self.filterModel = (SortModel *)array[1];
+        
+        [self.navBarView setLeftWithImage:@"menu_icon" title:self.filterModel.sortName];
+    }
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
+}
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-//    [self.tableView headerBeginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -131,8 +138,6 @@ typedef enum FilterType:NSUInteger{
     [self.tableView addHeaderWithCallback:^{
         
         weakSelf.start = 0;
-        weakSelf.lastProductId = 0;
-        weakSelf.pageCount = -1;
         weakSelf.isLoadingMore = NO;
         [weakSelf.tableView removeFooter];
         
@@ -143,11 +148,7 @@ typedef enum FilterType:NSUInteger{
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
     [self.tableView addFooterWithCallback:^{
-        weakSelf.start += weakSelf.limit;
-        if (weakSelf.dataArray.count>0) {
-            ProductModel *proObj = (ProductModel *)[weakSelf.dataArray lastObject];
-            weakSelf.lastProductId = proObj.productId;
-        }
+        weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
     }];
@@ -164,7 +165,7 @@ typedef enum FilterType:NSUInteger{
 
 -(FilterView *)filterView {
     if (!_filterView) {
-        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.height} dataSource:self];
+        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height} dataSource:self];
         _filterView.delegate=self;
         [self.view addSubview:_filterView];
     }
@@ -197,6 +198,9 @@ typedef enum FilterType:NSUInteger{
     
     NSArray *array = @[SetTitle(@"order_code"),SetTitle(@"new_creat"),SetTitle(@"new_update"),SetTitle(@"order_best_sell"),SetTitle(@"order_worst_sell"),SetTitle(@"order_stock_up"),SetTitle(@"order_stock_down")];
     [self.filterBtn setTitle:array[filterType] forState:UIControlStateNormal];
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
 }
 
 -(void)setDayType:(NSInteger)dayType {
@@ -210,8 +214,8 @@ typedef enum FilterType:NSUInteger{
             [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         }
     }
-    
 }
+
 #pragma mark - UI
 
 -(void)setNavBarView {
@@ -246,60 +250,109 @@ typedef enum FilterType:NSUInteger{
         [self.navigationController pushViewController:productVC animated:YES];
         SafeRelease(productVC);
     }else if(tag==1){//搜索
-        
+        ProductSearchVC *vc = LOADVC(@"ProductSearchVC");
+        [self.navigationController pushViewController:vc animated:YES];
+        vc = nil;
     }
 }
 #pragma mark -
 #pragma mark - 请求数据
 
 -(void)getDataFromSever {
-    ///接口请求
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
+        AVQuery *query1 = [AVQuery queryWithClassName:@"Product"];
+        //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
+        query1.cachePolicy = kAVCachePolicyNetworkElseCache;
+        //设置缓存有效期
+        query1.maxCacheAge = 24*3600;// 一天的总秒数
+        [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
         
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            NSDictionary *aDic = [jsonData objectForKey:@"returnObj"];
-            NSInteger proNumber = [[aDic objectForKey:@"totalProduct"]integerValue];
-            if (strongSelf.pageCount<0) {
-                strongSelf.pageCount = proNumber;
-            }
-            
-            if ((strongSelf.start+strongSelf.limit)<strongSelf.pageCount) {
-                if (strongSelf.isLoadingMore == NO) {
-                    [strongSelf addFooter];
+        if (self.filterType==ProductFilterType_code) {
+            [query1 addAscendingOrder:@"productCode"];
+        }else if (self.filterType==ProductFilterType_ccreat) {
+            [query1 orderByDescending:@"createdAt"];
+        }else if (self.filterType==ProductFilterType_update) {
+            [query1 orderByDescending:@"updatedAt"];
+        }else if (self.filterType==ProductFilterType_best_sell) {
+            //根据已有日期创建日期
+            if (self.dayType != 3) {
+                NSDate *yesterDay;
+                if (self.dayType==0) {
+                    yesterDay = [NSDate returnDay:7];
+                }else if (self.dayType==1) {
+                    yesterDay = [NSDate returnDay:15];
+                }else if (self.dayType==2) {
+                    yesterDay = [NSDate returnDay:30];
                 }
+                [query1 orderByDescending:@"saleNum"];
+                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:yesterDay];
             }else {
-                [strongSelf.tableView removeFooter];
+                [query1 orderByDescending:@"saleNum"];
             }
-            
-        }else {
-            strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+        }else if (self.filterType==ProductFilterType_worst_sell) {
+            NSDate *yesterDay = [NSDate returnDay:30];
+            [query1 orderByAscending:@"saleNum"];
+            [query1 whereKey:@"createdAt" greaterThanOrEqualTo:yesterDay];
+        }else if (self.filterType==ProductFilterType_stock_up) {
+            [query1 orderByDescending:@"stockNum"];
+        }else if (self.filterType==ProductFilterType_stock_down) {
+            [query1 orderByAscending:@"stockNum"];
         }
         
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
+        if (self.productType==0) {
+            [query1 whereKey:@"isWaring" equalTo:[NSNumber numberWithBool:true]];
+        }else if (self.productType==1) {
+        }else if (self.productType==2) {
+            [query1 whereKeyDoesNotExist:@"sort"];
+        }else if (self.productType==-1) {
+            [query1 whereKey:@"hot" equalTo:[NSNumber numberWithBool:true]];
+        }else if (self.productType==-2) {
+            [query1 whereKey:@"sale" equalTo:[NSNumber numberWithBool:false]];
+        }else if (self.productType==-100) {
+            AVObject *post = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.filterModel.sortId];
+            if (post != nil) {
+                [query1 whereKey:@"sort" equalTo:post];
+            }
         }
-        strongSelf.start = (strongSelf.start-strongSelf.limit)<0?0:strongSelf.start-strongSelf.limit;
-        [strongSelf.tableView headerEndRefreshing];
-        [strongSelf.tableView footerEndRefreshing];
         
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+        query1.limit = 10;
+        query1.skip = 10*self.start;
         
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-    }];
+        [query1 includeKey:@"sort"];
+        [query1 includeKey:@"material"];
+        [query1 includeKey:@"products"];
+        
+        [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            [weakSelf.tableView headerEndRefreshing];
+            [weakSelf.tableView footerEndRefreshing];
+            if (!error) {
+                if (!weakSelf.isLoadingMore) {
+                    weakSelf.dataArray = nil;
+                }
+                [weakSelf.tableView removeFooter];
+                if (objects.count==10) {
+                    [weakSelf addFooter];
+                }
+                
+                for (int i=0; i<objects.count; i++) {
+                    AVObject *object = objects[i];
+                    
+                    ProductModel *model = [ProductModel initWithObject:object];
+                    [weakSelf.dataArray addObject:model];
+                }
+                
+                [weakSelf.tableView reloadData];
+                
+            } else {
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+            }
+        }];
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
 }
 
 #pragma mark -
@@ -362,31 +415,29 @@ typedef enum FilterType:NSUInteger{
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    
+    AVObject *mPost = [[AVQuery queryWithClassName:@"Product"] getObjectWithId:productMode.productId];
+    [mPost setObject:[NSNumber numberWithBool:!productMode.isHot] forKey:@"hot"];
+    [mPost saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
-        
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            
+        if (!error) {
             productMode.isHot = !productMode.isHot;
-            [strongSelf.dataArray replaceObjectAtIndex:idxPath.row withObject:productMode];
-            [strongSelf.tableView reloadRowsAtIndexPaths:@[idxPath] withRowAnimation:UITableViewRowAnimationNone];
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            for (int i=0; i<productMode.productStockArray.count; i++) {
+                ProductStockModel *model2 = (ProductStockModel *)productMode.productStockArray[i];
+                AVObject *p_Post = [[AVQuery queryWithClassName:@"ProductStock"] getObjectWithId:model2.ProductStockId];
+                [p_Post setObject:[NSNumber numberWithBool:productMode.isHot] forKey:@"hot"];
+                [p_Post saveInBackground];
+                
+                model2.isHot = productMode.isHot;
+                [productMode.productStockArray replaceObjectAtIndex:i withObject:model2];
+            }
+            
+            [weakSelf.dataArray replaceObjectAtIndex:idxPath.row withObject:productMode];
+            
+            [weakSelf.tableView reloadRowsAtIndexPaths:@[idxPath] withRowAnimation:UITableViewRowAnimationNone];
         }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
         
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
 }
 
@@ -394,65 +445,122 @@ typedef enum FilterType:NSUInteger{
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
+
+    AVObject *mPost = [[AVQuery queryWithClassName:@"Product"] getObjectWithId:productMode.productId];
+    [mPost setObject:[NSNumber numberWithBool:!productMode.isDisplay] forKey:@"sale"];
+    [mPost saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+        
+        //分类
+        if ([Utility checkString:productMode.sortId]) {
+            AVObject *sPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:productMode.sortId];
+            if (productMode.isDisplay) {//下架
+                [sPost incrementKey:@"sale"];
+            }else {
+                [sPost incrementKey:@"sale" byAmount:[NSNumber numberWithInteger:-1]];
+            }
+            [sPost saveInBackground];
         }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
-        
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            
-            
+        if ([Utility checkString:productMode.materialId]) {
+            AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:productMode.materialId];
+            if (productMode.isDisplay) {
+                [mPost incrementKey:@"sale"];
+            }else {
+                [mPost incrementKey:@"sale" byAmount:[NSNumber numberWithInteger:-1]];
+            }
+            [mPost saveInBackground];
+        }
+        if (!error) {
             productMode.isDisplay = !productMode.isDisplay;
-            [strongSelf.dataArray replaceObjectAtIndex:idxPath.row withObject:productMode];
             
-            [strongSelf.tableView reloadRowsAtIndexPaths:@[idxPath] withRowAnimation:UITableViewRowAnimationNone];
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            for (int i=0; i<productMode.productStockArray.count; i++) {
+                ProductStockModel *model2 = (ProductStockModel *)productMode.productStockArray[i];
+                AVObject *p_Post = [[AVQuery queryWithClassName:@"ProductStock"] getObjectWithId:model2.ProductStockId];
+                [p_Post setObject:[NSNumber numberWithBool:productMode.isDisplay] forKey:@"sale"];
+                [p_Post saveInBackground];
+                
+                if ([Utility checkString:model2.colorModel.colorId]) {
+                    AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model2.colorModel.colorId];
+                    if (productMode.isDisplay) {
+                        [cPost incrementKey:@"sale" byAmount:[NSNumber numberWithInteger:-1]];
+                    }else {
+                        [cPost incrementKey:@"sale"];
+                    }
+                    [cPost saveInBackground];
+                }
+                
+                
+                model2.isDisplay = productMode.isDisplay;
+                [productMode.productStockArray replaceObjectAtIndex:i withObject:model2];
+            }
+            
+            [weakSelf.dataArray replaceObjectAtIndex:idxPath.row withObject:productMode];
+            
+            [weakSelf.tableView reloadRowsAtIndexPaths:@[idxPath] withRowAnimation:UITableViewRowAnimationNone];
         }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
         
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
+
 }
 
 -(void)deleteByIdx:(NSIndexPath *)idxPath {
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:@"" parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    ProductModel *productMode = (ProductModel *)self.dataArray[idxPath.row];
+    
+    AVQuery *query1 = [AVQuery queryWithClassName:@"ProductCode"];
+    [query1 whereKey:@"pcode" equalTo:productMode.productCode];
+    [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
+    AVObject *obj = [query1 getFirstObject];
+    if (obj) {
+        [obj deleteInBackground];
+    }
+    
+    if (productMode.sortModel!=nil){
+        AVObject *sPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:productMode.sortModel.sortId];
+        [sPost incrementKey:@"productCount" byAmount:[NSNumber numberWithInt:-1]];
+        [sPost saveInBackground];
+    }
+    
+    if (productMode.materialModel!=nil){
+        AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:productMode.materialModel.materialId];
+        [mPost incrementKey:@"productCount" byAmount:[NSNumber numberWithInt:-1]];
+        [mPost saveInBackground];
+    }
+    
+    if (productMode.productStockArray.count>0) {
+        for (int i=0; i<productMode.productStockArray.count; i++) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                ProductStockModel *model = (ProductStockModel *)productMode.productStockArray[i];
+                AVObject *p_post = [[AVQuery queryWithClassName:@"ProductStock"] getObjectWithId:model.ProductStockId];
+                
+                AVObject *c_post = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
+                [c_post incrementKey:@"productCount" byAmount:[NSNumber numberWithInt:-1]];
+                [c_post saveEventually];
+                
+                AVFile *attachment = [p_post objectForKey:@"header"];
+                if (attachment != nil) {
+                    [attachment deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [p_post deleteInBackground];
+                    }];
+                }
+            });
         }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    }
+    
+    AVObject *mPost = [[AVQuery queryWithClassName:@"Product"] getObjectWithId:productMode.productId];
+    [mPost deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
-        
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
+        if (!error) {
+            [weakSelf.dataArray removeObjectAtIndex:idxPath.row];
             
-            [strongSelf.dataArray removeObjectAtIndex:idxPath.row];
-            [strongSelf.tableView reloadData];
-            
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
+            [weakSelf.tableView reloadData];
         }
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
 }
 
@@ -473,6 +581,9 @@ typedef enum FilterType:NSUInteger{
     }else {
         self.dayType = btn.tag-100;
     }
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self getDataFromSever];
 }
 
 #pragma mark - FilterViewDelegate/FilterViewDataSourece

@@ -21,10 +21,15 @@
 #import "OrderVC.h"
 #import "OptionsVC.h"
 
-
 #import "ProductVC.h"
 
+#import "Reachability.h"
+
+#import "LeanChatCoreDataManager.h"
+
 @interface AppDelegate ()
+
+@property (strong, nonatomic) Reachability *hostReach;//网络监听所用
 
 @end
 
@@ -35,12 +40,39 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [application setStatusBarStyle:UIStatusBarStyleLightContent];
+    [application setStatusBarStyle:UIStatusBarStyleLightContent];    
     
+    // 配置
+    [LeanChatManager setupApplication];
+    
+    ///－－－－－－－－－－－－－－－－－－－－推送
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
+    //－－－－－－－－－－－－－－－－－－－－开启网络状况的监听
+    
+    _isReachable = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+    _hostReach = [Reachability reachabilityWithHostName:@"www.baidu.com"] ;
+    [_hostReach startNotifier];  //开始监听，会启动一个run loop
+    
+    //－－－－－－－－－－－－－－－－－－－－判读进入app来源
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:1 forKey:@"isOn"];
+    [defaults synchronize];
+    
+    [DataShare sharedService].isPushing = NO;
+    [DataShare sharedService].pushType = WQPushTypeNone;
+    
+    NSDictionary *pushDict = [launchOptions objectForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
+    if (pushDict) {
+        [DataShare sharedService].isPushing = YES;
+        [DataShare sharedService].pushType = [pushDict[@"type"] integerValue];
+    }
+    
+    //－－－－－－－－－－－－－－－－－－－－VC
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    
-    [self setupAppearance];
     
     InitVC *initVC = LOADVC(@"InitVC");
     
@@ -52,39 +84,124 @@
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:2 forKey:@"isOn"];
+    [defaults synchronize];
+    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    [self saveMessageData];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    [application setApplicationIconBadgeNumber:0];
+    [self saveMessageData];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSInteger isOn = [defaults integerForKey:@"isOn"];
+    if (isOn==2) {
+        [defaults setInteger:1 forKey:@"isOn"];
+        [defaults synchronize];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:0 forKey:@"isOn"];
+    [defaults synchronize];
+
+    [[LeanChatManager manager] close:^(BOOL succeeded, NSError *error) {
+        
+    }];
+    [Utility dataShareClear];
+    [[LeanChatCoreDataManager manager]saveContext];
+    [self saveMessageData];
 }
 
+-(void)saveMessageData {
+    NSFileManager *fileManage = [NSFileManager defaultManager];
+    NSString *path = [Utility returnPath];
+    //保存未读消息的数组
+    NSString *filenameMessage = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"message_%@.plist",[AVUser currentUser].username]];
+    if ([fileManage fileExistsAtPath:filenameMessage]) {
+        [fileManage removeItemAtPath:filenameMessage error:nil];
+    }
+    [NSKeyedArchiver archiveRootObject:[DataShare sharedService].unreadMessageDic toFile:filenameMessage];
+}
 
+-(void)getMessageData {
+    NSFileManager *fileManage = [NSFileManager defaultManager];
+    NSString *path = [Utility returnPath];
+    NSString *filenameMessage = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"message_%@.plist",[AVUser currentUser].username]];
+    
+    if ([fileManage fileExistsAtPath:filenameMessage]) {
+        NSDictionary *dic = [NSKeyedUnarchiver unarchiveObjectWithFile:filenameMessage];
+        [DataShare sharedService].unreadMessageDic = [NSMutableDictionary dictionaryWithDictionary:dic];
+    }
+}
+#pragma mark -
+#pragma mark - 推送
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    AVInstallation *currentInstallation = [AVInstallation currentInstallation];
+    [currentInstallation setDeviceProfile:@"MAPP"];
+    [currentInstallation setBadge:0];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackground];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    NSInteger isOn = [[NSUserDefaults standardUserDefaults] integerForKey:@"isOn"];
+    int type = [[userInfo objectForKey:@"type"]intValue];
+    if (type==WQPushTypeClient) {//新品上市
+        if (isOn == 2) {//app从后台进入前台
+            [PopView showWithImageName:@"error" message:SetTitle(@"new_client")];
+        }else {
+            [DataShare sharedService].pushType = type;
+            [DataShare sharedService].isPushing = YES;
+        }
+    }else if (type==WQPushTypeOrder) {
+        if (isOn == 2) {//app从后台进入前台
+            [PopView showWithImageName:@"error" message:SetTitle(@"new_order")];
+        }else {
+            [DataShare sharedService].pushType = WQPushTypeOrder;
+            [DataShare sharedService].isPushing = YES;
+        }
+    }
+    
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+
+#pragma mark -
+#pragma mark - 网络
+
+- (void)reachabilityChanged:(NSNotification *)note {
+    Reachability *currReach = [note object];
+    NSParameterAssert([currReach isKindOfClass:[Reachability class]]);
+    //对连接改变做出响应处理动作
+    NetworkStatus status = [currReach currentReachabilityStatus];
+    if(status == NotReachable) {
+        self.isReachable = NO;
+    }else {
+        self.isReachable = YES;
+    }
+}
+
+#pragma mark -
 #pragma mark - 加载VC
+
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
-
-//    ProductVC *colorVC = [[ProductVC alloc]init];
-//    UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:colorVC];
-//    self.window.rootViewController = navControl;
-//    return;
-
-    
     if (type==1) {
+        [self getMessageData];
+        
         MainVC *mainVC  = [[MainVC alloc]init];
         
         StockVC *stockVC = LOADVC(@"StockVC");
@@ -105,25 +222,11 @@
     }else {
         LoginVC *logVC = LOADVC(@"LoginVC");
         self.window.rootViewController = logVC;
+        
+        if (type==2) {
+            [PopView showWithImageName:@"error" message:SetTitle(@"Company_expire")];
+        }
     }
-}
-
-
-- (void)setupAppearance {
-    [[UINavigationBar appearance] setBackgroundImage:[UIImage imageNamed:@"nav_bg"] forBarMetrics:UIBarMetricsDefault];
-    
-    NSMutableDictionary *attributesDictionary = [NSMutableDictionary dictionary];
-    [[UINavigationBar appearance] setBarStyle:UIBarStyleDefault];
-    [attributesDictionary setValue:[UIFont systemFontOfSize:18]                 forKey:NSFontAttributeName];
-    [attributesDictionary setValue:[UIColor darkGrayColor]                             forKey:NSForegroundColorAttributeName];
-    [[UINavigationBar appearance] setTitleTextAttributes:attributesDictionary];
-    
-    [[UINavigationBar appearance] setTintColor:[UIColor darkGrayColor]];
-    
-    UIImage *backButtonImage = [[UIImage imageNamed:@"navBar_back"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 14, 23, 0)];
-    [[UIBarButtonItem appearance] setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    
-    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60) forBarMetrics:UIBarMetricsDefault];
 }
 
 @end

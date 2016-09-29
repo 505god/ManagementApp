@@ -10,15 +10,18 @@
 
 @implementation SortModel
 
-+ (NSDictionary*)mts_mapping {
-    return  @{@"sortId": mts_key(sortId),
-              @"sortName": mts_key(sortName),
-              @"sortProductCount": mts_key(sortProductCount),
-              };
++(SortModel *)initWithObject:(AVObject *)object {
+    SortModel *model = [[SortModel alloc]init];
+    
+    model.sortId = object.objectId;
+    
+    NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
+    
+    model.sortName = [dic objectForKey:@"sortName"];
+    model.productCount = [[dic objectForKey:@"productCount"]integerValue];
+    
+    return model;
 }
 
-+ (BOOL)mts_shouldSetUndefinedKeys {
-    return NO;
-}
 
 @end

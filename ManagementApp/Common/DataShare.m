@@ -14,6 +14,7 @@
 #import "ColorModel.h"
 #import "SortModel.h"
 #import "MaterialModel.h"
+#import "UserModel.h"
 
 @implementation DataShare
 - (id)init{
@@ -35,6 +36,13 @@
 
 #pragma mark - getter/setter
 
+-(AppDelegate *)appDel {
+    if (!_appDel) {
+        _appDel = [AppDelegate shareInstance];
+    }
+    return _appDel;
+}
+
 -(NSMutableArray *)colorArray {
     if (!_colorArray) {
         _colorArray = [[NSMutableArray alloc]init];
@@ -49,6 +57,26 @@
     return _classifyArray;
 }
 
+-(NSMutableArray *)materialArray {
+    if (!_materialArray) {
+        _materialArray = [[NSMutableArray alloc]init];
+    }
+    return _materialArray;
+}
+
+-(NSMutableArray *)agentArray {
+    if (!_agentArray) {
+        _agentArray = [[NSMutableArray alloc]init];
+    }
+    return _agentArray;
+}
+
+-(NSMutableDictionary *)unreadMessageDic {
+    if (!_unreadMessageDic) {
+        _unreadMessageDic = [NSMutableDictionary dictionary];
+    }
+    return _unreadMessageDic;
+}
 #pragma mark - 检索
 
 ///A-Z，按照姓名进行排序
@@ -134,6 +162,28 @@
                 [mutableArray addObject:aDic];
             }
         }];
+    }else if(type==3) {//代理
+        [dataArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSArray *array = (NSArray *)obj;
+            
+            if (array.count>0) {
+                NSMutableDictionary *aDic = [NSMutableDictionary dictionary];
+                [aDic setObject:array forKey:@"data"];
+                
+                UserModel *model = (UserModel *)array[0];
+                
+                NSString *nameSection = [[NSString stringWithFormat:@"%c",[[PinYinForObjc chineseConvertToPinYin:model.userName] characterAtIndex:0]]uppercaseString];
+                
+                NSString *nameRegex = @"^[a-zA-Z]+$";
+                NSPredicate *nameTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", nameRegex];
+                if ([nameTest evaluateWithObject:nameSection]) {//字母
+                    [aDic setObject:nameSection forKey:@"indexTitle"];
+                }else {
+                    [aDic setObject:@"#" forKey:@"indexTitle"];
+                }
+                [mutableArray addObject:aDic];
+            }
+        }];
     }
     
     if (completeBlock) {
@@ -192,4 +242,22 @@
     
     [self setupDataArray:mutableArray type:2];
 }
+
+#pragma mark - 代理
+-(void)sortAgent:(NSArray *)agent CompleteBlock:(CompleteBlock)complet {
+    completeBlock = [complet copy];
+    NSMutableArray *mutableArray = [[self emptyPartitionedArray] mutableCopy];
+    
+    for (UserModel *model in agent) {
+        SEL selector = @selector(userName);
+        NSInteger index = [[WQIndexedCollationWithSearch currentCollation]
+                           sectionForObject:model
+                           collationStringSelector:selector];
+        [mutableArray[index] addObject:model];
+    }
+    
+    [self setupDataArray:mutableArray type:3];
+    
+}
+
 @end

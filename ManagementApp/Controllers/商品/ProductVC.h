@@ -14,6 +14,8 @@
 
 @interface ProductVC : BaseVC
 
+@property (nonatomic, assign) BOOL isEditing;
+
 @property (nonatomic, strong) ProductModel *productModel;
 
 

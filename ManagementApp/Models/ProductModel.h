@@ -8,23 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ProductPriceModel.h"
 #import "SortModel.h"
-#import "StockWarningModel.h"
 #import "ProductStockModel.h"
 #import "MaterialModel.h"
 
 @interface ProductModel : NSObject
 
 ///商品id
-@property (nonatomic, assign) NSInteger productId;
+@property (nonatomic, strong) NSString *productId;
 
 ///商品货号必填
 @property (nonatomic, strong) NSString *productCode;
-
-///商品价格必填
-@property (nonatomic, strong) ProductPriceModel *productPriceModel;
-
 ///进货价
 @property (nonatomic, assign) CGFloat purchaseprice;
 
@@ -55,9 +49,6 @@
 ///热卖
 @property (nonatomic, assign) BOOL isHot;
 
-///库存警告
-@property (nonatomic, strong) StockWarningModel *stockWarningModel;
-
 ///商品库存
 @property (nonatomic, strong) NSMutableArray *productStockArray;
 
@@ -69,4 +60,27 @@
 
 ///图片
 @property (nonatomic, strong) NSString *picHeader;
+
+///商品价格必填
+@property (nonatomic, assign) CGFloat aPrice;
+@property (nonatomic, assign) CGFloat bPrice;
+@property (nonatomic, assign) CGFloat cPrice;
+@property (nonatomic, assign) CGFloat dPrice;
+///选择的价格,0=a,1=b,2=c,3=d   -1=未选
+@property (nonatomic, assign) NSInteger selected;
+
+
+
+///是否设置库存预警
+@property (nonatomic, assign) BOOL isSetting;
+///总的数量
+@property (nonatomic, assign) NSInteger totalNum;
+///单个数量
+@property (nonatomic, assign) NSInteger singleNum;
+
++(ProductModel *)initWithObject:(AVObject *)object ;
+
+
+@property (nonatomic, strong) NSString *sortId;
+@property (nonatomic, strong) NSString *materialId;
 @end

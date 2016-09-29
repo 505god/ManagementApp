@@ -8,6 +8,7 @@
 
 #import "ProductDetailCell.h"
 #import "UIImageView+WebCache.h"
+#import "UIImageView+Addition.h"
 
 @interface ProductDetailCell ()
 
@@ -25,7 +26,9 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.picImg = [[UIImageView alloc]initWithFrame:CGRectZero];
+        self.picImg.clipsToBounds = YES;
         self.picImg.contentMode = UIViewContentModeScaleAspectFill;
+        [self.picImg addDetailShow];
         [self addSubview:self.picImg];
         
         self.titleLab = [[UILabel alloc]initWithFrame:CGRectZero];
@@ -41,12 +44,14 @@
         
         self.saleLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.saleLab.backgroundColor = [UIColor clearColor];
-        self.saleLab.textAlignment = NSTextAlignmentRight;
+        self.saleLab.textAlignment = NSTextAlignmentCenter;
         [self.contentView addSubview:self.saleLab];
         
         self.timeLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.timeLab.backgroundColor = [UIColor clearColor];
         self.timeLab.textAlignment = NSTextAlignmentRight;
+        self.timeLab.textColor = [UIColor lightGrayColor];
+        self.timeLab.font = [UIFont systemFontOfSize:16];
         [self.contentView addSubview:self.timeLab];
     }
     return self;
@@ -56,37 +61,39 @@
     [super layoutSubviews];
     
     if (self.selectedIndex==0) {
-        
-        self.picImg.frame = (CGRect){15,(self.height-40)/2,40,40};
-        
         [self.timeLab sizeToFit];/////50
         self.timeLab.frame = (CGRect){self.width-60,(self.height-self.timeLab.height)/2,50,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-80,(self.height-self.saleLab.height)/2,60,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,(self.height-self.saleLab.height)/2,90,self.saleLab.height};
         
         [self.label sizeToFit];////100
-        self.label.frame = (CGRect){self.saleLab.left-120,(self.height-self.label.height)/2,100,self.label.height};
+        self.label.frame = (CGRect){self.saleLab.left-120,(self.height-self.label.height)/2,110,self.label.height};
         
         [self.titleLab sizeToFit];
-        self.titleLab.frame = (CGRect){65,(self.height-self.titleLab.height)/2,self.label.left-65,self.titleLab.height};
+        self.titleLab.frame = (CGRect){15,(self.height-self.titleLab.height)/2,self.label.left-25,self.titleLab.height};
     }else if (self.selectedIndex==1) {
         [self.timeLab sizeToFit];/////50
-        self.timeLab.frame = (CGRect){self.width-70,(self.height-self.timeLab.height)/2,60,self.timeLab.height};
+        self.timeLab.frame = (CGRect){self.width-80,(self.height-self.timeLab.height)/2,70,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-120,(self.height-self.saleLab.height)/2,100,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,(self.height-self.saleLab.height)/2,90,self.saleLab.height};
         
         [self.titleLab sizeToFit];
         self.titleLab.frame = (CGRect){15,(self.height-self.titleLab.height)/2,self.saleLab.left-25,self.titleLab.height};
     }else if (self.selectedIndex==2) {
-        self.picImg.frame = (CGRect){15,(self.height-40)/2,40,40};
+        
+        if (self.idxPath.row==0) {
+            self.picImg.frame = (CGRect){15+23,(self.height-17)/2,17,17};
+        }else {
+            self.picImg.frame = (CGRect){15,(self.height-40)/2,40,40};
+        }
         
         [self.timeLab sizeToFit];/////50
-        self.timeLab.frame = (CGRect){self.width-80,(self.height-self.timeLab.height)/2,60,self.timeLab.height};
+        self.timeLab.frame = (CGRect){self.width-80,(self.height-self.timeLab.height)/2,70,self.timeLab.height};
         
         [self.saleLab sizeToFit];/////60
-        self.saleLab.frame = (CGRect){self.timeLab.left-80,(self.height-self.saleLab.height)/2,60,self.saleLab.height};
+        self.saleLab.frame = (CGRect){self.timeLab.left-100,(self.height-self.saleLab.height)/2,90,self.saleLab.height};
         
         [self.titleLab sizeToFit];
         self.titleLab.frame = (CGRect){65,(self.height-self.titleLab.height)/2,self.saleLab.left-65,self.titleLab.height};
@@ -112,9 +119,39 @@
 #pragma mark -
 #pragma mark - getter/setter
 
+-(void)setIdxPath:(NSIndexPath *)idxPath {
+    _idxPath = idxPath;
+}
+
 -(void)setProductModel:(ProductModel *)productModel {
     _productModel = productModel;
+    
+    if (self.selectedIndex==2 && self.idxPath.row==0) {
+        self.picImg.image = [Utility getImgWithImageName:@"stock_warn@2x"];
+        self.titleLab.text = SetTitle(@"product_statistics");
+        
+        self.saleLab.text = [NSString stringWithFormat:@"%ld",productModel.saleCount];
+        
+        self.timeLab.text = [NSString stringWithFormat:@"%ld",productModel.stockCount];
+    }
 }
+
+
+-(void)setOrderStockModel:(OrderStockModel *)orderStockModel {
+    _orderStockModel = orderStockModel;
+    
+    if (self.selectedIndex==0) {
+        self.titleLab.text = orderStockModel.colorName;
+        
+        self.label.text = [NSString stringWithFormat:@"%.2f",orderStockModel.price];
+    }else if (self.selectedIndex==1) {
+        self.titleLab.text = orderStockModel.clientName;
+    }
+    self.saleLab.text = [NSString stringWithFormat:@"%ld",orderStockModel.num];
+    
+    self.timeLab.text = orderStockModel.timeString;
+}
+
 
 -(void)setSelectedIndex:(NSInteger)selectedIndex {
     _selectedIndex = selectedIndex;
@@ -123,7 +160,9 @@
     self.saleLab.hidden = NO;
     self.timeLab.hidden = NO;
     self.picImg.hidden = NO;
+    
     if (selectedIndex==0){
+        self.picImg.hidden = YES;
     }else if (selectedIndex==1) {
         self.label.hidden = YES;
         self.picImg.hidden = YES;
@@ -135,33 +174,19 @@
 -(void)setProductStockModel:(ProductStockModel *)productStockModel {
     _productStockModel = productStockModel;
     
-    if (self.selectedIndex==0) {
-        [self.picImg sd_setImageWithURL:[NSURL URLWithString:productStockModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
-        
-        self.titleLab.text = productStockModel.colorModel.colorName;
-        
-        self.saleLab.text = [NSString stringWithFormat:@"%ld",productStockModel.saleNum];
-        self.timeLab.text = productStockModel.time;
-    }else if (self.selectedIndex==1) {
-        
-        self.titleLab.text = productStockModel.clientName;
-        self.saleLab.text = [NSString stringWithFormat:@"%ld",productStockModel.saleNum];
-        self.timeLab.text = productStockModel.time;
-    }else if (self.selectedIndex==2) {
-        [self.picImg sd_setImageWithURL:[NSURL URLWithString:productStockModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
-        
-        self.titleLab.text = productStockModel.colorModel.colorName;
-        self.saleLab.text = [NSString stringWithFormat:@"%ld",productStockModel.saleNum];
-        
-        if (self.productModel.stockWarningModel.isSetting) {
-            if (productStockModel.stockNum<self.productModel.stockWarningModel.singleNum) {
-                self.timeLab.textColor = COLOR(252, 166, 0, 1);
-            }else {
-                self.timeLab.textColor = [UIColor blackColor];
-            }
+    [self.picImg sd_setImageWithURL:[NSURL URLWithString:productStockModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    
+    self.titleLab.text = productStockModel.colorModel.colorName;
+    self.saleLab.text = [NSString stringWithFormat:@"%ld",(productStockModel.saleANum+productStockModel.saleBNum+productStockModel.saleCNum+productStockModel.saleDNum)];
+    
+    if (self.productModel.isSetting) {
+        if (productStockModel.stockNum<self.productModel.singleNum) {
+            self.timeLab.textColor = COLOR(252, 166, 0, 1);
+        }else {
+            self.timeLab.textColor = [UIColor blackColor];
         }
-        self.timeLab.text = [NSString stringWithFormat:@"%ld",productStockModel.stockNum];
     }
+    self.timeLab.text = [NSString stringWithFormat:@"%ld",productStockModel.stockNum];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

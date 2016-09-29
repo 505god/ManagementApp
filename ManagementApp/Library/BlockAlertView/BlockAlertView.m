@@ -189,7 +189,7 @@ static UIFont *buttonFont = nil;
             
             CGSize size = [title boundingRectWithSize:CGSizeMake(_view.bounds.size.width-kAlertViewBorder*2 , CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:[NSDictionary dictionaryWithObjectsAndKeys:buttonFont,NSFontAttributeName, nil] context:nil].size;
             
-            size.width = MAX(size.width, 80);
+            size.width = MAX(_view.bounds.size.width-kAlertViewBorder*2, 80);
             if (size.width + 2 * kAlertViewBorder < width)
             {
                 width = size.width + 2 * kAlertViewBorder;

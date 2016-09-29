@@ -7,6 +7,9 @@
 //
 
 #import "Utility.h"
+#import "NSString+md5.h"
+
+static UIImageView *orginImageView;
 
 @implementation Utility
 
@@ -69,7 +72,7 @@
     
     CGFloat compression = 1.0f;
     CGFloat maxCompression = 0.1f;
-    int maxFileSize = 200*1024;
+    int maxFileSize = 250*1024;
     
     NSData *imageData = UIImageJPEGRepresentation(image, compression);
     
@@ -91,5 +94,109 @@
     }else {
         return YES;
     }
+}
+
+#pragma mark - 显示大图
+
++(void)showImage:(UIImageView *)avatarImageView{
+    UIImage *image=avatarImageView.image;
+    orginImageView = avatarImageView;
+    orginImageView.alpha = 0;
+    UIWindow *window=[UIApplication sharedApplication].keyWindow;
+    UIView *backgroundView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
+    CGRect oldframe=[avatarImageView convertRect:avatarImageView.bounds toView:window];
+    backgroundView.backgroundColor=[[UIColor blackColor] colorWithAlphaComponent:0.7];
+    backgroundView.alpha=1;
+    UIImageView *imageView=[[UIImageView alloc]initWithFrame:oldframe];
+    imageView.image=image;
+    imageView.tag=1;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
+    [backgroundView addSubview:imageView];
+    [window addSubview:backgroundView];
+    
+    UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hideImage:)];
+    [backgroundView addGestureRecognizer: tap];
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        imageView.frame=CGRectMake(0,([UIScreen mainScreen].bounds.size.height-image.size.height*[UIScreen mainScreen].bounds.size.width/image.size.width)/2, [UIScreen mainScreen].bounds.size.width, image.size.height*[UIScreen mainScreen].bounds.size.width/image.size.width);
+        backgroundView.alpha=1;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
++(void)hideImage:(UITapGestureRecognizer*)tap{
+    UIView *backgroundView=tap.view;
+    UIImageView *imageView=(UIImageView*)[tap.view viewWithTag:1];
+    [UIView animateWithDuration:0.3 animations:^{
+        imageView.frame=[orginImageView convertRect:orginImageView.bounds toView:[UIApplication sharedApplication].keyWindow];
+    } completion:^(BOOL finished) {
+        [backgroundView removeFromSuperview];
+        orginImageView.alpha = 1;
+        backgroundView.alpha=0;
+    }];
+}
+
+#pragma mark - 返回document文件夹的路径
+
++(NSString *)returnPath {
+    NSString *path;
+    if (Platform>5.0) {
+        path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    }else{
+        path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    }
+    return path;
+}
+
+#pragma mark - 邀请码
+
++(NSString *)getPlateForm {
+    CFUUIDRef uuidRef =CFUUIDCreate(NULL);
+    
+    CFStringRef uuidStringRef =CFUUIDCreateString(NULL, uuidRef);
+    
+    CFRelease(uuidRef);
+    
+    NSString *uniqueId = (__bridge NSString *)uuidStringRef;
+    
+    return [uniqueId getPlateForm];
+}
+
+#pragma mark - 清除数据
+
++(void)dataShareClear {
+    [DataShare sharedService].classifyArray = nil;
+    [DataShare sharedService].colorArray = nil;
+    [DataShare sharedService].materialArray = nil;
+}
+
+#pragma mark - 返回销售类型 saleA,saleB..
++(NSString *)returnSale:(ClientModel *)model {
+    if (model.clientLevel==0) {
+        return @"saleA";
+    }else if (model.clientLevel==1) {
+        return @"saleB";
+    }else if (model.clientLevel==2) {
+        return @"saleC";
+    }else if (model.clientLevel==3) {
+        return @"saleD";
+    }
+    return @"saleA";
+}
+
+#pragma mark - 返回价格类型 a,b..
++(NSString *)returnPrice:(ClientModel *)model {
+    if (model.clientLevel==0) {
+        return @"a";
+    }else if (model.clientLevel==1) {
+        return @"b";
+    }else if (model.clientLevel==2) {
+        return @"c";
+    }else if (model.clientLevel==3) {
+        return @"d";
+    }
+    return @"a";
 }
 @end

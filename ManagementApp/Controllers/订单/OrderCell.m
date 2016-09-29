@@ -9,8 +9,16 @@
 #import "OrderCell.h"
 
 @interface OrderCell()
-@property (weak, nonatomic) IBOutlet UIImageView *orderMoneyImageView;
-@property (weak, nonatomic) IBOutlet UIImageView *orderShipImageView;
+
+@property (weak, nonatomic) IBOutlet UIImageView *payImg;
+@property (weak, nonatomic) IBOutlet UIImageView *deliverImg;
+
+@property (weak, nonatomic) IBOutlet UILabel *codeLab;
+@property (weak, nonatomic) IBOutlet UILabel *nameLab;
+
+@property (weak, nonatomic) IBOutlet UILabel *countLab;
+@property (weak, nonatomic) IBOutlet UILabel *timeLab;
+@property (weak, nonatomic) IBOutlet UILabel *priceLab;
 
 @end
 
@@ -27,12 +35,18 @@
     // Configure the view for the selected state
 }
 
--(void)setOrderModel:(OrderModel*)orderModel{
+-(void)setOrderModel:(OrderModel *)orderModel{
     _orderModel=orderModel;
-    //self.orderMoneyImageView.transform = CGAffineTransformMakeScale(1,10);
-//    UIImage *image = [UIImage imageNamed:@"order_money_bg"];
-  //  [self.orderMoneyImageView.image resizableImageWithCapInsets:UIEdgeInsetsMake(27, 0, 28, 0) resizingMode:UIImageResizingModeStretch];
-//    [self.orderShipImageView.image resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0) resizingMode:UIImageResizingModeTile];
+    
+    self.payImg.image = [Utility getImgWithImageName:[NSString stringWithFormat:@"order_money_bg_%d@2x",(int)orderModel.isPay]];
+    
+    self.deliverImg.image = [Utility getImgWithImageName:[NSString stringWithFormat:@"order_ship_bg_%d@2x",(int)orderModel.isDeliver]];
+    
+    self.codeLab.text = orderModel.orderCode;
+    self.nameLab.text = orderModel.clientName;
+    self.countLab.text = [NSString stringWithFormat:@"%d",(int)orderModel.orderCount];
+    self.timeLab.text = orderModel.timeString;
+    self.priceLab.text = [NSString stringWithFormat:@"%.2f",orderModel.orderPrice];
 }
 
 @end

@@ -10,15 +10,16 @@
 
 @implementation ColorModel
 
-+ (NSDictionary*)mts_mapping {
-    return  @{@"colorId": mts_key(colorId),
-              @"colorName": mts_key(colorName),
-              @"productSize": mts_key(productCount),
-              };
++(ColorModel *)initWithObject:(AVObject *)object {
+    ColorModel *model = [[ColorModel alloc]init];
+    
+    model.colorId = object.objectId;
+    
+    NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
+    
+    model.colorName = [dic objectForKey:@"colorName"];
+    model.productCount = [[dic objectForKey:@"productCount"]integerValue];
+    
+    return model;
 }
-
-+ (BOOL)mts_shouldSetUndefinedKeys {
-    return NO;
-}
-
 @end

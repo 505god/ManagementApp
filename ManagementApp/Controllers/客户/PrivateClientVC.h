@@ -11,6 +11,6 @@
 
 @interface PrivateClientVC : BaseVC
 
-@property (nonatomic, weak) ClientModel *clientModel;
+@property (nonatomic, strong) ClientModel *clientModel;
 
 @end

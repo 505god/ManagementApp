@@ -41,13 +41,14 @@
 #define DLog(...)
 #endif
 
-
+#define MainId @"565d86ff60b294e7ca8cdd43"
 #define SafeRelease(__v) (__v = nil);
 
 #define LOADVC(string) [[NSClassFromString(string) alloc]initWithNibName:string bundle:nil];
 
 #define Platform [[[UIDevice currentDevice] systemVersion] floatValue]
 
+#define kOnePageSize  10
 #define NavgationHeight 44
 #define TabbarHeight 49
 

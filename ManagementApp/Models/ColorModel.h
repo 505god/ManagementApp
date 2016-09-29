@@ -13,7 +13,7 @@
 @interface ColorModel : NSObject
 
 ///颜色id
-@property (nonatomic, assign) NSInteger colorId;
+@property (nonatomic, strong) NSString *colorId;
 ///颜色名称
 @property (nonatomic, strong) NSString *colorName;
 ///颜色下产品数量
@@ -21,4 +21,7 @@
 
 
 @property (nonatomic, assign) NSInteger index;
+@property (nonatomic, assign) BOOL isExit;
+
++(ColorModel *)initWithObject:(AVObject *)object;
 @end

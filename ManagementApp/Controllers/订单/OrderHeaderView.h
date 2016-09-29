@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OrderHeaderView : UIView
+@interface OrderHeaderView : UITableViewHeaderFooterView
+
+@property (nonatomic, strong) NSArray *dataArray;
 
 @end

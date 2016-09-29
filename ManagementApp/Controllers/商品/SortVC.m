@@ -9,21 +9,31 @@
 #import "SortVC.h"
 #import "SortCell.h"
 
-@interface SortVC ()
+#import "MainVC.h"
 
+@interface SortVC ()
+@property(nonatomic, assign) NSInteger previousRowProduct;
+
+@property(nonatomic, assign) NSInteger previousRowClient;
+
+@property (nonatomic, assign) NSInteger waringCount;
 @end
 
 @implementation SortVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.previousRowProduct = 1;
+    //集成刷新控件
+    [self addHeader];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    DLog(@"currebtPage = %d",(int)self.currentPage);
     
-    [self.sortTable reloadData];
+    [Utility setExtraCellLineHidden:self.sortTable];
+    
     ///底部切换栏布局
     int num = (int)self.currentPage;
     if (num == 0) {
@@ -32,64 +42,163 @@
         self.rightIconImgV.image = [Utility getImgWithImageName:@"hide_s_bt@2x"];
         self.rightNameLab.text = SetTitle(@"off_the_shelf");
         
-        SortModel *model1 = [[SortModel alloc] init];
-        model1.sortId = 1;
-        model1.sortName = SetTitle(@"navicon_all");
-        model1.sortProductCount = 460;
         
-        SortModel *model2 = [[SortModel alloc] init];
-        model2.sortId = 2;
-        model2.sortName = SetTitle(@"not_classified");
-        model2.sortProductCount = 0;
-        
-        SortModel *model3 = [[SortModel alloc] init];
-        model3.sortId = 3;
-        model3.sortName = @"BORSE IN PELLE";
-        model3.sortProductCount = 67;
-        
-        SortModel *model4 = [[SortModel alloc] init];
-        model4.sortId = 4;
-        model4.sortName = @"CLASSIC BAGS";
-        model4.sortProductCount = 0;
-        
-        SortModel *model5 = [[SortModel alloc] init];
-        model5.sortId = 5;
-        model5.sortName = @"BORSE ESTIVO/SUMMER";
-        model5.sortProductCount = 140;
-        
-        SortModel *model6 = [[SortModel alloc] init];
-        model6.sortId = 6;
-        model6.sortName = @"WINTER 2015 NEW!!!!!!";
-        model6.sortProductCount = 121;
-        
-        SortModel *model7 = [[SortModel alloc] init];
-        model7.sortId = 7;
-        model7.sortName = @"BORSE IN PELLE VINTAGE";
-        model7.sortProductCount = 36;
-        
-        SortModel *model8 = [[SortModel alloc] init];
-        model8.sortId = 8;
-        model8.sortName = @"FOULAR";
-        model8.sortProductCount = 76;
-        
-        SortModel *model9 = [[SortModel alloc] init];
-        model9.sortId = 9;
-        model9.sortName = @"BORSE UOMO";
-        model9.sortProductCount = 20;
-        
-        self.dataArray = [NSArray arrayWithObjects:model1,model2,model3,model4,model5,model6,model7,model8,model9, nil];
-        
-        
+        if (self.dataArray.count==0) {
+            [self.sortTable headerBeginRefreshing];
+        }else {
+            [self.sortTable reloadData];
+        }
     }else{
         self.leftIconImgV.image = [Utility getImgWithImageName:@"vendor_drawer_icon@2x"];
         self.leftNameLab.text = SetTitle(@"private_client");
         self.rightIconImgV.image = [Utility getImgWithImageName:@"factory_drawer_icon@2x"];
         self.rightNameLab.text = SetTitle(@"supplier");
+        
+        if (self.typeArray.count==0) {
+            [self.sortTable headerBeginRefreshing];
+        }else {
+            [self.sortTable reloadData];
+        }
     }
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - getter/setter
+
+-(NSMutableArray *)dataArray {
+    if (!_dataArray) {
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
+}
+
+-(NSMutableArray *)typeArray {
+    if (!_typeArray) {
+        _typeArray = [NSMutableArray array];
+    }
+    return _typeArray;
+}
+
+#pragma mark - private
+
+- (void)addHeader {
+    
+    __weak __typeof(self)weakSelf = self;
+    [self.sortTable addHeaderWithCallback:^{
+        if (weakSelf.currentPage==0) {
+            [weakSelf getSortDataFromSever];
+        }else {
+            [weakSelf getClientTypeNum];
+        }
+        
+    } dateKey:@"SortVC"];
+}
+
+#pragma mark - 获取分类列表
+
+-(void)getSortDataFromSever {
+    
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            weakSelf.dataArray = nil;
+            //库存预警
+            AVQuery *query1 = [AVQuery queryWithClassName:@"Product"];
+            [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
+            [query1 whereKey:@"isWaring" equalTo:[NSNumber numberWithBool:true]];
+            weakSelf.waringCount = [query1 countObjects];
+            
+            //全部
+            AVQuery *query2 = [AVQuery queryWithClassName:@"Product"];
+            [query2 whereKey:@"user" equalTo:[AVUser currentUser]];
+            NSInteger all = [query2 countObjects];
+            [weakSelf.dataArray addObject:@[SetTitle(@"navicon_all"),@(all)]];
+            
+            //未分类
+            AVQuery *query3 = [AVQuery queryWithClassName:@"Product"];
+            [query3 whereKey:@"user" equalTo:[AVUser currentUser]];
+            [query3 whereKeyDoesNotExist:@"sort"];
+            NSInteger notFliter = [query3 countObjects];
+            [weakSelf.dataArray addObject:@[SetTitle(@"not_classified"),@(notFliter)]];
+            
+            AVQuery *query = [AVQuery queryWithClassName:@"Sort"];
+            //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
+            query.cachePolicy = kAVCachePolicyNetworkElseCache;
+            //设置缓存有效期
+            query.maxCacheAge = 24*3600;// 一天的总秒数
+            [query whereKey:@"user" equalTo:[AVUser currentUser]];
+
+            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                if (!error) {
+                    for (int i=0; i<objects.count; i++) {
+                        AVObject *object = objects[i];
+                        
+                        SortModel *model = [SortModel initWithObject:object];
+                        [weakSelf.dataArray addObject:model];
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.sortTable headerEndRefreshing];
+                        [weakSelf.sortTable reloadData];
+                    });
+                } else {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [weakSelf.sortTable headerEndRefreshing];
+                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                    });
+                }
+            }];
+        });
+        
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
+}
+
+#pragma mark - 获取客户类型数量
+
+-(void)getClientTypeNum {
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            weakSelf.typeArray = nil;
+            
+            AVQuery *query1 = [AVQuery queryWithClassName:@"Client"];
+            [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
+            NSInteger all = [query1 countObjects];
+            [weakSelf.typeArray addObject:@[SetTitle(@"navicon_all"),@(all)]];
+            
+            [query1 whereKey:@"clientType" equalTo:@(0)];
+            [query1 whereKey:@"clientLevel" equalTo:@(0)];
+            NSInteger aCount = [query1 countObjects];
+            [weakSelf.typeArray addObject:@[@"A",@(aCount)]];
+            
+            [query1 whereKey:@"clientLevel" equalTo:@(1)];
+            NSInteger bCount = [query1 countObjects];
+            [weakSelf.typeArray addObject:@[@"B",@(bCount)]];
+            
+            [query1 whereKey:@"clientLevel" equalTo:@(2)];
+            NSInteger cCount = [query1 countObjects];
+            [weakSelf.typeArray addObject:@[@"C",@(cCount)]];
+            
+            [query1 whereKey:@"clientLevel" equalTo:@(3)];
+            NSInteger dCount = [query1 countObjects];
+            [weakSelf.typeArray addObject:@[@"D",@(dCount)]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.sortTable headerEndRefreshing];
+                [weakSelf.sortTable reloadData];
+            });
+        });
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -98,14 +207,14 @@
     if (self.currentPage == 0) {
         return self.dataArray.count + 1;
     }else{
-        return self.dataArray.count;
+        return self.typeArray.count;
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString * CellIdentifier = @"sort_cell";
     
     if (self.currentPage == 0) {
+        static NSString * CellIdentifier = @"sort_cell";
         if (indexPath.row == 0) {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
             if (cell == nil) {
@@ -131,7 +240,7 @@
             
             UILabel *sortNumLabel = [[UILabel alloc] initWithFrame:CGRectMake(221, 12, 49, 21)];
             sortNumLabel.textColor = [UIColor whiteColor];
-            sortNumLabel.text = @"137";
+            sortNumLabel.text = [NSString stringWithFormat:@"%d",(int)self.waringCount];
             sortNumLabel.textAlignment = NSTextAlignmentRight;
             [customView addSubview:sortNumLabel];
             
@@ -145,14 +254,26 @@
                 cell = (SortCell *)[array objectAtIndex:0];
             }
             
-            SortModel *sortModel = (SortModel *)self.dataArray[indexPath.row-1];
-            [cell setSortModel:sortModel];
-            
-            return cell;
+            id object = self.dataArray[indexPath.row-1];
+            if ([object isKindOfClass:[NSArray class]]) {
+                [cell setResultArray:self.dataArray[indexPath.row-1]];
+            }else if ([object isKindOfClass:[SortModel class]]){
+                SortModel *sortModel = (SortModel *)self.dataArray[indexPath.row-1];
+                [cell setSortModel:sortModel];
 
+            }
+
+            return cell;
         }
     }else{
-        return nil;
+        SortCell *cell = [tableView dequeueReusableCellWithIdentifier:@"sort_cell2"];
+        if (cell == nil) {
+            NSArray *array = [[NSBundle mainBundle] loadNibNamed:@"SortCell" owner:self options:nil];
+            cell = (SortCell *)[array objectAtIndex:0];
+        }
+        
+        [cell setResultArray:self.typeArray[indexPath.row]];
+        return cell;
     }
     
 }
@@ -163,24 +284,25 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-//    ColorCell *cell = (ColorCell *)[tableView cellForRowAtIndexPath:indexPath];
-//    if (self.isSelectedColor) {
-//        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-//        
-//        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %d", colorModel.colorId];
-//        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[self.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
-//        if (filteredArray.count>0) {
-//            ///已经选择,取消选择
-//            [cell setSelectedType:1];
-//            [self.hasSelectedColor removeObjectsInArray:filteredArray];
-//        }else {
-//            ///选择
-//            [cell setSelectedType:2];
-//            [self.hasSelectedColor addObject:colorModel];
-//        }
-//    }else {
-//        //do noting
-//    }
+    if (self.currentPage==0) {
+        [self.drawer close];
+        if (indexPath.row == self.previousRowProduct){
+        }else {
+            if (indexPath.row<3) {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterProductDataWithNotification" object:[NSString stringWithFormat:@"%d",(int)indexPath.row]];
+            }else {
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterProductDataWithNotification" object:@[[NSString stringWithFormat:@"%d",(int)-100],self.dataArray[indexPath.row-1]]];
+            }
+        }
+        self.previousRowProduct = indexPath.row;
+    }else {
+        [self.drawer close];
+        if (indexPath.row == self.previousRowClient){
+        }else {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterDataWithNotification" object:[NSString stringWithFormat:@"%d",(int)indexPath.row]];
+        }
+        self.previousRowClient = indexPath.row;
+    }
 }
 
 -(void)scrollViewDidScrollToTop:(UIScrollView *)scrollView {
@@ -190,10 +312,38 @@
 ///segment切换
 -(IBAction)leftBtnPressed:(id)sender
 {
-    
+    if (self.currentPage==0) {
+        [self.drawer close];
+        if (self.previousRowProduct==-1) {
+        }else {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterProductDataWithNotification" object:[NSString stringWithFormat:@"%d",-1]];
+        }
+        self.previousRowProduct=-1;
+    }else {
+        [self.drawer close];
+        if (self.previousRowClient==5){
+        }else {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterDataWithNotification" object:[NSString stringWithFormat:@"%d",5]];
+        }
+        self.previousRowClient = 5;
+    }
 }
 -(IBAction)rightBtnPressed:(id)sender{
-    
+    if (self.currentPage==0) {
+        [self.drawer close];
+        if (self.previousRowProduct==-2) {
+        }else {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterProductDataWithNotification" object:[NSString stringWithFormat:@"%d",-2]];
+        }
+        self.previousRowProduct=-2;
+    }else {
+        [self.drawer close];
+        if (self.previousRowClient == 6){
+        }else {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"fliterDataWithNotification" object:[NSString stringWithFormat:@"%d",6]];
+        }
+        self.previousRowClient = 6;
+    }
 }
 #pragma mark - ICSDrawerControllerPresenting
 

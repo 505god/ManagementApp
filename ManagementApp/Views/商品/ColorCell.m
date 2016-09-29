@@ -13,8 +13,6 @@
 ///标题
 @property (nonatomic, strong) UILabel *titleLab;
 
-@property (nonatomic, strong) UIImageView *lineView;
-
 @property (nonatomic, strong) UIImageView *deleteGreyImageView;
 @property (nonatomic, strong) UIImageView *deleteRedImageView;
 
@@ -34,10 +32,6 @@
         self.titleLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.titleLab.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.titleLab];
-        
-        self.lineView = [[UIImageView alloc]initWithFrame:CGRectZero];
-        self.lineView.image = [Utility getImgWithImageName:@"line@2x"];
-        [self.contentView addSubview:self.lineView];
         
         self.accessView = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.accessView.contentMode = UIViewContentModeScaleAspectFit;
@@ -101,11 +95,9 @@
     self.imageView.frame = (CGRect){20,(self.height-20)/2,20,20};
     self.textLabel.frame = (CGRect){self.imageView.right+10,(self.height-self.textLabel.height)/2,self.textLabel.width,self.textLabel.height};
     
-    self.titleLab.frame = (CGRect){10,(self.contentView.height-20)/2,self.contentView.width-40,20};
+    self.titleLab.frame = (CGRect){15,(self.contentView.height-20)/2,self.contentView.width-45,20};
     
     self.accessView.frame = (CGRect){self.titleLab.right,(self.contentView.height-10)/2,14,10};
-    
-    self.lineView.frame = (CGRect){self.titleLab.left,self.height-1,self.contentView.width-20,2};
 }
 
 -(void)setColorModel:(ColorModel *)colorModel {

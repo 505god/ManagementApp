@@ -1,165 +1,517 @@
-/* 
-  Localizable.strings
-  TTTTTT
+///* 
+//  Localizable.strings
+//  TTTTTT
+//
+//  Created by 邱成西 on 15/2/13.
+//  Copyright (c) 2015年 苏州瑞鹏科技有限公司. All rights reserved.
+//*/
+//
+//
+////底部tabBar
+//"navicon_stock" = "Product";
+//"navicon_client" = "Client";
+//"navicon_order" = "Order";
+//"navicon_options" = "Options";
+//
+////登录
+//"log_error" = "Account error...";
+//"log_account" = "Account";
+//"log_pwd" = "Password";
+//"log_in" = "Login";
+//"log_out" = "Logout";
+//"logInNameError" = "Please enter account";
+//"logInPwdError" = "Please enter password";
+//"logInExit" = "user doesn't exists.";
+//"Company_info" = "Company name";
+//"Company_time" = "Service life";
+//"Company_expire" = "Account expired";
+//"Company_day" = "day";
+//"agent" = "Agent";
+//"new_agent" = "Add new agent";
+//"agent_day" = "Surplus days";
+//"editPwd" = "Edit password";
+//"OriginalPwd" = "Original password";
+//"NewPwd" = "New password";
+//"NewAgainPwd" = "Enter new password again";
+//
+////颜色
+//"color" = "Color";
+//"ColorDelete" = "The color include product can't be deleted";
+//"EditColor" = "Edit color";
+//"addColor" = "Add color";
+//
+////分类
+//"classify" = "Classify";
+//"classifyDelete" = "The classify include product can't be deleted";
+//"EditClassify" = "Edit classify";
+//"addClassify" = "Add classify";
+//"ClassifyExit" = "Non selection classification.";
+//
+////材质
+//"material" = "Material";
+//"materialDelete" = "The material include product can't be deleted";
+//"Editmaterial" = "Edit material";
+//"addmaterial" = "Add material";
+//
+////价格
+//"price" = "Price";
+//"sale_price" = "Sale price";
+//"purchase_price" = "Purchase price";
+//"column" = "column";
+//"error_price" = "Please enter %@ the correct price.";
+//"error_blank" = "%@ can't be blank.";
+//"edit_price_error" = "Prices fill in an error, return to re-edit?";
+//"print" = "Print";
+////消息
+//"NewMessage" = "say something";
+//"sendMessageError" = "message can't be blank.";
+//"copy" = "copy";
+//
+////商品
+//"product_statistics" = "Statistics";
+//"product" = "New Product";
+//"Description" = "description";
+//"stock" = "Stock";
+//"product_code" = "Code";
+//"product_required" = "Required";
+//"product_set" = "Not set";
+//"product_package" = "Package number";
+//"product_name" = "Name";
+//"product_mark" = "Remark";
+//"product_display" = "Retail side display";
+//"product_promotion" = "Retail side promotion";
+//"stock_warning" = "Stock warning";
+//"not_classified" = "Not classified";
+//"best_sellers" = "Hot";
+//"off_the_shelf" = "Off the shelf";
+//"navicon_all" = "All";
+//"product_sale" = "Sales";
+//"product_edit" = "Edit";
+//"order_code" = "Product code A-Z";
+//"order_best_sell" = "Best selling";
+//"order_worst_sell" = "The worst sell within 30 days";
+//"order_stock_up" = "Up to stock";
+//"order_stock_down" = "Minimum stock";
+//"day" = "days";
+//"pro_sale" = "Product sales";
+//"client_buy" = "Buy clients";
+//"stock_num" = "Stock number";
+//"date" = "Date";
+//"productError" = "Code already exist.";
+//
+////库存预警
+//"stock_all" = "The total stock";
+//"stock_one" = "A single color stock";
+//"edit_stock_error" = "Stock fill in an error, return to re-edit?";
+//
+////弹出框
+//"ConfirmDelete" = "Confirm delete?";
+//"alert_confirm" = "YES";
+//"alert_cancel" = "NO";
+//"Previous" = "Previous";
+//"Next" = "Next";
+//"confirm" = "Confirm";
+//"product_creat" = "Confirm creat product?";
+//"product_editing" = "Confirm edit product?";
+//"client_creat" = "Confirm creat client?";
+//"client_editing" = "Confirm edit client?";
+//
+////搜索框
+//"Search" = "Search";
+//"cancel" = "Cancel";
+//"search_name" = "Please enter name";
+//
+////客户
+//"private_client" = "Private client";
+//"unprivate_client" = "Non private client";
+//"supplier" = "Supplier";
+//"customer" = "Customer";
+//"detail" = "Detail";
+//"type" = "Type";
+//"level" = "Level";
+//"phone" = "Phone";
+//"email" = "Email";
+//"name" = "Name";
+//"client_type" = "Client type";
+//"order_maximum" = "Up to transactions";
+//"order_up" = "Up to amount";
+//"order_arrears" = "Up to arrears";
+//"order_buy" = "Buy history";
+//"client_detail" = "Client details";
+//"total_price" = "Total";
+//"total_num" = "num";
+//"Order_code" = "# code";
+//"qingchu" = "clear";
+//"command" = "Command";
+//"order_delete_error" = "Order has been paid or delivered,can't be deleted";
+//"command_change" = "Change command";
+//"command_send" = "Send command";
+//"price_show" = "Price has been shown";
+//"price_unshow" = "Price not shown";
+//"stock_show" = "Stock has been shown";
+//"stock_unshow" = "Stock not shown";
+//"order_edit_zhekou" = "total amount reduce";
+//"order_edit_jine" = "total amount reduce";
+//"price_display" = "Price been shown";
+//"stock_display" = "Stock been shown";
+//"member_disable" = "Disable membership";
+//"member_enable" = "Enable membership";
+//"command_use" = "Exclusive command（in use）";
+//"command_unuse" = "Exclusive command（not used）";
+//"command_disabled" = "Exclusive command（disabled）";
+//"send_message" = "Send message";
+//"sheet_sms" = "SMS";
+//"order_edit_count" = "Edit product's num";
+//"order_edit_count_error" = "Num exceeds a limit";
+//"order_edit_count_info" = "enter 2 said the num of products reduce 2";
+//"sheet_message" = "Message";
+//"jianzhekou" = "discount";
+//"jianzhekou_info" = "enter 20 said the total amount of orders reduce 20%";
+//"jianjine" = "amount";
+//"jianjine_info" = "enter 200 said the total amount of orders reduce 200";
+////订单
+//"new_client" = "There's a new private client～";
+//"new_order" = "There's a new order～";
+//"Statistics" = "Statistics";
+//"status" = "Status";
+//"mark" = "Mark";
+//"week" = "This week";
+//"month" = "This month";
+//"latest_month" = "Last 3 months";
+//"select_date" = "Select a date";
+//"pay_none" = "Unpaid";
+//"pay_part" = "Part paid";
+//"pay_part_price" = "Part paid amount";
+//"pay_all" = "All paid";
+//"deliver_none" = "Non shipped";
+//"deliver_part" = "Part shipped";
+//"deliver_all" = "All shipped";
+//"green" = "Green";
+//"orange" = "Orange";
+//"brown" = "Brown";
+//"red" = "Red";
+//"violet" = "Violet";
+//"blue" = "Blue";
+//"sureBtn" = "Complete";
+//"order_tax" = "Tax:";
+//"order_total" = "Total amount(included tax):";
+//"company_tax" = "Tax";
+//"company_taxinfo" = "enter 20 said the tax is 20%";
+//"order_items" = "Items:";
+//"order_count" = "Product number:";
+//"order_total" = "Total price";
+//"order_creat" = "creat";
+//"order_deliver" = "Set shipping status";
+//"order_pay" = "Set payment status";
+//"order_delete" = "Delete";
+//"order_zhekou" = "total amount reduce:";
+//"order_jine" = "total amount reduce:";
+//"order_info" = "Full statisti";
+//"order_profit" = "Profit:";
+//"order_num" = "Order number:";
+////相册
+//"title" = "Select Album";
+//"Format_photo" = "%ld Photo";
+//"Format_photos" = "%ld Photos";
+//"PhotoSelectedError" = "Select a picture errors";
+//"SelectedMaxPhoto" = "Select up a photo";
+//"Photo" = "Photo";
+//"TextDetail" = "Text detail";
+//"camera" = "Camera";
+//"recentMessage" = "Chat record";
+//
+//"no_connect" = "No network";
+//
+//"connect_error" = "Try again later...";
+//
+//"new_creat" = "Newly created";
+//"new_update" = "Last updated";
+//
+////下拉刷新
+//"FooterPullToRefresh" = "Pull-up to refresh";
+//"FooterReleaseToRefresh" = "Release to load more data";
+//"Refreshing" = "Refreshing...";
+//"HeaderPullToRefresh" = "Pull-down to refresh";
+//"HeaderReleaseToRefresh" = "Release to refresh";
+//"LastUpDate" = "Last update:";
+//
+////时间
+//"Night" = "Night";
+//"Dawn" = "Dawn";
+//"Tomorrow" = "Tomorrow";
+//"Today" = "Today";
+//"Yesterday" = "Yesterday";
+//"Monday" = "MON";
+//"Tuesday" = "TUE";
+//"Wednesday" = "WED";
+//"Thursday" = "THU";
+//"Friday" = "FRI";
+//"Saturday" = "SAT";
+//"Sunday" = "SUN";
+//"update_success" = "Success";
+////公司
+//"Company" = "Company detail";
+//"product_push" = "New Product、modish prosuct coming～";
+////错误码
+//"error_code_" = "稍后再试...";
 
-  Created by 邱成西 on 15/2/13.
-  Copyright (c) 2015年 苏州瑞鹏科技有限公司. All rights reserved.
-*/
+/*
+ Localizable.strings
+ TTTTTT
+ 
+ Created by 邱成西 on 15/2/13.
+ Copyright (c) 2015年 苏州瑞鹏科技有限公司. All rights reserved.
+ */
 
 
 //底部tabBar
-"navicon_stock" = "Product";
-"navicon_client" = "Client";
-"navicon_order" = "Order";
-"navicon_options" = "Options";
+"navicon_stock" = "商品";
+"navicon_client" = "客户";
+"navicon_order" = "订单";
+"navicon_options" = "更多";
 
 //登录
-"log_account" = "Account";
-"log_pwd" = "Password";
-"log_in" = "Login";
-"logInNameError" = "Please enter account";
-"logInPwdError" = "Please enter password";
+"log_error" = "帐号有误...";
+"log_account" = "帐号";
+"log_pwd" = "密码";
+"log_in" = "登录";
+"log_out" = "退出登录";
+"logInNameError" = "请输入帐号";
+"logInPwdError" = "请输入密码";
+"logInExit" = "用户不存在";
+"Company_info" = "公司名称";
+"Company_time" = "使用期限";
+"Company_expire" = "帐号已过期";
+"Company_day" = "日";
+"agent" = "代理";
+"new_agent" = "添加新代理";
+"agent_day" = "剩余天数";
+"editPwd" = "修改密码";
+"OriginalPwd" = "原密码";
+"NewPwd" = "新密码";
+"NewAgainPwd" = "再次输入新密码";
+
 
 //颜色
-"color" = "Color";
-"ColorDelete" = "The color include product can't be deleted";
-"EditColor" = "Edit color";
-"addColor" = "Add color";
+"color" = "颜色";
+"ColorDelete" = "该颜色下包含商品不能被删除";
+"EditColor" = "编辑颜色";
+"addColor" = "添加颜色";
 
 //分类
-"classify" = "Classify";
-"classifyDelete" = "The classify include product can't be deleted";
-"EditClassify" = "Edit classify";
-"addClassify" = "Add classify";
+"classify" = "分类";
+"classifyDelete" = "该分类下包含商品不能被删除";
+"EditClassify" = "编辑分类";
+"addClassify" = "添加分类";
+"ClassifyExit" = "未选择分类。";
 
 //材质
-"material" = "Material";
-"materialDelete" = "The material include product can't be deleted";
-"Editmaterial" = "Edit material";
-"addmaterial" = "Add material";
+"material" = "材质";
+"materialDelete" = "该材质下包含商品不能被删除";
+"Editmaterial" = "编辑材质";
+"addmaterial" = "添加材质";
 
 //价格
-"price" = "Price";
-"sale_price" = "Sale price";
-"purchase_price" = "Purchase price";
-"column" = "column";
-"error_price" = "Please enter %@ the correct price.";
-"error_blank" = "%@ can't be blank.";
-"edit_price_error" = "Prices fill in an error, return to re-edit?";
+"price" = "价格";
+"sale_price" = "销售价";
+"purchase_price" = "进货价";
+"column" = "栏";
+"error_price" = "请在%@填写正确的价格。";
+"error_blank" = "%@ 不能为空。";
+"edit_price_error" = "价格设置存在错误，重新编辑？";
 
 //商品
-"product" = "New Product";
-"Description" = "description";
-"stock" = "Stock";
-"product_code" = "Code";
-"product_required" = "Required";
-"product_set" = "Not set";
-"product_package" = "Package number";
-"product_name" = "Name";
-"product_mark" = "Remark";
-"product_display" = "Retail side display";
-"product_promotion" = "Retail side promotion";
-"stock_warning" = "Stock warning";
-"not_classified" = "Not classified";
-"best_sellers" = "Hot";
-"off_the_shelf" = "Off the shelf";
-"navicon_all" = "All";
-"product_sale" = "Sales";
-"product_edit" = "Edit";
-"order_code" = "Product code A-Z";
-"order_best_sell" = "Best selling";
-"order_worst_sell" = "The worst sell within 30 days";
-"order_stock_up" = "Up to stock";
-"order_stock_down" = "Minimum stock";
-"day" = "days";
-"pro_sale" = "Product sales";
-"client_buy" = "Buy clients";
-"stock_num" = "Stock number";
-"date" = "Date";
+"product_statistics" = "总计";
+"product" = "新商品";
+"Description" = "描述";
+"stock" = "库存";
+"product_code" = "货号";
+"product_required" = "必填";
+"product_set" = "未设置";
+"product_package" = "包装数";
+"product_name" = "名称";
+"product_mark" = "备注";
+"product_display" = "零售端显示";
+"product_promotion" = "零售端促销";
+"stock_warning" = "库存预警";
+"navicon_all" = "全部";
+"not_classified" = "未分类";
+"best_sellers" = "热卖";
+"off_the_shelf" = "下架";
+"product_sale" = "销量";
+"product_edit" = "修改";
+"order_delete_error" = "订单已付款或者已发货，无法删除";
+"order_code" = "货号A-Z";
+"order_best_sell" = "最好卖";
+"order_worst_sell" = "30天内最不好卖";
+"order_stock_up" = "库存最多";
+"order_stock_down" = "库存最少";
+"day" = "天";
+"pro_sale" = "商品销售";
+"client_buy" = "购买客户";
+"stock_num" = "库存数量";
+"date" = "日期";
+"productError" = "货号已存在";
 
 //库存预警
-"stock_all" = "The total stock";
-"stock_one" = "A single color stock";
-"edit_stock_error" = "Stock fill in an error, return to re-edit?";
+"stock_all" = "当总库存低于";
+"stock_one" = "当单款颜色库存低于";
+"edit_stock_error" = "库存数量设置存在错误，重新编辑？";
+
 
 //弹出框
-"ConfirmDelete" = "Confirm delete?";
-"alert_confirm" = "YES";
-"alert_cancel" = "NO";
-"Previous" = "Previous";
-"Next" = "Next";
-"confirm" = "Confirm";
+"ConfirmDelete" = "确认删除?";
+"alert_confirm" = "确认";
+"alert_cancel" = "取消";
+"Previous" = "上一项";
+"Next" = "下一项";
+"confirm" = "确认";
+"product_creat" = "确认创建商品?";
+"product_editing" = "确认修改商品?";
+"client_creat" = "确认创建客户?";
+"client_editing" = "确认修改客户?";
 
 //搜索框
-"Search" = "Search";
-"cancel" = "Cancel";
+"Search" = "搜索";
+"cancel" = "取消";
+"search_name" = "请输入名称";
 
 //客户
-"private_client" = "Private client";
-"supplier" = "Supplier";
-"customer" = "Customer";
-"detail" = "Detail";
-"type" = "Type";
-"level" = "Level";
-"phone" = "Phone";
-"email" = "Email";
-"name" = "Name";
-"client_type" = "Client type";
-"order_maximum" = "Up to amount";
-"order_up" = "Up to transactions";
-"order_arrears" = "Up to arrears";
-"order_buy" = "Buy history";
-"client_detail" = "Client details";
-"total_price" = "Total amount";
-"total_num" = "Total num";
-"Order_code" = "# code";
-"command" = "Command";
-"command_change" = "Change command";
-"command_send" = "Send command";
-"price_show" = "Price has been shown";
-"price_unshow" = "Price not shown";
-"member_disable" = "Disable membership";
-"member_enable" = "Enable membership";
-"command_use" = "Exclusive command（in use）";
-"command_unuse" = "Exclusive command（disabled）";
-"send_message" = "Send message";
-"sheet_sms" = "SMS";
-"sheet_message" = "Message";
-
+"private_client" = "私密客户";
+"unprivate_client" = "非私密客户";
+"supplier" = "供货商";
+"customer" = "顾客";
+"detail" = "详情";
+"type" = "类型";
+"client_type" = "客户类型";
+"level" = "等级";
+"phone" = "号码";
+"email" = "邮箱";
+"name" = "名字";
+"order_maximum" = "交易次数最多";
+"order_up" = "交易金额最高";
+"order_arrears" = "欠款最多";
+"order_buy" = "交易历史";
+"client_detail" = "客户详情";
+"total_price" = "总金额";
+"total_num" = "总数量";
+"Order_code" = "#订单号";
+"command" = "口令";
+"command_change" = "更改口令";
+"command_send" = "发送口令";
+"price_show" = "价格已显示";
+"price_unshow" = "价格未显示";
+"stock_show" = "库存已显示";
+"stock_unshow" = "库存未显示";
+"price_display" = "显示价格";
+"stock_display" = "显示库存";
+"member_disable" = "停用会员资格";
+"member_enable" = "启用会员资格";
+"command_use" = "专属口令（使用中）";
+"command_unuse" = "专属口令（未使用）";
+"command_disabled" = "专属口令（已停用）";
+"send_message" = "发送消息";
+"sheet_sms" = "短信";
+"sheet_message" = "消息";
+"order_items" = "项数:";
+"order_count" = "总数量:";
+"order_totall" = "总价";
+"order_creat" = "创建";
+"order_deliver" = "设置发货状态";
+"order_pay" = "设置付款状态";
+"order_delete" = "删除";
+"order_zhekou" = "折扣优惠:";
+"order_jine" = "价格优惠:";
+"order_info" = "完整统计";
+"print" = "打印";
+//订单
+"new_order" = "有新的订单了～";
+"Statistics" = "完整统计";
+"status" = "状态";
+"mark" = "标签";
+"week" = "本周";
+"month" = "本月";
+"latest_month" = "最近3个月";
+"select_date" = "选择日期";
+"pay_none" = "未付款";
+"pay_part" = "部分付款";
+"pay_part_price" = "部分付款金额";
+"pay_all" = "全部付款";
+"deliver_none" = "未发货";
+"deliver_part" = "部分发货";
+"deliver_all" = "全部发货";
+"qingchu" = "清除";
+"green" = "绿色";
+"orange" = "橙色";
+"brown" = "褐色";
+"red" = "红色";
+"violet" = "紫色";
+"blue" = "蓝色";
+"sureBtn" = "完成";
+"company_tax" = "税";
+"company_taxinfo" = "输入20代表税20%";
+"order_tax" = "税:";
+"order_total" = "总金额(含税):";
+"order_profit" = "利润:";
+"order_num" = "订单数:";
+"order_edit_zhekou" = "折扣优惠";
+"order_edit_jine" = "价格优惠";
+"jianzhekou" = "减折扣";
+"jianzhekou_info" = "输入20表示订单总金额－20%";
+"jianjine" = "减金额";
+"jianjine_info" = "输入200表示订单总金额－200";
+"order_edit_count" = "修改商品数量";
+"order_edit_count_error" = "数量超过限额";
+"order_edit_count_info" = "输入2表示商品数量－2";
 //相册
-"title" = "Select Album";
-"Format_photo" = "%ld Photo";
-"Format_photos" = "%ld Photos";
-"PhotoSelectedError" = "Select a picture errors";
-"SelectedMaxPhoto" = "Select up a photo";
+"title" = "选择相册";
+"Format_photo" = "%ld 张照片";
+"Format_photos" = "%ld 张照片";
+"PhotoSelectedError" = "选择图片失败";
+"SelectedMaxPhoto" = "最多选择%ld张照片";
+"Photo" = "照片";
+"camera" = "拍摄";
+"TextDetail" = "文本消息";
+"recentMessage" = "聊天记录";
 
+"no_connect" = "网络不给力";
+"product_push" = "新品、潮品上架了～";
+"connect_error" = "稍后再试...";
+"new_client" = "有新的私密客户了～";
 
-"connect_error" = "Try again later...";
-
-"new_creat" = "Newly created";
-"new_update" = "Last updated";
-
+"new_creat" = "最新创建";
+"new_update" = "最近更新";
+"update_success" = "修改成功";
 //下拉刷新
-"FooterPullToRefresh" = "Pull-up to refresh";
-"FooterReleaseToRefresh" = "Release to load more data";
-"Refreshing" = "Refreshing...";
-"HeaderPullToRefresh" = "Pull-down to refresh";
-"HeaderReleaseToRefresh" = "Release to refresh";
-"LastUpDate" = "Last update:";
+"FooterPullToRefresh" = "上拉可以加载更多数据";
+"FooterReleaseToRefresh" = "松开立即加载更多数据";
+"Refreshing" = "正在努力加载中...";
+"HeaderPullToRefresh" = "下拉可以刷新";
+"HeaderReleaseToRefresh" = "松开立即刷新";
+"LastUpDate" = "最近更新:";
+
+
+//消息
+"NewMessage" = "新消息";
+"sendMessageError" = "说点什么吧";
+"copy" = "复制";
 
 //时间
-"Night" = "Night";
-"Dawn" = "Dawn";
-"Tomorrow" = "Tomorrow";
-"Today" = "Today";
-"Yesterday" = "Yesterday";
-"Monday" = "MON";
-"Tuesday" = "TUE";
-"Wednesday" = "WED";
-"Thursday" = "THU";
-"Friday" = "FRI";
-"Saturday" = "SAT";
-"Sunday" = "SUN";
+"Night" = "晚上";
+"Dawn" = "凌晨";
+"Tomorrow" = "明天";
+"Today" = "今天";
+"Yesterday" = "昨天";
+"Monday" = "星期一";
+"Tuesday" = "星期二";
+"Wednesday" = "星期三";
+"Thursday" = "星期四";
+"Friday" = "星期五";
+"Saturday" = "星期六";
+"Sunday" = "星期日";
+
+//公司
+"Company" = "公司详情";
 
 //错误码
 "error_code_" = "稍后再试...";

@@ -16,9 +16,17 @@
 
 #import "PrivateClientVC.h"
 
+#import "OrderModel.h"
+
+#import "LeanChatMessageTableViewController.h"
+#import "AVIMConversation+Custom.h"
+
 @interface ClientDetailVC ()
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
+
+@property (nonatomic, assign) NSInteger start;
+@property (nonatomic, assign) BOOL isLoadingMore;
 
 @end
 
@@ -40,6 +48,10 @@
     
     //集成刷新控件
     [self addHeader];
+    
+    [[XHConfigurationHelper appearance] setupPopMenuTitles:@[NSLocalizedStringFromTable(@"copy", @"MessageDisplayKitString", @"复制文本消息")]];
+    
+    [self.tableView headerBeginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -65,7 +77,7 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,self.view.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -79,8 +91,19 @@
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
     [self.tableView addHeaderWithCallback:^{
+        weakSelf.start = 0;
+        weakSelf.isLoadingMore = NO;
         [weakSelf getDataFromSever];
     } dateKey:@"ClientDetailVC"];
+}
+
+- (void)addFooter {
+    __weak __typeof(self)weakSelf = self;
+    [self.tableView addFooterWithCallback:^{
+        weakSelf.start ++;
+        weakSelf.isLoadingMore = YES;
+        [weakSelf getDataFromSever];
+    }];
 }
 
 #pragma mark - getter/setter
@@ -101,6 +124,7 @@
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     AddClientVC *proVC = [[AddClientVC alloc]init];
     proVC.clientModel = self.clientModel;
+    proVC.isEditing = YES;
     [self.navigationController pushViewController:proVC animated:YES];
     SafeRelease(proVC);
 }
@@ -135,7 +159,15 @@
     };
     
     header.sendMessage = ^(ClientModel *clientModel){
+        [LeanChatManager manager].isInmessageVC = true;
+        [LeanChatManager manager].messageTo = weakSelf.clientModel.clientName;
+        [[DataShare sharedService].unreadMessageDic removeObjectForKey:weakSelf.clientModel.clientName];
         
+        LeanChatMessageTableViewController *leanChatMessageTableViewController = [[LeanChatMessageTableViewController alloc] initWithClientIDs:@[weakSelf.clientModel.clientName]];
+        leanChatMessageTableViewController.clientModel = weakSelf.clientModel;
+        [weakSelf.navigationController pushViewController:
+         leanChatMessageTableViewController animated:YES];
+        leanChatMessageTableViewController = nil;
     };
     
     
@@ -143,7 +175,7 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (self.index==0) {
-        return 100;
+        return self.dataArray.count;
     }
     return 3;
 }
@@ -162,7 +194,7 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
         
-//        cell.clientDetailModel = self.dataArray[indexPath.row];
+        cell.orderModel = self.dataArray[indexPath.row];
         
         return cell;
         
@@ -203,37 +235,47 @@
 #pragma mark - 请求数据
 
 -(void)getDataFromSever {
-    ///接口请求
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    __weak __typeof(self)weakSelf = self;
-    [[APIClient sharedClient] POST:loginInterface parameters:@{} success:^(NSURLSessionDataTask *task, id responseObject) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
+    if ([DataShare sharedService].appDel.isReachable) {
+        __weak __typeof(self)weakSelf = self;
         
-        NSDictionary *jsonData=(NSDictionary *)responseObject;
+        AVQuery *query1 = [AVQuery queryWithClassName:@"Order"];
+        query1.cachePolicy = kAVCachePolicyNetworkElseCache;
+        query1.maxCacheAge = 24*3600;// 一天的总秒数
+        [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
+        [query1 orderByDescending:@"updatedAt"];
         
-        if ([[jsonData objectForKey:@"status"]integerValue]==1) {
-            
-            
-        }else {
-            [Utility interfaceWithStatus:[jsonData[@"status"] integerValue] msg:jsonData[@"msg"]];
-        }
+        [query1 whereKey:@"clientId" containsString:self.clientModel.clientId];
         
-        [strongSelf.tableView headerEndRefreshing];
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        __strong __typeof(weakSelf)strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        [strongSelf.tableView headerEndRefreshing];
+        query1.limit = 10;
+        query1.skip = 10*self.start;
         
-        [MBProgressHUD hideAllHUDsForView:strongSelf.view animated:YES];
-        
-        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-    }];
+        [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            [weakSelf.tableView headerEndRefreshing];
+            [weakSelf.tableView footerEndRefreshing];
+            if (!error) {
+                if (!weakSelf.isLoadingMore) {
+                    weakSelf.dataArray = nil;
+                }
+                [weakSelf.tableView removeFooter];
+                if (objects.count==10) {
+                    [weakSelf addFooter];
+                }
+                for (int i=0; i<objects.count; i++) {
+                    AVObject *object = objects[i];
+                    OrderModel *model = [OrderModel initWithObject:object];
+                    [weakSelf.dataArray addObject:model];
+                }
+                
+                [weakSelf.tableView reloadData];
+                
+            } else {
+                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+            }
+        }];
+    }else {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+    }
 }
 
 @end

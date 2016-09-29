@@ -127,7 +127,7 @@
         self.backgroundColor  = [UIColor clearColor];
         
         //
-        self.bgView = [[UIView alloc] init];
+        self.bgView = [[UIView alloc] initWithFrame:frame];
         self.bgView.backgroundColor    = [UIColor whiteColor];
         self.bgView.clipsToBounds      = YES;
         self.bgView.layer.cornerRadius = 5;
@@ -184,7 +184,7 @@
     
     NSInteger count         = self.titles.count;
     CGFloat itemWidth       = CGRectGetWidth(self.bgView.frame)/count;
-    CGFloat itemHeight      = CGRectGetHeight(self.bgView.frame);
+    CGFloat itemHeight      = kItemHeight;
     CGFloat leftRightMargin = self.leftRightMargin?:kLeftRightMargin;
     
     //configure bgView

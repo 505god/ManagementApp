@@ -107,6 +107,11 @@
         self.accessoryType = item.accessoryType;
         self.accessoryView = item.accessoryView;
         self.textLabel.textAlignment = item.textAlignment;
+        
+        if (item.titleColor) {
+            self.textLabel.textColor = item.titleColor;
+        }
+        
         if (self.selectionStyle != UITableViewCellSelectionStyleNone)
             self.selectionStyle = item.selectionStyle;
         self.imageView.image = item.image;
@@ -129,6 +134,7 @@
     
     // Set content frame
     //
+    self.contentView.frame = (CGRect){0,0,[UIScreen mainScreen].bounds.size.width,self.contentView.height};
     CGRect contentFrame = self.contentView.frame;
     contentFrame.origin.x = contentFrame.origin.x + self.section.style.contentViewMargin;
     contentFrame.size.width = contentFrame.size.width - self.section.style.contentViewMargin * 2;

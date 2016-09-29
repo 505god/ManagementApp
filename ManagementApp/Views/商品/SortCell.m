@@ -15,13 +15,20 @@
     
 }
 
+-(void)setResultArray:(NSArray *)resultArray {
+    _resultArray = resultArray;
+    
+    self.nameLab.adjustsFontSizeToFitWidth = YES;
+    self.nameLab.text = [NSString stringWithFormat:@"%@",resultArray[0]];
+    self.countLab.text = [NSString stringWithFormat:@"%d",[resultArray[1] intValue]];
+}
+
 -(void)setSortModel:(SortModel *)sortModel {
     _sortModel = sortModel;
     
     self.nameLab.adjustsFontSizeToFitWidth = YES;
-//    self.nameLab.minimumFontSize = 6;
     self.nameLab.text = [NSString stringWithFormat:@"%@",sortModel.sortName];
-    self.countLab.text = [NSString stringWithFormat:@"%d",(int)sortModel.sortProductCount];
+    self.countLab.text = [NSString stringWithFormat:@"%d",(int)sortModel.productCount];
    
 }
 

@@ -10,6 +10,8 @@
 
 @interface REProductItem : RETextItem
 
+@property (nonatomic, assign) BOOL isEditing;
+
 @property (nonatomic, assign) NSInteger index;
 
 @property (nonatomic, strong) UIImage *picImg;

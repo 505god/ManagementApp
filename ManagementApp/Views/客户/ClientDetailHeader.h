@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ClientModel.h"
-
+#import "RKNotificationHub.h"
 @interface ClientDetailHeader : UITableViewHeaderFooterView
 
 @property (nonatomic, strong) ClientModel *clientModel;
@@ -22,6 +22,7 @@
 
 @property (nonatomic, copy) void (^sendMessage)(ClientModel *clientModel);
 
+@property (nonatomic, strong) RKNotificationHub *notificationHub;
 
 +(CGFloat)returnHeightWithIndex:(NSInteger)index;
 @end
