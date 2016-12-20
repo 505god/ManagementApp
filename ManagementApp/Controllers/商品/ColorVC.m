@@ -18,9 +18,6 @@
 
 #import "ColorCell.h"
 
-#import "BlockAlertView.h"
-#import "BlockTextPromptAlertView.h"
-
 @interface ColorVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
 
 ///通讯录列表
@@ -52,7 +49,7 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.tableView.tableView headerBeginRefreshing];
+    [self.tableView.tableView.mj_header beginRefreshing];
     
 //    ///第一次从服务器获取，后续从单例里面读取
 //    if ([DataShare sharedService].colorArray.count>0) {
@@ -89,7 +86,7 @@
 
 -(SearchTable *)tableView {
     if (!_tableView) {
-        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height}];
+        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.height}];
         _tableView.delegate = self;
         _tableView.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         [Utility setExtraCellLineHidden:_tableView.tableView];
@@ -114,11 +111,9 @@
 - (void)addHeader {
     
     __weak __typeof(self)weakSelf = self;
-    [self.tableView.tableView addHeaderWithCallback:^{
-        
+    self.tableView.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         [weakSelf getDataFromSever];
-        
-    } dateKey:@"ColorVC"];
+    }];
 }
 
 #pragma mark - 导航栏代理
@@ -132,66 +127,92 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addColor") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
-        [alert.textField resignFirstResponder];
-        return YES;
-    }];
-    
-    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+    if ([Utility isAuthority]) {
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"addColor") preferredStyle:UIAlertControllerStyleAlert];
         
-    }];
-    __weak __typeof(self)weakSelf = self;
-    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-        
-        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-        
-        //保存对象
-        AVObject *post = [AVObject objectWithClassName:@"Color"];
-        post[@"colorName"] = textField.text;
-        
-        // 为颜色和卖家建立一对一关系
-        [post setObject:[AVUser currentUser] forKey:@"user"];
-        
-        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                AVQuery *query = [AVQuery queryWithClassName:@"Color"];
-                //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
-                query.cachePolicy = kAVCachePolicyNetworkElseCache;
-                //设置缓存有效期
-                query.maxCacheAge = 24*3600;// 一天的总秒数
-                
-                [query whereKey:@"user" equalTo:[AVUser currentUser]];
-                
-                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                    
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-                    
-                    if (!error) {
-                        [DataShare sharedService].colorArray = nil;
-                        for (int i=0; i<objects.count; i++) {
-                            AVObject *object = objects[i];
-                            
-                            ColorModel *model = [ColorModel initWithObject:object];
-                            [[DataShare sharedService].colorArray addObject:model];
-                        }
-                        
-                        [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
-                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                            [weakSelf.tableView setHeaderAnimated:YES];
-                            [weakSelf.tableView reloadData];
-                        }];
-                    }else {
-                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                    }
-                }];
-            }else {
-                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-            }
+        [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.textAlignment = NSTextAlignmentCenter;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
         }];
-    }];
-    [alert show];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:SetTitle(@"alert_confirm") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:alert.textFields.firstObject];
+            
+            
+            [MBProgressHUD showHUDAddedTo:weakself.view animated:YES];
+            
+            //保存对象
+            AVObject *post = [AVObject objectWithClassName:@"Color"];
+            post[@"colorName"] = (UITextField *)alert.textFields.firstObject.text;
+            
+            // 为颜色和卖家建立一对一关系
+            [post setObject:[AVUser currentUser] forKey:@"user"];
+            
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    AVQuery *query = [AVQuery queryWithClassName:@"Color"];
+                    query.cachePolicy = kAVCachePolicyNetworkElseCache;
+                    query.maxCacheAge = 24*3600;// 一天的总秒数
+                    
+                    [query whereKey:@"user" equalTo:[AVUser currentUser]];
+                    
+                    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                        
+                        [MBProgressHUD hideAllHUDsForView:weakself.view animated:YES];
+                        
+                        if (!error) {
+                            [DataShare sharedService].colorArray = nil;
+                            for (int i=0; i<objects.count; i++) {
+                                AVObject *object = objects[i];
+                                
+                                ColorModel *model = [ColorModel initWithObject:object];
+                                [[DataShare sharedService].colorArray addObject:model];
+                            }
+                            
+                            [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                                weakself.dataArray = [NSMutableArray arrayWithArray:array];
+                                [weakself.tableView setHeaderAnimated:YES];
+                                [weakself.tableView reloadData];
+                            }];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                        }
+                    }];
+                }else {
+                    [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                }
+            }];
+            
+        }];
+//        [action setValue:kThemeColor forKey:@"_titleTextColor"];
+        action.enabled = NO;
+        [alert addAction:action];
+        self.sureAction = action;
+        
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
+}
+
+- (void)handleTextFieldTextDidChangeNotification:(NSNotification *)notification {
+    UITextField *textField = notification.object;
+    
+    self.sureAction.enabled = textField.text.length >= 1;
 }
 
 #pragma mark - 获取颜色列表
@@ -201,14 +222,12 @@
         __weak __typeof(self)weakSelf = self;
         
         AVQuery *query = [AVQuery queryWithClassName:@"Color"];
-        //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
         query.cachePolicy = kAVCachePolicyNetworkElseCache;
-        //设置缓存有效期
-        query.maxCacheAge = 24*3600;// 一天的总秒数
-        
+        query.maxCacheAge = 24*3600;
+        [query orderByDescending:@"updatedAt"];
         [query whereKey:@"user" equalTo:[AVUser currentUser]];
         [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            [weakSelf.tableView.tableView headerEndRefreshing];
+            [weakSelf.tableView.tableView.mj_header endRefreshing];
             if (!error) {
                 [DataShare sharedService].colorArray = nil;
                 for (int i=0; i<objects.count; i++) {
@@ -422,124 +441,159 @@
 #pragma mark - RMSwipeTableViewCellDelegate
 //删除颜色
 -(void)swipeTableViewCellWillResetState:(RMSwipeTableViewCell *)swipeTableViewCell fromPoint:(CGPoint)point animation:(RMSwipeTableViewCellAnimationType)animation velocity:(CGPoint)velocity {
-    if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
-        NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
-        
-        ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-        if (colorModel.productCount>0) {
-            [PopView showWithImageName:@"error" message:SetTitle(@"ColorDelete")];
-        }else {
-            swipeTableViewCell.shouldAnimateCellReset = YES;
+    if ([Utility isAuthority]) {
+        if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
+            NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
             
-            __weak __typeof(self)weakSelf = self;
-            BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"ConfirmDelete") message:nil];
-            [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+            ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+            if (colorModel.productCount>0) {
+                [PopView showWithImageName:@"error" message:SetTitle(@"ColorDelete")];
+            }else {
+                swipeTableViewCell.shouldAnimateCellReset = YES;
                 
-            }];
-            [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+                __weak __typeof(self)weakSelf = self;
                 
-                [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"ConfirmDelete") preferredStyle:UIAlertControllerStyleAlert];
                 
-                AVObject *post = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:colorModel.colorId];
-                [post deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+                
+                [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+                    [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
                     
-                    if (!error) {
-                        //已选择
-                        if (weakSelf.isSelectedColor) {
-                            NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
-                            NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[weakSelf.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
-                            
-                            if (filteredArray.count>0) {
-                                [weakSelf.hasSelectedColor removeObjectsInArray:filteredArray];
+                    AVObject *post = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:colorModel.colorId];
+                    [post deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        
+                        if (!error) {
+                            //已选择
+                            if (weakSelf.isSelectedColor) {
+                                NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
+                                NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[weakSelf.hasSelectedColor filteredArrayUsingPredicate:predicateString]];
+                                
+                                if (filteredArray.count>0) {
+                                    [weakSelf.hasSelectedColor removeObjectsInArray:filteredArray];
+                                }
                             }
+                            
+                            NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
+                            NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                            
+                            [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
+                            
+                            [UIView animateWithDuration:0.25
+                                                  delay:0
+                                                options:UIViewAnimationOptionCurveLinear
+                                             animations:^{
+                                                 swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
+                                             }
+                                             completion:^(BOOL finished) {
+                                                 [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                                                     weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                                                     [weakSelf.tableView setHeaderAnimated:YES];
+                                                     [weakSelf.tableView reloadData];
+                                                 }];
+                                                 
+                                                 [swipeTableViewCell setHidden:YES];
+                                             }
+                             ];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
                         }
                         
-                        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
-                        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
-                        
-                        [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
-                        
-                        [UIView animateWithDuration:0.25
-                                              delay:0
-                                            options:UIViewAnimationOptionCurveLinear
-                                         animations:^{
-                                             swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
-                                         }
-                                         completion:^(BOOL finished) {
-                                             [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
-                                                 weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                                                 [weakSelf.tableView setHeaderAnimated:YES];
-                                                 [weakSelf.tableView reloadData];
-                                             }];
-                                             
-                                             [swipeTableViewCell setHidden:YES];
-                                         }
-                         ];
-                    }else {
-                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                    }
-                    
+                    }];
                 }];
-            }];
-            [alert show];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
     }
 }
 
 //修改颜色
 -(void)editDidLongPressedOption:(RMSwipeTableViewCell *)cell {
-    UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"EditColor") message:nil defaultText:[(ColorCell *)cell colorModel].colorName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
-        [alert.textField resignFirstResponder];
-        return YES;
-    }];
-    
-    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
-    }];
-    
-    __weak __typeof(self)weakSelf = self;
-    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+    if ([Utility isAuthority]) {
+        __weak __typeof(self)weakSelf = self;
         
-        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"EditColor") preferredStyle:UIAlertControllerStyleAlert];
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.text = [(ColorCell *)cell colorModel].colorName;
+            textField.textAlignment = NSTextAlignmentCenter;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
+        }];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:SetTitle(@"alert_confirm") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:alert.textFields.firstObject];
             
-            NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
+            [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
             
-            ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-            
-            AVObject *post = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:colorModel.colorId];
-            //更新属性
-            [post setObject:textField.text forKey:@"colorName"];
-            //保存
-            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
+                
+                ColorModel *colorModel = (ColorModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+                
+                AVObject *post = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:colorModel.colorId];
+                //更新属性
+                UITextField *textField = (UITextField *)alert.textFields.firstObject;
+                [post setObject:textField.text forKey:@"colorName"];
+                //保存
+                __weak __typeof(textField)weakTXT = textField;
+                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     
-                    if (!error) {
-                        colorModel.colorName = textField.text;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
                         
-                        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
-                        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
-                        
-                        [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
-                        [[DataShare sharedService].colorArray addObject:colorModel];
-                        
-                        [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
-                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                            [weakSelf.tableView setHeaderAnimated:YES];
-                            [weakSelf.tableView reloadData];
-                        }];
-                    }else {
-                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                    }
-                });
-            }];
-        });
+                        if (!error) {
+                            colorModel.colorName = weakTXT.text;
+                            
+                            NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"colorId == %@", colorModel.colorId];
+                            NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].colorArray filteredArrayUsingPredicate:predicateString]];
+                            
+                            [[DataShare sharedService].colorArray removeObjectsInArray:filteredArray];
+                            [[DataShare sharedService].colorArray addObject:colorModel];
+                            
+                            [[DataShare sharedService] sortColors:[DataShare sharedService].colorArray CompleteBlock:^(NSArray *array) {
+                                weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                                [weakSelf.tableView setHeaderAnimated:YES];
+                                [weakSelf.tableView reloadData];
+                            }];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                        }
+                    });
+                }];
+            });
+        }];
+//        [action setValue:kThemeColor forKey:@"_titleTextColor"];
+        action.enabled = NO;
+        [alert addAction:action];
+        self.sureAction = action;
         
-    }];
-    [alert show];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
 }
 @end

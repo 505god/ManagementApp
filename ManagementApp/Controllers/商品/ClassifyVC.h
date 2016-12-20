@@ -26,5 +26,7 @@ typedef void(^ClassifyVCCompletedBlock)(SortModel *sortModel);
 @property (nonatomic, strong) NSMutableArray *hasSelectedClassify;
 
 @property (nonatomic, strong) ClassifyVCCompletedBlock completedBlock;
+
+@property (nonatomic, strong) UIAlertAction *sureAction;
 @end
 

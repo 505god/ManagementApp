@@ -13,8 +13,8 @@
 #import "AFNetworking.h"
 #import "NSString+md5.h"
 
-#define APPID @"4buRKUuDv5oI11CpPtogkX6X"
-#define MASTERKEY @"IgRij0kYWTaOQcgvO1SY8nEo"
+
+#import "AddDateVC.h"
 
 @interface AgentDetailVC ()<RETableViewManagerDelegate>
 
@@ -71,7 +71,7 @@
     //左侧名称显示的分类名称
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.navBarView setTitle:SetTitle(@"detail") image:nil];
-    [self.navBarView setRightWithArray:@[@"ok_bt"] type:0];
+//    [self.navBarView setRightWithArray:@[@"ok_bt"] type:0];
     
     [self.view addSubview:self.navBarView];
 }
@@ -85,7 +85,7 @@
     headerImg.layer.cornerRadius = 8;
     headerImg.layer.masksToBounds = YES;
     headerImg.contentMode = UIViewContentModeScaleAspectFill;
-    [headerImg sd_setImageWithURL:[NSURL URLWithString:self.model.userHead] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    [headerImg sd_setImageWithURL:[NSURL URLWithString:self.model.header] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
     
     [view addSubview:headerImg];
     
@@ -94,7 +94,7 @@
 
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     [Utility setExtraCellLineHidden:self.tableView];
     [self.view addSubview:self.tableView];
     
@@ -103,6 +103,7 @@
     _manager.delegate = self;
     RETableViewSection *section1 = [RETableViewSection section];
     section1.headerView = [self headerViewUI];
+    section1.footerHeight = 10;
     [_manager addSection:section1];
     
     __weak __typeof(self)weakSelf = self;
@@ -113,7 +114,7 @@
     [section1 addItem:nameItem];
     
     
-    RERadioItem *pwdItem = [RERadioItem itemWithTitle:SetTitle(@"phone") value:self.model.phone selectionHandler:^(RERadioItem *item) {
+    RERadioItem *pwdItem = [RERadioItem itemWithTitle:SetTitle(@"log_phone") value:self.model.phone selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
         
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:weakSelf.model.phone]];
@@ -127,23 +128,31 @@
     [section1 addItem:nameItem3];
     
     
-    RECompanyDayItem *dayIten = [RECompanyDayItem itemWithTitle:SetTitle(@"agent_day") value:self.model.dayNumber placeholder:@"0"];
-    
-    dayIten.onEndEditing = ^(RETextItem *item) {
-        weakSelf.dayNum = [NSString stringWithFormat:@"%ld",([item.value integerValue]-[self.model.dayNumber integerValue])];
+    QWeakSelf(self);
+    RETableViewSection *section4 = [RETableViewSection section];
+    section4.footerHeight = 10;
+    [_manager addSection:section4];
+    RERadioItem *stockItem = [RERadioItem itemWithTitle:SetTitle(@"authority_add") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
         
-        [weakSelf checkData];
-    };
-    dayIten.cellHeight = 60;
-    [section1 addItem:dayIten];
+        AddDateVC *vc = LOADVC(@"AddDateVC");
+        vc.completedBlock = ^(BOOL success){
+            if (weakself.completedBlock) {
+                weakself.completedBlock(success);
+            }
+        };
+        vc.model = weakself.model;
+        [weakself.navigationController pushViewController:vc animated:YES];
+    }];
+    [section4 addItem:stockItem];
 }
 
 -(void)checkData {
-    if ([self.dayNum integerValue] <= [self.model.dayNumber integerValue]) {
-        self.navBarView.rightEnable = NO;
-    }else {
-        self.navBarView.rightEnable = YES;
-    }
+//    if ([self.dayNum integerValue] <= [self.model.dayNumber integerValue]) {
+//        self.navBarView.rightEnable = NO;
+//    }else {
+//        self.navBarView.rightEnable = YES;
+//    }
 }
 #pragma mark - 导航栏代理
 
@@ -157,16 +166,16 @@
     
     AFHTTPClient * Client = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:@"https://api.leancloud.cn"]];
     [Client setDefaultHeader:@"Content-Type" value:@"application/json"];
-    [Client setDefaultHeader:@"X-LC-Id" value:APPID];
+    [Client setDefaultHeader:@"X-LC-Id" value:kApplicationId];
     [Client setDefaultHeader:@"X-LC-Key" value:[NSString stringWithFormat:@"%@,master",MASTERKEY]];
     
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    [params setObject:[NSNumber numberWithInteger:([self.dayNum integerValue]+self.model.day)] forKey:@"day"];
+    //    [params setObject:[NSNumber numberWithInteger:([self.dayNum integerValue]+self.model.day)] forKey:@"day"];
     NSString* path = [NSString stringWithFormat:@"/1.1/classes/_User/%@",self.model.userId];
     
     [Client putPath:path parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        weakSelf.model.day = [weakSelf.dayNum integerValue]+weakSelf.model.day;
+        //        weakSelf.model.day = [weakSelf.dayNum integerValue]+weakSelf.model.day;
         weakSelf.dayNum = nil;
         
         if (weakSelf.updateHandler) {
@@ -177,6 +186,7 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
     }];
+
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {

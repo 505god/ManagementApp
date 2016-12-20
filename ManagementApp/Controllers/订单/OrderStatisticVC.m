@@ -41,7 +41,7 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -73,12 +73,11 @@
     model1.type = 0;
     [self.dataList addObject:model1];
     
-    StatisticModel *model2 = [[StatisticModel alloc]init];
-    model2.title = SetTitle(@"order_tax");
-    CGFloat tax = [[[AVUser currentUser] objectForKey:@"tax"] floatValue];
-    model2.info = [NSString stringWithFormat:@"%.2f",[self.headerArray[1] floatValue]*tax/100];
-    model2.type = 0;
-    [self.dataList addObject:model2];
+//    StatisticModel *model2 = [[StatisticModel alloc]init];
+//    model2.title = SetTitle(@"order_tax");
+//    model2.info = [NSString stringWithFormat:@"%.2f",[self.headerArray[8] floatValue]];
+//    model2.type = 0;
+//    [self.dataList addObject:model2];
     
     
     StatisticModel *model3 = [[StatisticModel alloc]init];
@@ -99,9 +98,7 @@
     model5.info = [NSString stringWithFormat:@"%ld",self.dataArray.count];
     model5.type = 0;
     [self.dataList addObject:model5];
-    
-    DLog(@"%ld",(self.dataArray.count-[self.headerArray[4] integerValue]-[self.headerArray[5] integerValue]));
-    
+        
     StatisticModel *model6 = [[StatisticModel alloc]init];
     model6.title = SetTitle(@"pay_none");
     model6.info = [NSString stringWithFormat:@"%ld",(self.dataArray.count-[self.headerArray[4] integerValue]-[self.headerArray[5] integerValue])];

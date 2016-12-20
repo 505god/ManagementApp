@@ -43,7 +43,7 @@
     //集成刷新控件
     [self addHeader];
     
-    [self.tableView headerBeginRefreshing];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -69,7 +69,7 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -82,17 +82,16 @@
 
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addHeaderWithCallback:^{
-        
+    self.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         weakSelf.start = 0;
         weakSelf.isLoadingMore = NO;
         [weakSelf getDataFromSever];
-    } dateKey:@"ProductDetailVC"];
+    }];
 }
 
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addFooterWithCallback:^{
+    self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
@@ -116,11 +115,23 @@
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    ProductVC *proVC = [[ProductVC alloc]init];
-    proVC.isEditing = YES;
-    proVC.productModel = self.productModel;
-    [self.navigationController pushViewController:proVC animated:YES];
-    SafeRelease(proVC);
+    if ([Utility isAuthority]) {
+        ProductVC *proVC = [[ProductVC alloc]init];
+        proVC.isEditing = YES;
+        proVC.productModel = self.productModel;
+        [self.navigationController pushViewController:proVC animated:YES];
+        SafeRelease(proVC);
+    }else {
+//        QWeakSelf(self);
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//            
+//            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//            [weakself.navigationController pushViewController:vc animated:YES];
+//        }];
+//        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//        [self presentViewController:alert animated:YES completion:nil];
+    }
 }
 
 #pragma mark -
@@ -213,14 +224,14 @@
     [query whereKey:@"pcode" equalTo:self.productModel.productCode];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        [weakSelf.tableView headerEndRefreshing];
-        [weakSelf.tableView footerEndRefreshing];
+        [weakSelf.tableView.mj_header endRefreshing];
+        [weakSelf.tableView.mj_footer endRefreshing];
         
         if (!error) {
             if (!weakSelf.isLoadingMore) {
                 weakSelf.dataArray = nil;
             }
-            [weakSelf.tableView removeFooter];
+            [weakSelf.tableView.mj_footer setHidden:YES];
             if (objects.count==15) {
                 [weakSelf addFooter];
             }

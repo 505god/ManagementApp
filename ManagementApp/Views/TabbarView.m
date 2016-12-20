@@ -22,12 +22,7 @@
     if (self){
         
         [self setClipsToBounds:YES];
-        if (![self toolbar]) {
-            [self setToolbar:[[UIToolbar alloc] initWithFrame:[self bounds]]];
-            
-            [self.toolbar setBarTintColor:[UIColor colorWithWhite:0.9 alpha:1.f]];
-            [self.layer insertSublayer:[self.toolbar layer] atIndex:0];
-        }
+        self.backgroundColor = [UIColor colorWithPatternImage:[Utility getImgWithImageName:@"tab_bg@2x"]];
 
         
         CGFloat count = 4;

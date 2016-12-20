@@ -59,7 +59,7 @@ static const float BUMP_TIME_2 = 0.1;
     
     redCircle = [[UIView alloc]init];
     redCircle.userInteractionEnabled = NO;
-    redCircle.backgroundColor = COLOR(255, 130, 0, 1);
+    redCircle.backgroundColor = [UIColor redColor];
     
     countLabel = [[UILabel alloc]initWithFrame:redCircle.frame];
     countLabel.userInteractionEnabled = NO;

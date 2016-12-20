@@ -37,17 +37,6 @@ static UIImageView *orginImageView;
     if (status==0) {
         
     }else if (status==101 || status==100) {
-//        [[WQLocalDB sharedWQLocalDB] deleteLocalUserWithCompleteBlock:^(BOOL finished) {
-//            [[Utility sharedService].appDel.xmppManager getOffLineMessage];
-//            [[Utility sharedService].appDel.xmppManager goOffline];
-//            [[Utility sharedService].appDel.xmppManager teardownStream];
-//            [Utility sharedService].appDel.xmppManager = nil;
-//            
-//            [[Utility sharedService].appDel saveMessageData];
-//            [Utility dataShareClear];
-//            
-//            [[Utility sharedService].appDel showRootVC];
-//        }];
     }
     [PopView showWithImageName:@"error" message:msg];
 }
@@ -170,6 +159,13 @@ static UIImageView *orginImageView;
     [DataShare sharedService].classifyArray = nil;
     [DataShare sharedService].colorArray = nil;
     [DataShare sharedService].materialArray = nil;
+    [LCChatKitExample invokeThisMethodBeforeLogoutSuccess:^{
+    } failed:^(NSError *error) {
+    }];
+    
+//    AVInstallation *installation = [AVInstallation currentInstallation];
+//    [installation setObject:@"" forKey:@"cid"];
+//    [installation saveInBackground];
 }
 
 #pragma mark - 返回销售类型 saleA,saleB..
@@ -198,5 +194,20 @@ static UIImageView *orginImageView;
         return @"d";
     }
     return @"a";
+}
+
+
++ (BOOL)isAuthority {
+   
+    if ([DataShare sharedService].userObject.type==1) {
+        return true;
+    }
+    
+    if ([DataShare sharedService].userObject.isExpire) {
+        [PopView showWithImageName:nil message:SetTitle(@"authority_error")];
+        return false;
+    }
+    
+    return  true;
 }
 @end

@@ -24,8 +24,7 @@
     
     AVFile *attachment = [object objectForKey:@"header"];
     if (attachment != nil) {
-        NSString *url = [attachment getThumbnailURLWithScaleToFit:true width:100 height:100];
-        model.picHeader = url;
+        model.picHeader = attachment.url;
     }
     
     AVObject *object4 = [object objectForKey:@"sort"];
@@ -54,7 +53,7 @@
             model2.ProductStockId = object6.objectId;
             model2.stockNum = model2.num-model2.saleANum-model2.saleBNum-model2.saleCNum-model2.saleDNum;
             
-            AVFile *attachment = [object objectForKey:@"header"];
+            AVFile *attachment = [object6 objectForKey:@"header"];
             if (attachment != nil) {
                 model2.picHeader = attachment.url;
             }
@@ -77,12 +76,15 @@
     model.productId = object.objectId;
     NSDictionary *dic =(NSDictionary *)[object objectForKey:@"localData"];
     
+    
+    model.discountType = [dic[@"discountType"] integerValue];
+    model.discount = [dic[@"discount"] floatValue];
     model.aPrice = [dic[@"a"] floatValue];
     model.bPrice = [dic[@"b"] floatValue];
     model.cPrice = [dic[@"c"] floatValue];
     model.dPrice = [dic[@"d"] floatValue];
     model.selected = [dic[@"selected"] integerValue];
-    
+    model.productDetails = dic[@"details"];
     model.isSetting = [dic[@"isSetting"] boolValue];
     model.totalNum = [dic[@"totalNum"] integerValue];
     model.singleNum = [dic[@"singleNum"] integerValue];
@@ -98,6 +100,8 @@
     model.productMark = [dic objectForKey:@"remark"];
     model.profitStatus = [[dic objectForKey:@"profitStatus"]integerValue];
     model.profit = [[dic objectForKey:@"profit"]floatValue];
+    
+    model.isWarning = [[dic objectForKey:@"isWarning"]boolValue];
     return model;
 }
 @end

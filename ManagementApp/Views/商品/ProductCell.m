@@ -12,8 +12,8 @@
 #define TableViewCellNotificationEnableScroll @"TableViewCellNotificationEnableScroll"
 #define TableViewCellNotificationUnenableScroll @"TableViewCellNotificationUnenableScroll"
 
-#import "BlockAlertView.h"
 
+#import "UIImageView+Addition.h"
 ///正在修改的cell
 static ProductCell *_editingCell;
 
@@ -118,7 +118,7 @@ static ProductCell *_editingCell;
         
         self.proSale = [[UILabel alloc]initWithFrame:CGRectZero];
         self.proSale.textAlignment = NSTextAlignmentCenter;
-        self.proSale.textColor = COLOR(25, 216, 120, 1);
+        self.proSale.textColor = kThemeColor;
         
         self.proStock = [[UILabel alloc]initWithFrame:CGRectZero];
         self.saleImg = [[UIImageView alloc]initWithFrame:CGRectZero];
@@ -181,20 +181,13 @@ static ProductCell *_editingCell;
 -(void)deleteBtnTap {
     
     __weak __typeof(self)weakSelf = self;
-    BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"ConfirmDelete") message:nil];
-    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
-        
+    [UIView animateWithDuration:0 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        weakSelf.state = CellStateUnexpanded;
+    } completion:^(BOOL finished) {
+        if (weakSelf.deleteCell) {
+            weakSelf.deleteCell(weakSelf.idxPath);
+        }
     }];
-    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-        [UIView animateWithDuration:0 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            weakSelf.state = CellStateUnexpanded;
-        } completion:^(BOOL finished) {
-            if (weakSelf.deleteCell) {
-                weakSelf.deleteCell(weakSelf.idxPath);
-            }
-        }];
-    }];
-    [alert show];
 }
 
 #pragma mark - 
@@ -220,10 +213,14 @@ static ProductCell *_editingCell;
     
     if (self.type==0) {
         self.proSale.text = @"";
-        self.proStock.textColor = [UIColor blackColor];
+        self.proStock.textColor = kThemeColor;
     }else {
         self.proSale.text = [NSString stringWithFormat:@"%d",(int)productModel.saleCount];
         self.proStock.textColor = COLOR(252, 166, 0, 1);
+    }
+    
+    if (productModel.isWarning) {
+        self.proStock.textColor = kDeleteColor;
     }
     
     self.proStock.text = [NSString stringWithFormat:@"%d",(int)productModel.stockCount];

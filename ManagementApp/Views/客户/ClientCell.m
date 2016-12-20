@@ -50,22 +50,47 @@
     
     self.clientImg.hidden = !clientModel.isPrivate;
     
-    self.priceLab.text = [NSString stringWithFormat:@"%.2f",clientModel.totalPrice];
+    if (self.type==2) {
+        self.priceLab.text = [NSString stringWithFormat:@"%ld",clientModel.tradeNum];
+    }else if (self.type==3) {
+        self.priceLab.text = [NSString stringWithFormat:@"%.2f",clientModel.totalPrice];
+    }else if (self.type==4) {
+        self.priceLab.text = [NSString stringWithFormat:@"%.2f",clientModel.arrearsPrice];
+    }else {
+        self.priceLab.text = [NSString stringWithFormat:@"%.2f",clientModel.totalPrice];
+    }
+    
+    
     
     if (clientModel.clientType==0) {
         self.imgViewLeftConstraint.constant = 10;
     }else {
         self.imgViewLeftConstraint.constant = -27;
         self.clientImg.hidden = YES;
+        self.priceLab.text = @"";
     }
     
-    if (clientModel.redPoint>0) {
+    if (clientModel.redPoint>0 || clientModel.msgCount>0) {
         [self.notificationHub setCount:0];
     }else {
         [self.notificationHub setCount:-1];
     }
 }
 
+//2=交易次数最多 3=交易金额最高 4=欠款最多
+-(void)setType:(NSInteger)type {
+    _type = type;
+    
+    if (type==2) {
+        self.priceLab.textColor = COLOR(252, 166, 0, 1);
+    }else if (type==3) {
+        self.priceLab.textColor = kThemeColor;
+    }else if (type==4) {
+        self.priceLab.textColor = kDeleteColor;
+    }else {
+        self.priceLab.textColor = kThemeColor;
+    }
+}
 
 -(void)prepareForReuse {
     [super prepareForReuse];
@@ -78,6 +103,6 @@
     [super layoutSubviews];
     
     
-    [self.notificationHub setCircleAtFrame:(CGRect){self.imgView.right-5,self.imgView.top-5,10,10}];
+    [self.notificationHub setCircleAtFrame:(CGRect){40,6,10,10}];
 }
 @end

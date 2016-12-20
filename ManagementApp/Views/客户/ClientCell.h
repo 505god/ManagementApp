@@ -17,4 +17,6 @@
 
 @property (nonatomic, strong) RKNotificationHub *notificationHub;
 
+//2=交易次数最多 3=交易金额最高 4=欠款最多
+@property (nonatomic, assign) NSInteger type;
 @end

@@ -32,6 +32,7 @@
 #import "REURLValidator.h"
 #import "REFloatValidator.h"
 #import "RENumberValidator.h"
+#import "REPwdValidator.h"
 
 @interface REValidation : NSObject
 

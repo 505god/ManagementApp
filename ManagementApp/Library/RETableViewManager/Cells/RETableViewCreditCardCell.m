@@ -197,11 +197,11 @@ static inline RECreditCardType RECreditCardTypeFromNumber(NSString *creditCardNu
     }
 
     self.creditCardField.text = [self.item.number re_stringWithNumberFormat:self.creditCardField.format];
-    self.creditCardField.font = [UIFont systemFontOfSize:17];
+    self.creditCardField.font = [UIFont systemFontOfSize:16];
     self.creditCardField.keyboardAppearance = self.item.keyboardAppearance;
     
     self.expirationDateField.text = self.item.expirationDate;
-    self.expirationDateField.font = [UIFont systemFontOfSize:17];
+    self.expirationDateField.font = [UIFont systemFontOfSize:16];
     self.expirationDateField.keyboardAppearance = self.item.keyboardAppearance;
     
     self.cvvField.text = self.item.cvv;

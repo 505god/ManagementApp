@@ -103,7 +103,7 @@
                     [self.contentView addSubview:btn];
                     
                     if (tempNum == selectedNum) {
-                        [btn setTitleColor:COLOR(12, 96, 254, 1) forState:UIControlStateNormal];
+                        [btn setTitleColor:kThemeColor forState:UIControlStateNormal];
                         
                         [self.filterBtn setTitle:btnTitle forState:UIControlStateNormal];
                         _selectedIndexDic[[NSString stringWithFormat:@"%ld",(long)i]] = [NSString stringWithFormat:@"%ld",(long)selectedNum];

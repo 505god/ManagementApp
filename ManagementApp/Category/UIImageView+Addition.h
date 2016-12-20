@@ -13,4 +13,5 @@
 
 - (void)addDetailShow;
 
+- (void)gay_sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder;
 @end

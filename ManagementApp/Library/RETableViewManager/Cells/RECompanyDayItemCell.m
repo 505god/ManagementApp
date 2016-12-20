@@ -75,9 +75,9 @@
     self.textLabel.hidden = NO;
     self.textField.text = self.item.value;
     self.textField.placeholder = self.item.placeholder;
-    self.textField.font = [UIFont systemFontOfSize:17];
+    self.textField.font = [UIFont systemFontOfSize:16];
     //    self.textField.backgroundColor = [UIColor redColor];
-    self.stockLab.font = [UIFont systemFontOfSize:17];
+    self.stockLab.font = [UIFont systemFontOfSize:16];
     self.textField.textAlignment = NSTextAlignmentRight;
     self.textField.keyboardType = UIKeyboardTypeNumberPad;
     self.stockLab.text = self.textField.text.length==0?@"0":self.textField.text;

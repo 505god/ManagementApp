@@ -8,6 +8,8 @@
 
 #import "InitVC.h"
 
+#import "VerifiedVC.h"
+
 @interface InitVC ()
 
 @property (nonatomic, weak) IBOutlet UIActivityIndicatorView* activityView;
@@ -21,45 +23,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    AVQuery *query = [AVQuery queryWithClassName:@"Apple"];
+    AVObject *object = [query getFirstObject];
+    [DataShare sharedService].escape = [[object objectForKey:@"escape"]integerValue];
+    
+//    [self performSelectorOnMainThread:@selector(loadLogin) withObject:nil waitUntilDone:NO];
+
+    
     //检测登录与否
     AVUser *user = [AVUser currentUser];
     
     if (user != nil) {
         [[AVUser currentUser] refresh];
         
-        BOOL isCheck = NO;
-        if ([user.objectId isEqualToString:MainId]) {
-            
-        }else {
-            isCheck = YES;
-        }
+        [[AppDelegate shareInstance] saveUserInfo];
         
-        if (isCheck) {
-            NSInteger dayNum = [[[AVUser currentUser] objectForKey:@"day"] integerValue];
-            NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-            NSDateComponents *components = [gregorian components:NSDayCalendarUnit fromDate:[AVUser currentUser].createdAt toDate:[NSDate date] options:0];
-            
-            NSInteger day = [components day];
-            
-            if (dayNum-day<=0) {
-                [[AVUser currentUser] setObject:[NSNumber numberWithBool:true] forKey:@"expire"];
-                [[AVUser currentUser] saveEventually];
-                
-                [AVUser logOut];  //清除缓存用户对象
-                
-                [self performSelectorOnMainThread:@selector(loadLoginx) withObject:nil waitUntilDone:NO];
-            }else {
-                __weak __typeof(self)weakSelf = self;
-                [[LeanChatManager manager] openSessionWithClientID:[AVUser currentUser].username completion:^(BOOL succeeded, NSError *error) {
-                    [weakSelf performSelectorOnMainThread:@selector(loadRootVC) withObject:nil waitUntilDone:NO];
-                }];
-            }
-        }else {
-            __weak __typeof(self)weakSelf = self;
-            [[LeanChatManager manager] openSessionWithClientID:[AVUser currentUser].username completion:^(BOOL succeeded, NSError *error) {
-                [weakSelf performSelectorOnMainThread:@selector(loadRootVC) withObject:nil waitUntilDone:NO];
-            }];
-        }
+        [self performSelectorOnMainThread:@selector(loadRootVC) withObject:nil waitUntilDone:NO];
     }else {
         [self performSelectorOnMainThread:@selector(loadLogin) withObject:nil waitUntilDone:NO];
     }

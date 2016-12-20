@@ -17,4 +17,6 @@
 @property (nonatomic, strong) ClientModel *clientModel;
 
 @property (nonatomic, assign) BOOL isEditing;
+
+@property (nonatomic, copy) void (^addHandler)();
 @end

@@ -13,20 +13,25 @@
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *phone;
+@property (nonatomic, assign) BOOL phoneVerified;
 @property (nonatomic, copy) NSString *email;
-@property (nonatomic, copy) NSString *userHead;
+@property (nonatomic, assign) BOOL emailVerified;
 
-@property (nonatomic, assign) NSInteger day;
-@property (nonatomic, copy) NSString *dayId;
+@property (nonatomic, assign) CGFloat tax;
+
+@property (nonatomic, strong) NSString *header;
+@property (nonatomic, assign) double expireDate;
+
+@property (nonatomic, assign) BOOL rule;
+
 @property (nonatomic, assign) BOOL isExpire;
+//使用剩余天数
+@property (nonatomic, assign) NSInteger dayNumber;
+@property (nonatomic, assign) NSInteger hourNumber;
+@property (nonatomic, assign) NSInteger minuteNumber;
 
-@property (nonatomic, strong) NSDate *createdAt;
-
-@property (nonatomic, strong) NSString *dayString;
-
-@property (nonatomic, strong) NSString *dayNumber;
+@property (nonatomic, assign) NSInteger type;
 
 +(UserModel *)initWithObject:(AVObject *)object;
 
--(BOOL)checkExpire;
 @end

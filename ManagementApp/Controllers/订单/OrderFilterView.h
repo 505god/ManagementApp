@@ -12,6 +12,9 @@ typedef void(^OrderFilterViewBlock)(NSInteger orderType,NSInteger type,NSString 
 
 @interface OrderFilterView : UIControl
 
+@property (nonatomic, weak) IBOutlet UIView *customView;
+@property (nonatomic, assign) BOOL isShow;
+
 @property (nonatomic, strong) OrderFilterViewBlock completedBlock;
 
 - (id)initWithFrame:(CGRect)frame orderType:(NSInteger)orderType type:(NSInteger)type filterArray:(NSMutableArray *)filterArray;

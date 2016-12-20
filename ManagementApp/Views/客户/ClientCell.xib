@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -11,36 +12,35 @@
             <rect key="frame" x="0.0" y="0.0" width="369" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="369" height="43.5"/>
+                <frame key="frameInset" width="369" height="43.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X2k-T7-hOl">
-                        <rect key="frame" x="10" y="8" width="27" height="27"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="27" id="Fhf-9u-dNL"/>
                             <constraint firstAttribute="width" constant="27" id="uwT-t9-oPl"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="oyC-K7-R3m">
-                        <rect key="frame" x="45" y="11" width="178" height="21"/>
+                        <frame key="frameInset" minX="45" minY="11" width="178" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="lhV-CA-cDm"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" misplaced="YES" text="999999.99" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wbf-X7-Die">
-                        <rect key="frame" x="269" y="11" width="90" height="21"/>
+                        <frame key="frameInset" minX="269" minY="11" width="90" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="m5u-DE-wcU"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="252" misplaced="YES" image="premium_flag.png" translatesAutoresizingMaskIntoConstraints="NO" id="ASB-8c-fhE">
-                        <rect key="frame" x="233" y="9" width="26" height="26"/>
+                        <frame key="frameInset" minX="233" minY="9" width="26" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="26" id="b13-UO-UCT"/>
                             <constraint firstAttribute="height" constant="26" id="uXH-0O-Z7O"/>
@@ -66,7 +66,7 @@
                 <outlet property="nameLab" destination="oyC-K7-R3m" id="J8S-0c-RgR"/>
                 <outlet property="priceLab" destination="Wbf-X7-Die" id="XO0-en-q1v"/>
             </connections>
-            <point key="canvasLocation" x="212.5" y="122"/>
+            <point key="canvasLocation" x="-36" y="109"/>
         </tableViewCell>
     </objects>
     <resources>

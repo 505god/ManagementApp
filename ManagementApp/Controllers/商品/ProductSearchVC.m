@@ -64,8 +64,7 @@
 
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addHeaderWithCallback:^{
-        
+    self.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         if (weakSelf.searchBar.text.length==0) {
             [PopView showWithImageName:@"error" message:SetTitle(@"search_name")];
             return;
@@ -73,12 +72,12 @@
         weakSelf.start = 0;
         weakSelf.isLoadingMore = NO;
         [weakSelf getDataFromSever];
-    } dateKey:@"ProductSearchVC"];
+    }];
 }
 
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addFooterWithCallback:^{
+    self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
@@ -109,7 +108,7 @@
 }
 
 -(void)setTableView {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.tableView registerClass:[ProductHeader class] forHeaderFooterViewReuseIdentifier:@"ProductHeader"];
@@ -249,13 +248,13 @@
         
         [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-            [weakSelf.tableView headerEndRefreshing];
-            [weakSelf.tableView footerEndRefreshing];
+            [weakSelf.tableView.mj_header endRefreshing];
+            [weakSelf.tableView.mj_footer endRefreshing];
             if (!error) {
                 if (!weakSelf.isLoadingMore) {
                     weakSelf.searchArray = nil;
                 }
-                [weakSelf.tableView removeFooter];
+                [weakSelf.tableView.mj_footer setHidden:YES];
                 if (objects.count==10) {
                     [weakSelf addFooter];
                 }

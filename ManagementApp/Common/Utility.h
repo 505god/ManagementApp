@@ -47,4 +47,6 @@
 
 #pragma mark - 返回价格类型 a,b..
 +(NSString *)returnPrice:(ClientModel *)model;
+
++ (BOOL)isAuthority;
 @end

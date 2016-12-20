@@ -13,11 +13,14 @@
 @property (strong, nonatomic) UIWindow *window;
 
 @property (assign, nonatomic) BOOL isReachable;//网络是否连接
-
+@property (assign, nonatomic) BOOL isInmessageVC;
+@property (copy, nonatomic) NSString *messageTo;
 + (AppDelegate*)shareInstance;
 
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type;
+
+-(void)saveUserInfo;
 
 @end
 

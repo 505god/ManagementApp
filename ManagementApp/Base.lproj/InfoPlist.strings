@@ -1,0 +1,12 @@
+/* 
+  InfoPlist.strings
+  CustomerApp
+
+  Created by 邱成西 on 15/5/24.
+  Copyright (c) 2015年 邱成西. All rights reserved.
+*/
+NSCameraUsageDescription = "L'App ha bisogno del tuo consenso può chiamare la telecamera.";
+
+NSMicrophoneUsageDescription = "L'App ha bisogno del tuo consenso può usare il microfono.";
+
+NSPhotoLibraryUsageDescription = "L'App ha bisogno del tuo permesso di Leggere I Dati.";

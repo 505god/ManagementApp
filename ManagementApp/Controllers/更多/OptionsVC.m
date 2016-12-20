@@ -14,9 +14,9 @@
 #import "MaterialVC.h"
 #import "ColorVC.h"
 #import "CompanyVC.h"
+#import "StaticVC.h"
 #import "AgentVC.h"
-
-#import "AddAgentVC.h"
+#import "ContactVC.h"
 
 @interface OptionsVC ()
 
@@ -60,7 +60,7 @@
 }
 
 -(void)setTableView {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
     
     // Create manager
@@ -68,51 +68,9 @@
     
     __weak __typeof(self)weakSelf = self;
     
-    RETableViewSection *section2 = [RETableViewSection section];
-    [self.manager addSection:section2];
-    //公司
-    RERadioItem *companyItem = [RERadioItem itemWithTitle:SetTitle(@"Company") value:@"" selectionHandler:^(RERadioItem *item) {
-        [item deselectRowAnimated:YES];
-        
-        CompanyVC *vc = [[CompanyVC alloc]init];
-        vc.currentUser = [AVUser currentUser];
-        [weakSelf.navigationController pushViewController:vc animated:YES];
-        SafeRelease(vc);
-        
-    }];
-    [section2 addItem:companyItem];
-    
-    //------------------------------------------------------------------
-    if ([[AVUser currentUser].objectId isEqualToString:MainId]) {
-        RETableViewSection *section4 = [RETableViewSection section];
-        [self.manager addSection:section4];
-        section4.headerHeight = 10;
-        
-        //代理列表
-        RERadioItem *agentItem = [RERadioItem itemWithTitle:SetTitle(@"agent") value:@"" selectionHandler:^(RERadioItem *item) {
-            [item deselectRowAnimated:YES];
-            
-            AgentVC *vc = LOADVC(@"AgentVC");
-            [weakSelf.navigationController pushViewController:vc animated:YES];
-            vc = nil;
-        }];
-        [section4 addItem:agentItem];
-        
-        //代理
-        RERadioItem *agentsItem = [RERadioItem itemWithTitle:SetTitle(@"new_agent") value:@"" selectionHandler:^(RERadioItem *item) {
-            [item deselectRowAnimated:YES];
-            
-            AddAgentVC *vc = [[AddAgentVC alloc]init];
-            [weakSelf.navigationController pushViewController:vc animated:YES];
-            vc = nil;
-        }];
-        [section4 addItem:agentsItem];
-    }
-    
     //------------------------------------------------------------------
     RETableViewSection *section = [RETableViewSection section];
     [self.manager addSection:section];
-    section.headerHeight = 10;
     //分类
     RERadioItem *classifyItem = [RERadioItem itemWithTitle:SetTitle(@"classify") value:@"" selectionHandler:^(RERadioItem *item) {
         [item deselectRowAnimated:YES];
@@ -149,6 +107,62 @@
     }];
     [section addItem:colorItem];
     
+    RETableViewSection *section10 = [RETableViewSection section];
+    section10.headerHeight = 10;
+    [self.manager addSection:section10];
+    RERadioItem *staticItem = [RERadioItem itemWithTitle:SetTitle(@"statistics") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        StaticVC *colorVC = LOADVC(@"StaticVC");
+        [weakSelf.navigationController pushViewController:colorVC animated:YES];
+        SafeRelease(colorVC);
+        
+    }];
+    [section10 addItem:staticItem];
+    
+    RETableViewSection *section2 = [RETableViewSection section];
+    [self.manager addSection:section2];
+    section2.headerHeight = 10;
+    //公司
+    RERadioItem *companyItem = [RERadioItem itemWithTitle:SetTitle(@"Company") value:@"" selectionHandler:^(RERadioItem *item) {
+        [item deselectRowAnimated:YES];
+        
+        CompanyVC *vc = [[CompanyVC alloc]init];
+        [weakSelf.navigationController pushViewController:vc animated:YES];
+        SafeRelease(vc);
+        
+    }];
+    [section2 addItem:companyItem];
+    
+    if ([DataShare sharedService].userObject.type==1) {
+        RETableViewSection *section4 = [RETableViewSection section];
+        [self.manager addSection:section4];
+        section4.headerHeight = 10;
+        //代理列表
+        RERadioItem *agentItem = [RERadioItem itemWithTitle:SetTitle(@"agent") value:@"" selectionHandler:^(RERadioItem *item) {
+            [item deselectRowAnimated:YES];
+            
+            AgentVC *vc = [[AgentVC alloc]init];
+            [weakSelf.navigationController pushViewController:vc animated:YES];
+            vc = nil;
+        }];
+        [section4 addItem:agentItem];
+    }
+    
+    
+    if ([DataShare sharedService].userObject.type!=1) {
+        RETableViewSection *section13 = [RETableViewSection section];
+        section13.headerHeight = 10;
+        [self.manager addSection:section13];
+        RERadioItem *pwdItem = [RERadioItem itemWithTitle:SetTitle(@"contact") value:@"" selectionHandler:^(RERadioItem *item) {
+            [item deselectRowAnimated:YES];
+            
+            ContactVC *vc = LOADVC(@"ContactVC");
+            [weakSelf.navigationController pushViewController:vc animated:YES];
+        }];
+        [section13 addItem:pwdItem];
+    }
+    
     //------------------------------------------------------------------
     RETableViewSection *section3 = [RETableViewSection section];
     [self.manager addSection:section3];
@@ -157,12 +171,18 @@
     RETableViewItem *buttonItem = [RETableViewItem itemWithTitle:SetTitle(@"log_out") accessoryType:UITableViewCellAccessoryNone selectionHandler:^(RETableViewItem *item) {
         [item deselectRowAnimated:YES];
         
-        [AVUser logOut];  //清除缓存用户对象
-        [Utility dataShareClear];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"log_out_info") message:nil preferredStyle:UIAlertControllerStyleAlert];
+        [weakSelf addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            [AVUser logOut];  //清除缓存用户对象
+            [Utility dataShareClear];
+            
+            [weakSelf performSelectorOnMainThread:@selector(loadLogin) withObject:nil waitUntilDone:NO];
+        }];
+        [weakSelf addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [weakSelf presentViewController:alert animated:YES completion:nil];
         
-        [weakSelf performSelectorOnMainThread:@selector(loadLogin) withObject:nil waitUntilDone:NO];
     }];
-    buttonItem.titleColor = [UIColor redColor];
+    buttonItem.titleColor = kDeleteColor;
     buttonItem.textAlignment = NSTextAlignmentCenter;
     [section3 addItem:buttonItem];
 }

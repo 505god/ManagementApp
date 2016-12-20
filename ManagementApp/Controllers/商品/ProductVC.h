@@ -7,7 +7,7 @@
 //
 
 #import "BaseVC.h"
-
+#import "DiscountVC.h"
 ///添加产品页面
 
 #import "ProductModel.h"
@@ -18,5 +18,5 @@
 
 @property (nonatomic, strong) ProductModel *productModel;
 
-
+@property (nonatomic, copy) void (^addHandler)();
 @end

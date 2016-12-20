@@ -17,7 +17,7 @@ typedef void(^StockWarningVCCompletedBlock)(ProductModel *stockWarningModel,BOOL
 
 @interface StockWarningVC : BaseVC
 
-@property (nonatomic, strong) StockWarningVCCompletedBlock completedBlock;
+@property (nonatomic, copy) StockWarningVCCompletedBlock completedBlock;
 
 ///从上个页面传过来
 @property (nonatomic, strong) ProductModel *stockWarningModel;

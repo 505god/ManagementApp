@@ -27,4 +27,7 @@ typedef void(^MaterialVCCompletedBlock)(MaterialModel *materialModel);
 @property (nonatomic, strong) NSMutableArray *hasSelectedMaterial;
 
 @property (nonatomic, strong) MaterialVCCompletedBlock completedBlock;
+
+
+@property (nonatomic, strong) UIAlertAction *sureAction;
 @end

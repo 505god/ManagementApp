@@ -8,7 +8,6 @@
 
 #import "StockWarningVC.h"
 #import "RETableViewManager.h"
-#import "BlockAlertView.h"
 
 @interface StockWarningVC ()
 
@@ -80,7 +79,7 @@
             item.textFieldColor = [UIColor blackColor];
             weakSelf.stockWarningModel.totalNum = [item.value integerValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
     aItem.validators = @[@"presence", @"number"];
@@ -95,7 +94,7 @@
             item.textFieldColor = [UIColor blackColor];
             weakSelf.stockWarningModel.singleNum = [item.value integerValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
     bItem.validators = @[@"presence", @"number"];
@@ -146,18 +145,18 @@
         NSString *errorString = [errors componentsJoinedByString:@"\n"];
         
         __weak __typeof(self)weakSelf = self;
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"edit_stock_error") message:errorString];
-        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"edit_stock_error") message:errorString preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel") action:^(UIAlertAction *action) {
             if (weakSelf.completedBlock) {
                 weakSelf.completedBlock (weakSelf.stockWarningModel,NO);
             }
             
             [weakSelf.navigationController popViewControllerAnimated:YES];
         }];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-            
-        }];
-        [alert show];
+        [self presentViewController:alert animated:YES completion:nil];
     }else {
         if (self.completedBlock) {
             self.completedBlock (self.stockWarningModel,YES);

@@ -28,13 +28,15 @@
         self.picImg = [[UIImageView alloc]initWithFrame:CGRectZero];
         self.picImg.clipsToBounds = YES;
         self.picImg.contentMode = UIViewContentModeScaleAspectFill;
-        [self.picImg addDetailShow];
+        
         [self addSubview:self.picImg];
         
         self.titleLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.titleLab.backgroundColor = [UIColor clearColor];
         self.titleLab.adjustsFontSizeToFitWidth = YES;
         self.titleLab.minimumScaleFactor = 12;
+        self.titleLab.minimumScaleFactor = 9/12;
+        self.titleLab.adjustsFontSizeToFitWidth = YES;
         [self.contentView addSubview:self.titleLab];
         
         self.label = [[UILabel alloc]initWithFrame:CGRectZero];
@@ -45,6 +47,7 @@
         self.saleLab = [[UILabel alloc]initWithFrame:CGRectZero];
         self.saleLab.backgroundColor = [UIColor clearColor];
         self.saleLab.textAlignment = NSTextAlignmentCenter;
+        self.saleLab.textColor = kThemeColor;
         [self.contentView addSubview:self.saleLab];
         
         self.timeLab = [[UILabel alloc]initWithFrame:CGRectZero];
@@ -71,7 +74,7 @@
         self.label.frame = (CGRect){self.saleLab.left-120,(self.height-self.label.height)/2,110,self.label.height};
         
         [self.titleLab sizeToFit];
-        self.titleLab.frame = (CGRect){15,(self.height-self.titleLab.height)/2,self.label.left-25,self.titleLab.height};
+        self.titleLab.frame = (CGRect){15,(self.height-self.titleLab.height)/2,60,self.titleLab.height};
     }else if (self.selectedIndex==1) {
         [self.timeLab sizeToFit];/////50
         self.timeLab.frame = (CGRect){self.width-80,(self.height-self.timeLab.height)/2,70,self.timeLab.height};
@@ -121,10 +124,16 @@
 
 -(void)setIdxPath:(NSIndexPath *)idxPath {
     _idxPath = idxPath;
+    
+    if (idxPath.row!=0) {
+        [self.picImg addDetailShow];
+    }
 }
 
 -(void)setProductModel:(ProductModel *)productModel {
     _productModel = productModel;
+    
+    self.timeLab.textColor = COLOR(252, 166, 0, 1);
     
     if (self.selectedIndex==2 && self.idxPath.row==0) {
         self.picImg.image = [Utility getImgWithImageName:@"stock_warn@2x"];
@@ -133,6 +142,7 @@
         self.saleLab.text = [NSString stringWithFormat:@"%ld",productModel.saleCount];
         
         self.timeLab.text = [NSString stringWithFormat:@"%ld",productModel.stockCount];
+        
     }
 }
 
@@ -140,6 +150,7 @@
 -(void)setOrderStockModel:(OrderStockModel *)orderStockModel {
     _orderStockModel = orderStockModel;
     
+    self.timeLab.textColor = [UIColor lightGrayColor];
     if (self.selectedIndex==0) {
         self.titleLab.text = orderStockModel.colorName;
         
@@ -174,6 +185,8 @@
 -(void)setProductStockModel:(ProductStockModel *)productStockModel {
     _productStockModel = productStockModel;
     
+    self.timeLab.textColor = COLOR(252, 166, 0, 1);
+    
     [self.picImg sd_setImageWithURL:[NSURL URLWithString:productStockModel.picHeader] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
     
     self.titleLab.text = productStockModel.colorModel.colorName;
@@ -181,9 +194,7 @@
     
     if (self.productModel.isSetting) {
         if (productStockModel.stockNum<self.productModel.singleNum) {
-            self.timeLab.textColor = COLOR(252, 166, 0, 1);
-        }else {
-            self.timeLab.textColor = [UIColor blackColor];
+            self.timeLab.textColor = kDeleteColor;
         }
     }
     self.timeLab.text = [NSString stringWithFormat:@"%ld",productStockModel.stockNum];

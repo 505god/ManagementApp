@@ -18,8 +18,6 @@
 
 #import "OrderModel.h"
 
-#import "LeanChatMessageTableViewController.h"
-#import "AVIMConversation+Custom.h"
 
 @interface ClientDetailVC ()
 
@@ -49,9 +47,17 @@
     //集成刷新控件
     [self addHeader];
     
-    [[XHConfigurationHelper appearance] setupPopMenuTitles:@[NSLocalizedStringFromTable(@"copy", @"MessageDisplayKitString", @"复制文本消息")]];
-    
-    [self.tableView headerBeginRefreshing];
+    [self.tableView.mj_header beginRefreshing];
+}
+
+
+-(void)viewWillAppear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveMessage) name:LCCKNotificationMessageReceived object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveMessage) name:LCCKNotificationUnreadsUpdated object:nil];
+}
+
+-(void)receiveMessage {
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -77,7 +83,7 @@
 }
 
 -(void)setTableViewUI {
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     self.tableView.backgroundColor = [UIColor whiteColor];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -90,16 +96,16 @@
 
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addHeaderWithCallback:^{
+    self.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         weakSelf.start = 0;
         weakSelf.isLoadingMore = NO;
         [weakSelf getDataFromSever];
-    } dateKey:@"ClientDetailVC"];
+    }];
 }
 
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addFooterWithCallback:^{
+    self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
@@ -118,15 +124,31 @@
 #pragma mark - 导航栏代理
 
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    AddClientVC *proVC = [[AddClientVC alloc]init];
-    proVC.clientModel = self.clientModel;
-    proVC.isEditing = YES;
-    [self.navigationController pushViewController:proVC animated:YES];
-    SafeRelease(proVC);
+    if ([Utility isAuthority]) {
+        AddClientVC *proVC = [[AddClientVC alloc]init];
+        proVC.clientModel = self.clientModel;
+        proVC.isEditing = YES;
+        [self.navigationController pushViewController:proVC animated:YES];
+        SafeRelease(proVC);
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
 }
 
 #pragma mark -
@@ -158,16 +180,45 @@
         SafeRelease(privateVC);
     };
     
+    __weak ClientDetailHeader *weakheader = header;
     header.sendMessage = ^(ClientModel *clientModel){
-        [LeanChatManager manager].isInmessageVC = true;
-        [LeanChatManager manager].messageTo = weakSelf.clientModel.clientName;
-        [[DataShare sharedService].unreadMessageDic removeObjectForKey:weakSelf.clientModel.clientName];
         
-        LeanChatMessageTableViewController *leanChatMessageTableViewController = [[LeanChatMessageTableViewController alloc] initWithClientIDs:@[weakSelf.clientModel.clientName]];
-        leanChatMessageTableViewController.clientModel = weakSelf.clientModel;
-        [weakSelf.navigationController pushViewController:
-         leanChatMessageTableViewController animated:YES];
-        leanChatMessageTableViewController = nil;
+        if ([Utility isAuthority]) {
+            [DataShare sharedService].clientObject = clientModel;
+            
+            [weakheader.notificationHub setCount:-1];
+            
+            LCCKConversationViewController *conversationViewController =
+            [[LCCKConversationViewController alloc] initWithPeerId:clientModel.clientName];
+            
+            __weak __typeof(conversationViewController)weakConversation = conversationViewController;
+            conversationViewController.viewWillAppearBlock = ^(LCCKBaseViewController *viewController, BOOL aAnimated){
+                [weakConversation.navigationController setNavigationBarHidden:false animated:YES];
+                
+                weakConversation.navigationItem.title = @"";
+            };
+            conversationViewController.viewWillDisappearBlock = ^(LCCKBaseViewController *viewController, BOOL aAnimated){
+                [AppDelegate shareInstance].isInmessageVC = false;
+                [AppDelegate shareInstance].messageTo = nil;
+                [weakConversation.navigationController setNavigationBarHidden:YES animated:YES];
+            };
+            
+            [weakSelf.navigationController pushViewController:
+             conversationViewController animated:YES];
+            
+            [AppDelegate shareInstance].isInmessageVC = true;
+            [AppDelegate shareInstance].messageTo = weakSelf.clientModel.clientName;
+            [[DataShare sharedService].unreadMessageDic removeObjectForKey:weakSelf.clientModel.clientName];
+        }else {
+//            UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//            [weakSelf addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//                
+//                AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//                [weakSelf.navigationController pushViewController:vc animated:YES];
+//            }];
+//            [weakSelf addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//            [weakSelf presentViewController:alert animated:YES completion:nil];
+        }
     };
     
     
@@ -251,13 +302,13 @@
         
         [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-            [weakSelf.tableView headerEndRefreshing];
-            [weakSelf.tableView footerEndRefreshing];
+            [self.tableView.mj_header endRefreshing];
+            [self.tableView.mj_footer endRefreshing];
             if (!error) {
                 if (!weakSelf.isLoadingMore) {
                     weakSelf.dataArray = nil;
                 }
-                [weakSelf.tableView removeFooter];
+                [weakSelf.tableView.mj_footer setHidden:YES];
                 if (objects.count==10) {
                     [weakSelf addFooter];
                 }

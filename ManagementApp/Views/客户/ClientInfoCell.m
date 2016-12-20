@@ -39,7 +39,7 @@
     _clientModel = clientModel;
     
     if (self.idxPath.row==0) {
-        self.titleLab.text = SetTitle(@"phone");
+        self.titleLab.text = SetTitle(@"log_phone");
         self.detailLab.text = clientModel.clientPhone?clientModel.clientPhone:@"";
     }else if (self.idxPath.row==1){
         self.titleLab.text = SetTitle(@"email");

@@ -34,7 +34,8 @@
 @property (nonatomic, assign) NSInteger orderCount;
 
 @property (nonatomic, assign) NSInteger orderStatus;
-
+@property (nonatomic, assign) CGFloat tax;
+@property (nonatomic, assign) CGFloat taxNum;
 @property (nonatomic, assign) CGFloat profit;
 ///0=未付款  1=部分付款  2=全部付款
 @property (nonatomic, assign) NSInteger isPay;
@@ -48,6 +49,9 @@
 
 @property (nonatomic, strong) ClientModel *clientModel;
 @property (nonatomic, assign) CGFloat arrearsPrice;
+
+@property (nonatomic, assign) BOOL ered;
+@property (nonatomic, assign) BOOL cred;
 
 +(OrderModel *)initWithObject:(AVObject *)object;
 @end

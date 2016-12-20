@@ -22,7 +22,7 @@
 ///是否显示价格
 @property (nonatomic, assign) BOOL isShowPrice;
 @property (nonatomic, assign) BOOL isShowStock;
-
+@property (nonatomic, assign) BOOL isMutable;
 ///客户名称
 @property (nonatomic, strong) NSString *clientName;
 ///客户电话
@@ -36,6 +36,9 @@
 ///交易次数
 @property (nonatomic, assign) NSInteger tradeNum;
 @property (nonatomic, assign) NSInteger redPoint;
+
+//聊天数
+@property (nonatomic, assign) NSInteger msgCount;
 ///私密客户
 @property (nonatomic, assign) BOOL isPrivate;
 
@@ -47,6 +50,8 @@
 ///口令使用与否
 @property (nonatomic, assign) BOOL isCommand;
 @property (nonatomic, assign) BOOL disable;
+
+@property (nonatomic, strong) NSString *header;
 
 
 @end

@@ -46,4 +46,35 @@
     
 }
 
+
+//添加对应的title    这个方法也可以传进一个数组的titles  我只传一个是为了方便实现每个title的对应的响应事件不同的需求不同的方法
+- (void)addActionTarget:(UIAlertController *)alertController title:(NSString *)title color:(UIColor *)color action:(void(^)(UIAlertAction *action))actionTarget
+{
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        actionTarget(action);
+    }];
+//    [action setValue:color forKey:@"_titleTextColor"];
+    [alertController addAction:action];
+}
+
+// 取消按钮
+-(void)addCancelActionTarget:(UIAlertController*)alertController title:(NSString *)title action:(void(^)(UIAlertAction *action))actionTarget
+{
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        actionTarget(action);
+    }];
+//    [action setValue:kDeleteColor forKey:@"_titleTextColor"];
+    [alertController addAction:action];
+}
+
+// 取消按钮
+-(void)addCancelActionTarget:(UIAlertController*)alertController title:(NSString *)title
+{
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        
+    }];
+//    [action setValue:kDeleteColor forKey:@"_titleTextColor"];
+    [alertController addAction:action];
+}
+
 @end

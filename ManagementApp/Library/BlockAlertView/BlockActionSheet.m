@@ -112,7 +112,7 @@ static UIFont *buttonFont = nil;
 
 - (void)setCancelButtonWithTitle:(NSString *)title block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"black" block:block atIndex:-1];
+    [self addButtonWithTitle:title color:@"red" block:block atIndex:-1];
 }
 
 - (void)addButtonWithTitle:(NSString *)title block:(void (^)())block 
@@ -155,17 +155,15 @@ static UIFont *buttonFont = nil;
         button.tag = i++;
         
         button.layer.cornerRadius = 6;
-        button.layer.borderColor = COLOR(212, 212, 212, 1).CGColor;
-        button.layer.borderWidth = 0.5;
         button.clipsToBounds = YES;
         [button setBackgroundColor:[UIColor whiteColor]];
         [button setBackgroundImage:nil forState:UIControlStateNormal];
         [button setBackgroundImage:image forState:UIControlStateHighlighted];
         
         if ([color isEqualToString:@"red"]) {
-            [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            [button setTitleColor:kDeleteColor forState:UIControlStateNormal];
         }else {
-            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [button setTitleColor:kThemeColor forState:UIControlStateNormal];
         }
 
         [button setTitle:title forState:UIControlStateNormal];

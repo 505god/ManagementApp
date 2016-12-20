@@ -32,7 +32,7 @@
     //集成刷新控件
     [self addHeader];
     
-    [self.tableView.tableView headerBeginRefreshing];
+    [self.tableView.tableView.mj_header beginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -44,7 +44,7 @@
 
 -(SearchTable *)tableView {
     if (!_tableView) {
-        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height}];
+        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,SCREEN_WIDTH,SCREEN_HEIGHT-self.navBarView.height}];
         _tableView.delegate = self;
         _tableView.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         [Utility setExtraCellLineHidden:_tableView.tableView];
@@ -62,9 +62,9 @@
 - (void)addHeader {
     
     __weak __typeof(self)weakSelf = self;
-    [self.tableView.tableView addHeaderWithCallback:^{
+    self.tableView.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         [weakSelf getDataFromSever];
-    } dateKey:@"AgentVC"];
+    }];
 }
 
 #pragma mark - UI
@@ -82,9 +82,9 @@
         __weak __typeof(self)weakSelf = self;
         
         AVQuery *query = [AVUser query];
-        [query whereKey:@"objectId" notEqualTo:MainId];
+        [query whereKey:@"type" equalTo:@(0)];
         [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            [weakSelf.tableView.tableView headerEndRefreshing];
+            [weakSelf.tableView.tableView.mj_header endRefreshing ];
             if (!error) {
                 [DataShare sharedService].agentArray = nil;
                 for (int i=0; i<objects.count; i++) {
@@ -252,7 +252,11 @@
     __weak __typeof(self)weakSelf = self;
     UserModel *colorModel = (UserModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
     
+    
     AgentDetailVC *vc = [[AgentDetailVC alloc]init];
+    vc.completedBlock = ^(BOOL success){
+        [weakSelf.tableView.tableView.mj_header beginRefreshing];
+    };
     vc.model = colorModel;
     vc.idxPath = indexPath;
     vc.updateHandler = ^(NSIndexPath *idxPath,UserModel *model){

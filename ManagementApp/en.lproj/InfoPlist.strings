@@ -5,4 +5,8 @@
   Created by 邱成西 on 15/5/24.
   Copyright (c) 2015年 邱成西. All rights reserved.
 */
-CFBundleDisplayName="闪城";
+NSCameraUsageDescription = "App need your consent to call the camera.";
+
+NSMicrophoneUsageDescription = "App needs your permission to use the microphone.";
+
+NSPhotoLibraryUsageDescription = "App need your consent to read the media database.";

@@ -17,6 +17,9 @@
 ///商品id
 @property (nonatomic, strong) NSString *productId;
 
+///商品详情
+@property (nonatomic, strong) NSString *productDetails;
+
 ///商品货号必填
 @property (nonatomic, strong) NSString *productCode;
 ///进货价
@@ -30,6 +33,11 @@
 
 ///包装数
 @property (nonatomic, assign) NSInteger packageNum;
+
+
+@property (nonatomic, assign) NSInteger discountType;
+@property (nonatomic, assign) CGFloat discount;
+
 
 ///名称
 @property (nonatomic, strong) NSString *productName;
@@ -83,4 +91,8 @@
 
 @property (nonatomic, strong) NSString *sortId;
 @property (nonatomic, strong) NSString *materialId;
+
+
+//是否库存预警
+@property (nonatomic, assign) BOOL isWarning;
 @end

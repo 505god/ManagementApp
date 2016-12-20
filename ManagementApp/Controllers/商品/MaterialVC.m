@@ -18,8 +18,6 @@
 
 #import "MaterialCell.h"
 
-#import "BlockAlertView.h"
-#import "BlockTextPromptAlertView.h"
 
 @interface MaterialVC ()<SearchTableDelegate,RMSwipeTableViewCellDelegate>
 
@@ -57,20 +55,20 @@
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.tableView.tableView headerBeginRefreshing];
+    [self.tableView.tableView.mj_header beginRefreshing];
     
-//    ///第一次从服务器获取，后续从单例里面读取
-//    if ([DataShare sharedService].materialArray.count>0) {
-//        __weak __typeof(self)weakSelf = self;
-//        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-//            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-//            [weakSelf.tableView setHeaderAnimated:YES];
-//            [weakSelf.tableView reloadData];
-//        }];
-//    }else {
-//        //自动刷新(一进入程序就下拉刷新)
-//        [self.tableView.tableView headerBeginRefreshing];
-//    }
+    //    ///第一次从服务器获取，后续从单例里面读取
+    //    if ([DataShare sharedService].materialArray.count>0) {
+    //        __weak __typeof(self)weakSelf = self;
+    //        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+    //            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+    //            [weakSelf.tableView setHeaderAnimated:YES];
+    //            [weakSelf.tableView reloadData];
+    //        }];
+    //    }else {
+    //        //自动刷新(一进入程序就下拉刷新)
+    //        [self.tableView.tableView headerBeginRefreshing];
+    //    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated {
@@ -96,7 +94,7 @@
 
 -(SearchTable *)tableView {
     if (!_tableView) {
-        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height}];
+        _tableView = [[SearchTable alloc] initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.height}];
         _tableView.delegate = self;
         _tableView.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         [Utility setExtraCellLineHidden:_tableView.tableView];
@@ -127,11 +125,9 @@
 - (void)addHeader {
     
     __weak __typeof(self)weakSelf = self;
-    [self.tableView.tableView addHeaderWithCallback:^{
-        
+    self.tableView.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         [weakSelf getDataFromSever];
-        
-    } dateKey:@"MaterialVC"];
+    }];
 }
 
 #pragma mark - 导航栏代理
@@ -150,67 +146,91 @@
 }
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
-    UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"addmaterial") message:nil textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
-        [alert.textField resignFirstResponder];
-        return YES;
-    }];
-    
-    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+    if ([Utility isAuthority]) {
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"addmaterial") preferredStyle:UIAlertControllerStyleAlert];
         
-    }];
-    __weak __typeof(self)weakSelf = self;
-    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-        
-        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-        
-        //保存对象
-        AVObject *post = [AVObject objectWithClassName:@"Material"];
-        post[@"materialName"] = textField.text;
-        
-        // 为颜色和卖家建立一对一关系
-        [post setObject:[AVUser currentUser] forKey:@"user"];
-        
-        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                AVQuery *query = [AVQuery queryWithClassName:@"Material"];
-                //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
-                query.cachePolicy = kAVCachePolicyNetworkElseCache;
-                //设置缓存有效期
-                query.maxCacheAge = 24*3600;// 一天的总秒数
-                
-                [query whereKey:@"user" equalTo:[AVUser currentUser]];
-                
-                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                    
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-                    
-                    if (!error) {
-                        [DataShare sharedService].materialArray = nil;
-                        for (int i=0; i<objects.count; i++) {
-                            AVObject *object = objects[i];
-                            
-                            MaterialModel *model = [MaterialModel initWithObject:object];
-                            [[DataShare sharedService].materialArray addObject:model];
-                        }
-                        
-                        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                            [weakSelf.tableView setHeaderAnimated:YES];
-                            [weakSelf.tableView reloadData];
-                        }];
-                    }else {
-                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                    }
-                }];
-            }else {
-                [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-            }
+        [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.textAlignment = NSTextAlignmentCenter;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
         }];
-    }];
-    [alert show];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:SetTitle(@"alert_confirm") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:alert.textFields.firstObject];
+            
+            
+            [MBProgressHUD showHUDAddedTo:weakself.view animated:YES];
+            
+            //保存对象
+            AVObject *post = [AVObject objectWithClassName:@"Material"];
+            post[@"materialName"] = (UITextField *)alert.textFields.firstObject.text;
+            
+            // 为颜色和卖家建立一对一关系
+            [post setObject:[AVUser currentUser] forKey:@"user"];
+            
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    AVQuery *query = [AVQuery queryWithClassName:@"Material"];
+                    query.cachePolicy = kAVCachePolicyNetworkElseCache;
+                    query.maxCacheAge = 24*3600;// 一天的总秒数
+                    
+                    [query whereKey:@"user" equalTo:[AVUser currentUser]];
+                    
+                    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                        
+                        [MBProgressHUD hideAllHUDsForView:weakself.view animated:YES];
+                        
+                        if (!error) {
+                            [DataShare sharedService].materialArray = nil;
+                            for (int i=0; i<objects.count; i++) {
+                                AVObject *object = objects[i];
+                                
+                                MaterialModel *model = [MaterialModel initWithObject:object];
+                                [[DataShare sharedService].materialArray addObject:model];
+                            }
+                            
+                            [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                                weakself.dataArray = [NSMutableArray arrayWithArray:array];
+                                [weakself.tableView setHeaderAnimated:YES];
+                                [weakself.tableView reloadData];
+                            }];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                        }
+                    }];
+                }else {
+                    [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
+                }
+            }];
+            
+        }];
+//        [action setValue:kThemeColor forKey:@"_titleTextColor"];
+        action.enabled = NO;
+        [alert addAction:action];
+        self.sureAction = action;
+        
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
 }
 
+- (void)handleTextFieldTextDidChangeNotification:(NSNotification *)notification {
+    UITextField *textField = notification.object;
+    
+    self.sureAction.enabled = textField.text.length >= 1;
+}
 
 #pragma mark - 获取颜色列表
 
@@ -219,14 +239,12 @@
         __weak __typeof(self)weakSelf = self;
         
         AVQuery *query = [AVQuery queryWithClassName:@"Material"];
-        //查询行为先尝试从网络加载，若加载失败，则从缓存加载结果
         query.cachePolicy = kAVCachePolicyNetworkElseCache;
-        //设置缓存有效期
-        query.maxCacheAge = 24*3600;// 一天的总秒数
-        
+        query.maxCacheAge = 24*3600;
+        [query orderByDescending:@"updatedAt"];
         [query whereKey:@"user" equalTo:[AVUser currentUser]];
         [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            [weakSelf.tableView.tableView headerEndRefreshing];
+            [weakSelf.tableView.tableView.mj_header endRefreshing];
             if (!error) {
                 [DataShare sharedService].materialArray = nil;
                 for (int i=0; i<objects.count; i++) {
@@ -455,137 +473,172 @@
 #pragma mark - RMSwipeTableViewCellDelegate
 //删除颜色
 -(void)swipeTableViewCellWillResetState:(RMSwipeTableViewCell *)swipeTableViewCell fromPoint:(CGPoint)point animation:(RMSwipeTableViewCellAnimationType)animation velocity:(CGPoint)velocity {
-    if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
-        NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
-        
-        MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
-        if (materialModel.productCount>0) {
-            [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
-        }else {
-        swipeTableViewCell.shouldAnimateCellReset = YES;
-        
-        __weak __typeof(self)weakSelf = self;
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"ConfirmDelete") message:nil];
-        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+    if ([Utility isAuthority]) {
+        if (point.x < 0 && (0-point.x) >= swipeTableViewCell.contentView.height)  {
+            NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:swipeTableViewCell];
             
-        }];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-            
-            [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-            
-            AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
-            [post deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+            if (materialModel.productCount>0) {
+                [PopView showWithImageName:@"error" message:SetTitle(@"materialDelete")];
+            }else {
+                swipeTableViewCell.shouldAnimateCellReset = YES;
                 
-                if (!error) {
-                    //已选择
-                    if ([materialModel.materialId isEqualToString:weakSelf.selectedMaterialModel.materialId]) {
-                        weakSelf.selectedMaterialModel = nil;
-                    }
-                    if (weakSelf.hasSelectedMaterial.count>0) {
-                        MaterialModel *materialModelTemp = (MaterialModel *)weakSelf.hasSelectedMaterial[0];
-                        if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
-                            [weakSelf.hasSelectedMaterial removeAllObjects];
+                __weak __typeof(self)weakSelf = self;
+                
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"ConfirmDelete") preferredStyle:UIAlertControllerStyleAlert];
+                
+                [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+                
+                [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+                    [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                    
+                    AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
+                    [post deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        
+                        if (!error) {
+                            //已选择
+                            if ([materialModel.materialId isEqualToString:weakSelf.selectedMaterialModel.materialId]) {
+                                weakSelf.selectedMaterialModel = nil;
+                            }
+                            if (weakSelf.hasSelectedMaterial.count>0) {
+                                MaterialModel *materialModelTemp = (MaterialModel *)weakSelf.hasSelectedMaterial[0];
+                                if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
+                                    [weakSelf.hasSelectedMaterial removeAllObjects];
+                                }
+                            }
+                            
+                            NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
+                            NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
+                            
+                            [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
+                            
+                            [UIView animateWithDuration:0.25
+                                                  delay:0
+                                                options:UIViewAnimationOptionCurveLinear
+                                             animations:^{
+                                                 swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
+                                             }
+                                             completion:^(BOOL finished) {
+                                                 [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                                                     weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
+                                                     [weakSelf.tableView setHeaderAnimated:YES];
+                                                     [weakSelf.tableView reloadData];
+                                                 }];
+                                                 
+                                                 [swipeTableViewCell setHidden:YES];
+                                             }
+                             ];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
                         }
-                    }
-                    
-                    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
-                    NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
-                    
-                    [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
-                    
-                    [UIView animateWithDuration:0.25
-                                          delay:0
-                                        options:UIViewAnimationOptionCurveLinear
-                                     animations:^{
-                                         swipeTableViewCell.contentView.frame = CGRectOffset(swipeTableViewCell.contentView.bounds, swipeTableViewCell.contentView.frame.size.width, 0);
-                                     }
-                                     completion:^(BOOL finished) {
-                                         [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                                             weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                                             [weakSelf.tableView setHeaderAnimated:YES];
-                                             [weakSelf.tableView reloadData];
-                                         }];
-                                         
-                                         [swipeTableViewCell setHidden:YES];
-                                     }
-                     ];
-                }else {
-                    [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                }
-                
-            }];
-            
-        }];
-        [alert show];
+                        
+                    }];
+                }];
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
     }
 }
 
 //修改颜色
 -(void)editDidLongPressedOption:(RMSwipeTableViewCell *)cell {
-    UITextField *textField;
-    BlockTextPromptAlertView *alert = [BlockTextPromptAlertView promptWithTitle:SetTitle(@"Editmaterial") message:nil defaultText:[(MaterialCell *)cell materialModel].materialName textField:&textField type:0 block:^(BlockTextPromptAlertView *alert){
-        [alert.textField resignFirstResponder];
-        return YES;
-    }];
-    
-    [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+    if ([Utility isAuthority]) {
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:SetTitle(@"Editmaterial") preferredStyle:UIAlertControllerStyleAlert];
         
-    }];
-    
-    __weak __typeof(self)weakSelf = self;
-    [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-        
-        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-    
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+            textField.textAlignment = NSTextAlignmentCenter;
+            textField.text = [(MaterialCell *)cell materialModel].materialName;
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
+        }];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:SetTitle(@"alert_confirm") style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:UITextFieldTextDidChangeNotification object:alert.textFields.firstObject];
             
-            NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
             
-            MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+            [MBProgressHUD showHUDAddedTo:weakself.view animated:YES];
             
-            AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
-            //更新属性
-            [post setObject:textField.text forKey:@"materialName"];
-            //保存
-            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                NSIndexPath *indexPath = [self.tableView.tableView indexPathForCell:cell];
+                
+                MaterialModel *materialModel = (MaterialModel *)self.dataArray[indexPath.section][@"data"][indexPath.row];
+                
+                AVObject *post = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialModel.materialId];
+                //更新属性
+                UITextField *textField = (UITextField *)alert.textFields.firstObject;
+                [post setObject:textField.text forKey:@"materialName"];
+                //保存
+                
+                __weak __typeof(textField)weakTXT = textField;
+                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     
-                    if (!error) {
-                        //已选择
-                        if ([materialModel.materialId isEqualToString:weakSelf.selectedMaterialModel.materialId]) {
-                            weakSelf.selectedMaterialModel.materialName = textField.text;
-                        }
-                        if (weakSelf.hasSelectedMaterial.count>0) {
-                            MaterialModel *materialModelTemp = (MaterialModel *)weakSelf.hasSelectedMaterial[0];
-                            if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
-                                materialModelTemp.materialName = textField.text;
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [MBProgressHUD hideAllHUDsForView:weakself.view animated:YES];
+                        
+                        if (!error) {
+                            //已选择
+                            if ([materialModel.materialId isEqualToString:weakself.selectedMaterialModel.materialId]) {
+                                weakself.selectedMaterialModel.materialName = weakTXT.text;
                             }
+                            if (weakself.hasSelectedMaterial.count>0) {
+                                MaterialModel *materialModelTemp = (MaterialModel *)weakself.hasSelectedMaterial[0];
+                                if ([materialModel.materialId isEqualToString:materialModelTemp.materialId]) {
+                                    materialModelTemp.materialName = weakTXT.text;
+                                }
+                            }
+                            
+                            materialModel.materialName =weakTXT.text;
+                            NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
+                            NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
+                            
+                            [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
+                            [[DataShare sharedService].materialArray addObject:materialModel];
+                            
+                            [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
+                                weakself.dataArray = [NSMutableArray arrayWithArray:array];
+                                [weakself.tableView setHeaderAnimated:YES];
+                                [weakself.tableView reloadData];
+                            }];
+                        }else {
+                            [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
                         }
-                        
-                        materialModel.materialName = textField.text;
-                        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"materialId == %@", materialModel.materialId];
-                        NSMutableArray *filteredArray = [NSMutableArray arrayWithArray:[[DataShare sharedService].materialArray filteredArrayUsingPredicate:predicateString]];
-                        
-                        [[DataShare sharedService].materialArray removeObjectsInArray:filteredArray];
-                        [[DataShare sharedService].materialArray addObject:materialModel];
-                        
-                        [[DataShare sharedService] sortMaterial:[DataShare sharedService].materialArray CompleteBlock:^(NSArray *array) {
-                            weakSelf.dataArray = [NSMutableArray arrayWithArray:array];
-                            [weakSelf.tableView setHeaderAnimated:YES];
-                            [weakSelf.tableView reloadData];
-                        }];
-                    }else {
-                        [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
-                    }
-                });
-            }];
-        });
-    }];
-    [alert show];
+                    });
+                }];
+            });
+        }];
+//        [action setValue:kThemeColor forKey:@"_titleTextColor"];
+        action.enabled = NO;
+        [alert addAction:action];
+        self.sureAction = action;
+        
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
 }
 
 @end

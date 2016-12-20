@@ -7,13 +7,8 @@
 //
 
 #import "PrivateClientVC.h"
-#import "BlockActionSheet.h"
-#import "BlockAlertView.h"
 #import <MessageUI/MFMessageComposeViewController.h>
-
-#import "LeanChatMessageTableViewController.h"
-#import "AVIMConversation+Custom.h"
-
+#import "BlockActionSheet.h"
 @interface PrivateClientVC ()<MFMessageComposeViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLab;
@@ -44,6 +39,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setNavBarView];
+    
+    self.view.backgroundColor = kThemeColor;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,7 +55,7 @@
     //左侧名称显示的分类名称
     [self.navBarView setLeftWithImage:@"back_nav" title:nil];
     [self.navBarView setTitle:self.clientModel.isPrivate?SetTitle(@"private_client"):SetTitle(@"unprivate_client") image:nil];
-
+    
     [self.view addSubview:self.navBarView];
     
     [self setXibData];
@@ -112,6 +109,22 @@
 #pragma mark - action
 
 -(IBAction)changeCommandPressed:(id)sender {
+    if ([Utility isAuthority]) {
+        
+    }else {
+        /*
+        QWeakSelf(self);
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+            [weakself.navigationController pushViewController:vc animated:YES];
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
+         */
+    }
+    
     if ([DataShare sharedService].appDel.isReachable) {
         __weak __typeof(self)weakSelf = self;
         AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
@@ -130,128 +143,209 @@
 }
 
 -(IBAction)sendCommandPressed:(id)sender {
-    __weak __typeof(self)weakSelf = self;
-    
-    if (self.clientModel.isCommand) {
-        BlockActionSheet *sheet = [[BlockActionSheet alloc]initWithTitle:nil];
-        [sheet addButtonWithTitle:SetTitle(@"sheet_sms") block:^{
-            [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-            MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
-            if([MFMessageComposeViewController canSendText])
-            {
-                controller.body = [NSString stringWithFormat:@"%@:%@",SetTitle(@"command"),weakSelf.clientModel.command];
-                controller.recipients = @[weakSelf.clientModel.clientPhone];
-                controller.messageComposeDelegate = weakSelf;
-                [weakSelf presentViewController:controller animated:YES completion:^{
-                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+    if ([Utility isAuthority]) {
+        __weak __typeof(self)weakSelf = self;
+        
+        if (self.clientModel.isCommand) {
+            
+            BlockActionSheet *sheet = [BlockActionSheet sheetWithTitle:@""];
+            
+            [sheet addButtonWithTitle:SetTitle(@"sheet_sms") block:^{
+                if (self.clientModel.clientPhone) {
+                    [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                    MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+                    if([MFMessageComposeViewController canSendText])
+                    {
+                        controller.body = [NSString stringWithFormat:@"%@:%@",SetTitle(@"command"),weakSelf.clientModel.command];
+                        controller.recipients = @[weakSelf.clientModel.clientPhone];
+                        controller.messageComposeDelegate = weakSelf;
+                        [weakSelf presentViewController:controller animated:YES completion:^{
+                            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        }];
+                    }else {
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                    }
+                }else {
+                    [PopView showWithImageName:nil message:SetTitle(@"call_phone_error")];
+                }
+            }];
+            
+            if ([DataShare sharedService].escape==1) {
+                [sheet addButtonWithTitle:SetTitle(@"sheet_message") block:^{
+                    [DataShare sharedService].clientObject = weakSelf.clientModel;
+                    
+                    LCCKConversationViewController *conversationViewController =
+                    [[LCCKConversationViewController alloc] initWithPeerId:weakSelf.clientModel.clientName];
+                    
+                    __weak __typeof(conversationViewController)weakConversation = conversationViewController;
+                    conversationViewController.viewWillAppearBlock = ^(LCCKBaseViewController *viewController, BOOL aAnimated){
+                        [weakConversation.navigationController setNavigationBarHidden:false animated:YES];
+                        
+                        weakConversation.navigationItem.title = @"";
+                    };
+                    conversationViewController.viewWillDisappearBlock = ^(LCCKBaseViewController *viewController, BOOL aAnimated){
+                        //                    [DataShare sharedService].clientObject = nil;
+                        [AppDelegate shareInstance].isInmessageVC = false;
+                        [AppDelegate shareInstance].messageTo = nil;
+                        [weakConversation.navigationController setNavigationBarHidden:YES animated:YES];
+                    };
+                    
+                    [weakSelf.navigationController pushViewController:
+                     conversationViewController animated:YES];
+                    
+                    [AppDelegate shareInstance].isInmessageVC = true;
+                    [AppDelegate shareInstance].messageTo = weakSelf.clientModel.clientName;
+                    [[DataShare sharedService].unreadMessageDic removeObjectForKey:weakSelf.clientModel.clientName];
                 }];
             }
-        }];
-        [sheet addButtonWithTitle:SetTitle(@"sheet_message") block:^{
             
-            [LeanChatManager manager].isInmessageVC = true;
-            [LeanChatManager manager].messageTo = weakSelf.clientModel.clientName;
-            [[DataShare sharedService].unreadMessageDic removeObjectForKey:weakSelf.clientModel.clientName];
-            
-            LeanChatMessageTableViewController *leanChatMessageTableViewController = [[LeanChatMessageTableViewController alloc] initWithClientIDs:@[weakSelf.clientModel.clientName]];
-            leanChatMessageTableViewController.clientModel = weakSelf.clientModel;
-            [weakSelf.navigationController pushViewController:
-             leanChatMessageTableViewController animated:YES];
-            leanChatMessageTableViewController = nil;
-        }];
-        [sheet setCancelButtonWithTitle:SetTitle(@"cancel") block:^{
-            
-        }];
-        [sheet showInView:self.view];
-    }else {
-        [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
-        MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
-        if([MFMessageComposeViewController canSendText])
-        {
-            controller.body = [NSString stringWithFormat:@"%@:%@",SetTitle(@"command"),weakSelf.clientModel.command];
-            controller.recipients = @[weakSelf.clientModel.clientPhone];
-            controller.messageComposeDelegate = weakSelf;
-            [weakSelf presentViewController:controller animated:YES completion:^{
-                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+            [sheet setCancelButtonWithTitle:SetTitle(@"cancel") block:^{
+                
             }];
+            [sheet showInView:weakSelf.view];
+        }else {
+            if (self.clientModel.clientPhone) {
+                [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+                MFMessageComposeViewController *controller = [[MFMessageComposeViewController alloc] init];
+                if([MFMessageComposeViewController canSendText])
+                {
+                    controller.body = [NSString stringWithFormat:@"%@:%@",SetTitle(@"command"),weakSelf.clientModel.command];
+                    controller.recipients = @[weakSelf.clientModel.clientPhone];
+                    controller.messageComposeDelegate = weakSelf;
+                    [weakSelf presentViewController:controller animated:YES completion:^{
+                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                    }];
+                }else {
+                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                }
+            }
         }
+    }else {
+//        QWeakSelf(self);
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//            
+//            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//            [weakself.navigationController pushViewController:vc animated:YES];
+//        }];
+//        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//        [self presentViewController:alert animated:YES completion:nil];
     }
-    
 }
 
 -(IBAction)priceBtnPressed:(id)sender {
-    if ([DataShare sharedService].appDel.isReachable) {
-        __weak __typeof(self)weakSelf = self;
-        AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
-    
-        post[@"isShowPrice"] =  @(!self.clientModel.isShowPrice);
-        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                weakSelf.clientModel.isShowPrice = !weakSelf.clientModel.isShowPrice;
-
-                if (weakSelf.clientModel.isShowPrice) {
-                    [weakSelf.priceBtn setTitle:SetTitle(@"price_show") forState:UIControlStateNormal];
-                }else {
-                    [weakSelf.priceBtn setTitle:SetTitle(@"price_unshow") forState:UIControlStateNormal];
+    if ([Utility isAuthority]) {
+        if ([DataShare sharedService].appDel.isReachable) {
+            __weak __typeof(self)weakSelf = self;
+            AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
+            
+            post[@"isShowPrice"] =  @(!self.clientModel.isShowPrice);
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    weakSelf.clientModel.isShowPrice = !weakSelf.clientModel.isShowPrice;
+                    
+                    if (weakSelf.clientModel.isShowPrice) {
+                        [weakSelf.priceBtn setTitle:SetTitle(@"price_show") forState:UIControlStateNormal];
+                    }else {
+                        [weakSelf.priceBtn setTitle:SetTitle(@"price_unshow") forState:UIControlStateNormal];
+                    }
                 }
-            }
-        }];
+            }];
+        }else {
+            [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+        }
     }else {
-        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+//        QWeakSelf(self);
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//            
+//            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//            [weakself.navigationController pushViewController:vc animated:YES];
+//        }];
+//        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
 -(IBAction)stockBtnPressed:(id)sender {
-    if ([DataShare sharedService].appDel.isReachable) {
-        __weak __typeof(self)weakSelf = self;
-        AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
-        
-        post[@"isShowStock"] =  @(!self.clientModel.isShowStock);
-        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                weakSelf.clientModel.isShowStock = !weakSelf.clientModel.isShowStock;
-                
-                if (weakSelf.clientModel.isShowStock) {
-                    [weakSelf.stockBtn setTitle:SetTitle(@"stock_show") forState:UIControlStateNormal];
-                }else {
-                    [weakSelf.stockBtn setTitle:SetTitle(@"stock_unshow") forState:UIControlStateNormal];
+    if ([Utility isAuthority]) {
+        if ([DataShare sharedService].appDel.isReachable) {
+            __weak __typeof(self)weakSelf = self;
+            AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
+            
+            post[@"isShowStock"] =  @(!self.clientModel.isShowStock);
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    weakSelf.clientModel.isShowStock = !weakSelf.clientModel.isShowStock;
+                    
+                    if (weakSelf.clientModel.isShowStock) {
+                        [weakSelf.stockBtn setTitle:SetTitle(@"stock_show") forState:UIControlStateNormal];
+                    }else {
+                        [weakSelf.stockBtn setTitle:SetTitle(@"stock_unshow") forState:UIControlStateNormal];
+                    }
                 }
-            }
-        }];
+            }];
+        }else {
+            [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+        }
     }else {
-        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+//        QWeakSelf(self);
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//            
+//            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//            [weakself.navigationController pushViewController:vc animated:YES];
+//        }];
+//        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
 -(IBAction)membershipBtnPressed:(id)sender {
-    if ([DataShare sharedService].appDel.isReachable) {
-        __weak __typeof(self)weakSelf = self;
-        AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
-        
-        post[@"disable"] =  @(!self.clientModel.disable);
-        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                weakSelf.clientModel.disable = !weakSelf.clientModel.disable;
-                
-                if (weakSelf.clientModel.disable) {
-                    if (weakSelf.clientModel.isCommand) {
+    if ([Utility isAuthority]) {
+        if ([DataShare sharedService].appDel.isReachable) {
+            __weak __typeof(self)weakSelf = self;
+            AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:self.clientModel.clientId];
+            
+            post[@"disable"] =  @(!self.clientModel.disable);
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (!error) {
+                    weakSelf.clientModel.disable = !weakSelf.clientModel.disable;
+                    
+                    if (weakSelf.clientModel.disable) {
+                        if (weakSelf.clientModel.isCommand) {
+                            weakSelf.optionLab.text = SetTitle(@"command_disabled");
+                            
+                            [weakSelf.memberBtn setTitle:SetTitle(@"member_enable") forState:UIControlStateNormal];
+                        }else {
+                            weakSelf.optionLab.text = SetTitle(@"command_unuse");
+                            
+                            [weakSelf.memberBtn setTitle:SetTitle(@"member_enable") forState:UIControlStateNormal];
+                        }
+                        
+                        [[LCCKConversationService sharedInstance] sendWelcomeMessageToPeerId:weakSelf.clientModel.clientName text:@"xiaxian" block:^(BOOL succeeded, NSError *error) {
+                            
+                        }];
+                    }else {
                         weakSelf.optionLab.text = SetTitle(@"command_use");
                         
                         [weakSelf.memberBtn setTitle:SetTitle(@"member_disable") forState:UIControlStateNormal];
-                    }else {
-                        weakSelf.optionLab.text = SetTitle(@"command_unuse");
-                        
-                        [weakSelf.memberBtn setTitle:SetTitle(@"member_disable") forState:UIControlStateNormal];
                     }
-                }else {
-                    weakSelf.optionLab.text = SetTitle(@"command_disabled");
-                    
-                    [weakSelf.memberBtn setTitle:SetTitle(@"member_enable") forState:UIControlStateNormal];
                 }
-            }
-        }];
+            }];
+        }else {
+            [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+        }
     }else {
-        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+//        QWeakSelf(self);
+//        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+//        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+//            
+//            AuthorityVC *vc = LOADVC(@"AuthorityVC");
+//            [weakself.navigationController pushViewController:vc animated:YES];
+//        }];
+//        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+//        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 

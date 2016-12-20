@@ -16,9 +16,16 @@
     #import "AppDelegate.h"
 
 #import "Common.h"
+#import "Masonry.h"
+#import "DeformationButton.h"
+#import "Utility.h"
+#import "MJRefresh.h"
+#import "LCCKConversationRefreshHeader.h"
 
+#import "LCChatKit.h"
 
-
+#import "LCChatKitExample.h"
+#import "AuthorityVC.h"
 #endif
 
 
@@ -29,6 +36,27 @@
 
 #define COLOR(R,G,B,A) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:A]
 
+#define Enterprise @"enterprise1010enterprise"
+
+#define Platform [[[UIDevice currentDevice] systemVersion] floatValue]
+
+#define kOnePageSize  10
+#define NavgationHeight 44
+#define TabbarHeight 49
+
+//#define kApplicationId @"4buRKUuDv5oI11CpPtogkX6X"
+//#define kClientKey @"1pJLrtIay3l2wgF8PTCJCJNT"
+//#define MASTERKEY @"IgRij0kYWTaOQcgvO1SY8nEo"
+
+#define kApplicationId @"76kajJAvU9snC0ozT3LAcJgK-MdYXbMMI"
+#define kClientKey @"IU9Io3XRHzNGUqrOMKfJBOqB"
+#define MASTERKEY @"ftd34vOEGJB52v4KqmyOjHLS"
+
+#define SetTitle(string) NSLocalizedString(string, @"")
+
+
+
+//打印 输出
 #ifdef DEBUG
 #define debugLog(...)    NSLog(__VA_ARGS__)
 #define debugMethod()    NSLog(@"%s", __func__)
@@ -41,15 +69,56 @@
 #define DLog(...)
 #endif
 
-#define MainId @"565d86ff60b294e7ca8cdd43"
-#define SafeRelease(__v) (__v = nil);
-
+//加载xib
 #define LOADVC(string) [[NSClassFromString(string) alloc]initWithNibName:string bundle:nil];
 
-#define Platform [[[UIDevice currentDevice] systemVersion] floatValue]
+//屏幕宽高
+#define    SCREEN_WIDTH         [UIScreen mainScreen].bounds.size.width
+#define    SCREEN_HEIGHT        [UIScreen mainScreen].bounds.size.height
 
-#define kOnePageSize  10
-#define NavgationHeight 44
-#define TabbarHeight 49
+//取色值相关的方法
+#define RGB(r,g,b)          [UIColor colorWithRed:(r)/255.f green:(g)/255.f blue:(b)/255.f alpha:1.f]
 
-#define SetTitle(string) NSLocalizedString(string, @"")
+#define RGBA(r,g,b,a)       [UIColor colorWithRed:(r)/255.f green:(g)/255.f blue:(b)/255.f alpha:(a)]
+
+#define RGBOF(rgbValue)     [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+
+
+//通用颜色
+#define kBlackColor         [UIColor blackColor]
+#define kDarkGrayColor      [UIColor darkGrayColor]
+#define kLightGrayColor     [UIColor lightGrayColor]
+#define kWhiteColor         [UIColor whiteColor]
+#define kGrayColor          [UIColor grayColor]
+#define kRedColor           [UIColor redColor]
+#define kGreenColor         [UIColor greenColor]
+#define kBlueColor          [UIColor blueColor]
+#define kCyanColor          [UIColor cyanColor]
+#define kYellowColor        [UIColor yellowColor]
+#define kMagentaColor       [UIColor magentaColor]
+#define kOrangeColor        [UIColor orangeColor]
+#define kPurpleColor        [UIColor purpleColor]
+#define kClearColor         [UIColor clearColor]
+
+//取字体相关的方法
+#define    SYSTEM_FONT(A)       [UIFont systemFontOfSize:A]
+#define    BOLD_FONT(A)         [UIFont boldSystemFontOfSize:A]
+
+//通用字体
+#define kLargeTextFont       [UIFont systemFontOfSize:16]
+#define kMiddleTextFont      [UIFont systemFontOfSize:14]
+#define kSmallTextFont       [UIFont systemFontOfSize:12]
+
+//变量释放
+#define SafeRelease(__v) (__v = nil);
+
+// 主色调
+#define kThemeColor             RGBOF(0x959595)
+#define kDeleteColor         RGBOF(0xF13236)
+
+//弱引用
+#define QWeakSelf(type)  __weak typeof(type) weak##type = type;
+
+//字符串
+#define QString(str) [NSString stringWithFormat:@"%@",@#str]
+

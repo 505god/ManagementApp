@@ -9,6 +9,7 @@
 #import "BaseVC.h"
 #import "UserModel.h"
 
+typedef void(^dateVCBlock)(BOOL success);
 
 @interface AgentDetailVC : BaseVC
 
@@ -16,4 +17,6 @@
 
 @property(strong, nonatomic) NSIndexPath *idxPath;
 @property(copy, nonatomic) void (^updateHandler)(NSIndexPath *idxPath,UserModel *model);
+
+@property (nonatomic, copy) dateVCBlock completedBlock;
 @end

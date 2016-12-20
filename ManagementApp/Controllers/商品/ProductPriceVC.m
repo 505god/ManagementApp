@@ -7,7 +7,6 @@
 //
 
 #import "ProductPriceVC.h"
-#import "BlockAlertView.h"
 
 @interface ProductPriceVC ()
 
@@ -46,14 +45,14 @@
     //－－－－－－－－－－－－－－－－－A
     __weak __typeof(self)weakSelf = self;
     
-    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"A %@",SetTitle(@"column")] value:(self.productPriceModel.aPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.aItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"%@A",SetTitle(@"price")] value:(self.productPriceModel.aPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.aPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.aItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
             item.textFieldColor = [UIColor blackColor];
             weakSelf.productPriceModel.aPrice = [item.value floatValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
         
     };
@@ -89,14 +88,14 @@
     [section addItem:self.aItem];
     
     //－－－－－－－－－－－－－－－－－B
-    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"B %@",SetTitle(@"column")] value:(self.productPriceModel.bPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.bItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"%@B",SetTitle(@"price")] value:(self.productPriceModel.bPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.bPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.bItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
             item.textFieldColor = [UIColor blackColor];
             weakSelf.productPriceModel.bPrice = [item.value floatValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
     self.bItem.isHighlighted = self.productPriceModel.selected==1?YES:NO;
@@ -131,14 +130,14 @@
     [section addItem:self.bItem];
     
     //－－－－－－－－－－－－－－－－－C
-    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"C %@",SetTitle(@"column")] value:(self.productPriceModel.cPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.cItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"%@C",SetTitle(@"price")] value:(self.productPriceModel.cPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.cPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.cItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
             item.textFieldColor = [UIColor blackColor];
             weakSelf.productPriceModel.cPrice = [item.value floatValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
     self.cItem.isHighlighted = self.productPriceModel.selected==2?YES:NO;
@@ -173,14 +172,14 @@
     [section addItem:self.cItem];
     
     //－－－－－－－－－－－－－－－－－D
-    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"D %@",SetTitle(@"column")] value:(self.productPriceModel.dPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
+    self.dItem = [RETextItem itemWithTitle:[NSString stringWithFormat:@"%@D",SetTitle(@"price")] value:(self.productPriceModel.dPrice==0?@"":[NSString stringWithFormat:@"%.2f",self.productPriceModel.dPrice]) placeholder:[NSString stringWithFormat:@"%@%@",SetTitle(@"price"),SetTitle(@"product_required")]];
     self.dItem.onChange = ^(RETextItem *item){
         //判读是否为数字
         if ([Utility predicateText:item.value regex:@"^[0-9]+(.[0-9]{1,2})?$"]){
             item.textFieldColor = [UIColor blackColor];
             weakSelf.productPriceModel.dPrice = [item.value floatValue];
         }else {
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
     self.dItem.isHighlighted = self.productPriceModel.selected==3?YES:NO;
@@ -256,18 +255,19 @@
         NSString *errorString = [errors componentsJoinedByString:@"\n"];
         
         __weak __typeof(self)weakSelf = self;
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"edit_price_error") message:errorString];
-        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"edit_price_error") message:errorString preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+            
+        }];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel") action:^(UIAlertAction *action) {
             if (weakSelf.completedBlock) {
                 weakSelf.completedBlock (weakSelf.productPriceModel,NO);
             }
             
             [weakSelf.navigationController popViewControllerAnimated:YES];
         }];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-            
-        }];
-        [alert show];
+        [self presentViewController:alert animated:YES completion:nil];
     }else {
         if (self.completedBlock) {
             self.completedBlock (self.productPriceModel,YES);

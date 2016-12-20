@@ -25,4 +25,5 @@ typedef void(^ColorVCCompletedBlock)(NSArray *array);
 
 @property (nonatomic, strong) ColorVCCompletedBlock completedBlock;
 
+@property (nonatomic, strong) UIAlertAction *sureAction;
 @end

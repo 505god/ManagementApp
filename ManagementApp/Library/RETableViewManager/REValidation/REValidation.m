@@ -60,6 +60,7 @@
         [REValidation registerValidator:[REURLValidator class]];
         [REValidation registerValidator:[REFloatValidator class]];
         [REValidation registerValidator:[RENumberValidator class]];
+        [REValidation registerValidator:[REPwdValidator class]];
     });
 }
 
@@ -69,9 +70,10 @@
     dispatch_once(&onceToken, ^{
         NSDictionary *messages = @{
                                    @"com.REValidation.presence": [NSString stringWithFormat:@"%@",SetTitle(@"error_blank")],
+                                   @"com.REValidation.pwd": [NSString stringWithFormat:@"%@",SetTitle(@"pwd_error")],
                                    @"com.REValidation.minimumLength": @"%@ is too short (minimum is %i characters).",
                                    @"com.REValidation.maximumLength": @"%@ is too long (maximum is %i characters).",
-                                   @"com.REValidation.email": @"%@ is not a valid email.",
+                                   @"com.REValidation.email": [NSString stringWithFormat:@"%@",SetTitle(@"erroremail")],
                                    @"com.REValidation.url": @"%@ is not a valid url.",
                                    @"com.REValidation.price": [NSString stringWithFormat:@"%@",SetTitle(@"error_price")],
                                    @"com.REValidation.number": @"%@ is not a valid number."

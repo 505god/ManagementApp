@@ -32,7 +32,9 @@
               @"redPoint": mts_key(redPoint),
               @"tradeNum": mts_key(tradeNum),
               @"disable": mts_key(disable),
-              @"arrearsPrice": mts_key(arrearsPrice)
+              @"arrearsPrice": mts_key(arrearsPrice),
+              @"isMutable": mts_key(isMutable)
+              
               };
 }
 

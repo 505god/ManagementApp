@@ -112,6 +112,8 @@
         self.titleLab.backgroundColor = [UIColor clearColor];
         self.titleLab.font = [UIFont systemFontOfSize:14];
         self.titleLab.textColor = [UIColor lightGrayColor];
+        self.titleLab.minimumScaleFactor = 10/14;
+        self.titleLab.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.titleLab];
         
         
@@ -161,7 +163,7 @@
         originY += 70;
         
         [self.profitLab sizeToFit];
-        self.profitLab.frame = (CGRect){self.width-self.profitLab.width-40,(60-self.profitLab.height)/2,self.profitLab.width,self.profitLab.height};
+        self.profitLab.frame = (CGRect){self.width-self.profitLab.width-10,(60-self.profitLab.height)/2,self.profitLab.width,self.profitLab.height};
     }
     
     ///图片
@@ -204,7 +206,7 @@
         self.label.frame = (CGRect){self.saleLab.left-120,self.timeLab.top,110,self.label.height};
         
         [self.titleLab sizeToFit];
-        self.titleLab.frame = (CGRect){15,self.timeLab.top,self.label.left-25,self.titleLab.height};
+        self.titleLab.frame = (CGRect){15,self.timeLab.top,60,self.titleLab.height};
     }else if (self.selectedIndex==1) {
         [self.timeLab sizeToFit];/////50
         self.timeLab.frame = (CGRect){self.width-80,self.lineImg2.bottom+5,70,self.timeLab.height};

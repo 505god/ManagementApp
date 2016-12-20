@@ -18,16 +18,16 @@
         self.logoImg.highlightedImage = [Utility getImgWithImageName:[NSString stringWithFormat:@"%@@2x",active]];
         [self addSubview:self.logoImg];
         
-        self.titleLab = [[UILabel alloc]initWithFrame:(CGRect){0,frame.size.height-12,frame.size.width,12}];
+        self.titleLab = [[UILabel alloc]initWithFrame:(CGRect){0,frame.size.height-15,frame.size.width,12}];
         self.titleLab.textAlignment = NSTextAlignmentCenter;
         self.titleLab.textColor = [UIColor lightGrayColor];
-        self.titleLab.font = [UIFont systemFontOfSize:10];
+        self.titleLab.font = [UIFont systemFontOfSize:12];
         self.titleLab.text = title;
         [self addSubview:self.titleLab];
         
         self.notificationHub = [[RKNotificationHub alloc]initWithView:self];
         [self.notificationHub setCount:-1];
-        [self.notificationHub setCircleAtFrame:(CGRect){self.logoImg.right-5,self.logoImg.top-5,10,10}];
+        [self.notificationHub setCircleAtFrame:(CGRect){self.logoImg.right-8,self.logoImg.top,18,18}];
 
     }
     return self;
@@ -64,7 +64,7 @@
     _isSelected = isSelected;
     [self.logoImg setHighlighted:isSelected];
     
-    self.titleLab.textColor = isSelected?[UIColor blackColor]:[UIColor lightGrayColor];
+    self.titleLab.textColor = isSelected?kThemeColor:[UIColor lightGrayColor];
 }
 
 

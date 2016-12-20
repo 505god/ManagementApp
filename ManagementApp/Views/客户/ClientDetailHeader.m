@@ -8,6 +8,7 @@
 
 #import "ClientDetailHeader.h"
 #import "RFSegmentView.h"
+#import "AVIMMessage+LCCKExtension.h"
 
 @interface ClientDetailHeader ()<RFSegmentViewDelegate>
 
@@ -137,8 +138,10 @@
         self.messageBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
         [self.messageBtn addTarget:self action:@selector(sendMessagePressed) forControlEvents:UIControlEventTouchUpInside];
         self.messageBtn.hidden = YES;
-        [self addSubview:self.messageBtn];
         
+        if ([DataShare sharedService].escape==1) {
+            [self addSubview:self.messageBtn];
+        }
         self.notificationHub = [[RKNotificationHub alloc]initWithView:self];
         [self.notificationHub setCount:-1];
     }
@@ -239,16 +242,21 @@
     
     self.nameLab.text = clientModel.clientName;
     
+    [self.notificationHub setCount:-1];
     ///红点
-    NSArray *allkeys = [[DataShare sharedService].unreadMessageDic allKeys];
-    if ([allkeys containsObject:clientModel.clientName]) {
-         NSInteger value = [[[DataShare sharedService].unreadMessageDic objectForKey:clientModel.clientName] integerValue];
+    QWeakSelf(self);
+    [[LCCKConversationListService sharedInstance] findRecentConversationsWithBlock:^(NSArray *conversations, NSInteger totalUnreadCount, NSError *error) {
         
-        [self.notificationHub setCount:value==0?-1:(int)value];
-    }else {
-        [self.notificationHub setCount:-1];
-    }
-    
+        for (AVIMConversation *conversation in conversations) {
+            if ([conversation.members containsObject:clientModel.clientName] && [conversation.members containsObject:[AVUser currentUser].username]) {
+                //是这个人和企业的聊天
+                
+                if (conversation.lcck_unreadCount>0) {
+                    [weakself.notificationHub setCount:(int)conversation.lcck_unreadCount];
+                }
+            }
+        }
+    }];
     if (clientModel.clientType==1) {
         self.arrowImg.hidden = YES;
         self.privateImg.hidden = YES;

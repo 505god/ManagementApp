@@ -94,7 +94,8 @@
     self.textView.text = self.item.value;
     self.textView.placeholder = self.item.placeholder;
     self.textView.placeholderColor = self.item.placeholderColor;
-    self.textView.font = [UIFont systemFontOfSize:17];
+    self.textView.textColor = [UIColor darkGrayColor];
+    self.textView.font = [UIFont systemFontOfSize:16];
     self.textView.autocapitalizationType = self.item.autocapitalizationType;
     self.textView.autocorrectionType = self.item.autocorrectionType;
     self.textView.spellCheckingType = self.item.spellCheckingType;

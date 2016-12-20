@@ -132,7 +132,7 @@
     [self.navBarView setTitle:SetTitle(@"client_type") image:nil];
     [self.view addSubview:self.navBarView];
     
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom} style:UITableViewStylePlain];
     [Utility setExtraCellLineHidden:self.tableView];
     [self.view addSubview:self.tableView];
 }

@@ -17,9 +17,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self){
-        UIImage *normal = [Utility getImgWithImageName:@"nav_bg@2x"];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-        [self setBackgroundColor:[UIColor colorWithPatternImage:normal]];
+        self.backgroundColor = kThemeColor;
         
         self.rightEnable = YES;
     }
@@ -100,8 +98,14 @@
         btn.enabled = self.rightEnable;
         
         [btn addTarget:self action:@selector(tapRight:) forControlEvents:UIControlEventTouchUpInside];
+        if (type==0){
+            btn.titleLabel.font = [UIFont systemFontOfSize:16];
+            btn.frame = (CGRect){self.width-5-40*(i+1),20+(NavgationHeight-40)/2,40,40};
+        }else {
+            btn.titleLabel.font = [UIFont systemFontOfSize:16];
+            btn.frame = (CGRect){self.width-5-80*(i+1),20+(NavgationHeight-40)/2,80,40};
+        }
         
-        btn.frame = (CGRect){self.width-5-50*(i+1),20+(NavgationHeight-40)/2,50,40};
         [self addSubview:btn];
         btn = nil;
     }

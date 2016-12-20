@@ -19,7 +19,6 @@
 
 #import "JKImagePickerController.h"
 
-#import "BlockAlertView.h"
 
 @interface ProductVC ()<RFSegmentViewDelegate>
 
@@ -38,6 +37,9 @@
 
 ///根据productModel判断是新建还是修改
 @property (nonatomic, assign) BOOL isNew;
+
+///编辑商品下原来的货号
+@property (nonatomic, strong) NSString *product_code;
 
 @end
 
@@ -61,10 +63,12 @@
     
     if (self.productModel) {
         self.isNew = NO;
+        
+        self.product_code = self.productModel.productCode;
     }else {
         self.isNew = YES;
         self.productModel = [[ProductModel alloc]init];
-        self.productModel.profitStatus = -1;
+        self.productModel.profitStatus = 0;
         self.productModel.isDisplay = YES;
         self.productModel.isHot = YES;
         self.productModel.selected = -1;
@@ -136,7 +140,7 @@
 }
 
 -(void)setDescriptionTableView {
-    self.descriptionTable = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom-60} style:UITableViewStylePlain];
+    self.descriptionTable = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom-60} style:UITableViewStylePlain];
     [Utility setExtraCellLineHidden:self.descriptionTable];
     [self.view addSubview:self.descriptionTable];
     
@@ -151,12 +155,10 @@
     __weak __typeof(self)weakSelf = self;
     //货号必填
     RETextItem *codeItem = [RETextItem itemWithTitle:SetTitle(@"product_code") value:self.productModel.productCode.length>0?self.productModel.productCode:@"" placeholder:SetTitle(@"product_required")];
-    codeItem.enabled = !self.isEditing;//编辑状态下不可更改
     codeItem.onChange = ^(RETextItem *item){
         weakSelf.productModel.productCode = item.value;
     };
     codeItem.alignment = NSTextAlignmentRight;
-    codeItem.validators = @[@"presence"];
     [section addItem:codeItem];
     
     //价格选择
@@ -240,13 +242,20 @@
             weakSelf.productModel.profitStatus = 0;
         }else {
             weakSelf.productModel.profitStatus = -1;
-            item.textFieldColor = COLOR(251, 0, 41, 1);
+            item.textFieldColor = kDeleteColor;
         }
     };
-    purchaseItem.validators = @[@"presence"];
     purchaseItem.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     purchaseItem.alignment = NSTextAlignmentRight;
     [section addItem:purchaseItem];
+    
+    //详情
+    RELongTextItem *longTextItem = [RELongTextItem itemWithValue:nil placeholder:SetTitle(@"product_detail")];
+    longTextItem.onChange = ^(RETextItem *item){
+        weakSelf.productModel.productDetails = item.value;
+    };
+    longTextItem.cellHeight = 88;
+    [section addItem:longTextItem];
     
     //包装数
     self.productModel.packageNum = 1;
@@ -264,7 +273,6 @@
         weakSelf.productModel.productName = item.value;
     };
     nameItem.alignment = NSTextAlignmentRight;
-    nameItem.validators = @[@"presence"];
     [section addItem:nameItem];
     
     //材质
@@ -355,10 +363,30 @@
         
     }];
     [section addItem:stockItem];
+    
+//    //优惠选择
+//    RERadioItem *discountItem = [RERadioItem itemWithTitle:SetTitle(@"product_disount") value:@"" selectionHandler:^(RERadioItem *item) {
+//        [item deselectRowAnimated:YES];
+//        
+//        DiscountVC *stockVC = [[DiscountVC alloc]init];
+//        
+//        stockVC.discountType = weakSelf.productModel.discountType;
+//        stockVC.discount = weakSelf.productModel.discount;
+//        
+//        stockVC.completedBlock = ^(NSInteger discountType,CGFloat discount){
+//            weakSelf.productModel.discountType = discountType;
+//            
+//            weakSelf.productModel.discount = discount;
+//        };
+//        [weakSelf.navigationController pushViewController:stockVC animated:YES];
+//        SafeRelease(stockVC);
+//        
+//    }];
+//    [section addItem:discountItem];
 }
 
 -(void)setStockTableView {
-    self.stockTable = [[UITableView alloc]initWithFrame:(CGRect){[UIScreen mainScreen].bounds.size.width,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom-60} style:UITableViewStylePlain];
+    self.stockTable = [[UITableView alloc]initWithFrame:(CGRect){[UIScreen mainScreen].bounds.size.width,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom-60} style:UITableViewStylePlain];
     self.stockTable.backgroundColor = [UIColor whiteColor];
     [Utility setExtraCellLineHidden:self.stockTable];
     [self.view addSubview:self.stockTable];
@@ -532,56 +560,76 @@ static NSString * sortId = nil;
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     [self.view endEditing:YES];
     
-    NSString *errorString;
-    
-    if (self.productModel.aPrice==0 || self.productModel.bPrice==0 || self.productModel.cPrice==0 || self.productModel.dPrice==0) {
-        errorString = [NSString stringWithFormat:@"%@",[NSString stringWithFormat:SetTitle(@"error_blank"),SetTitle(@"price")]];
+    if (![DataShare sharedService].appDel.isReachable) {
+        [PopView showWithImageName:@"error" message:SetTitle(@"no_connect")];
+        return;
     }
     
-    //判断数据
-    NSArray *managerErrors = _descriptionManager.errors;
-    if (managerErrors.count > 0) {
-        
-        NSMutableArray *errors = [NSMutableArray array];
-        for (NSError *error in managerErrors) {
-            [errors addObject:error.localizedDescription];
-        }
-        errorString = [NSString stringWithFormat:@"%@\n%@",errorString,[errors componentsJoinedByString:@"\n"]];;
-        
-        if (self.productModel.aPrice==0 || self.productModel.bPrice==0 || self.productModel.cPrice==0 || self.productModel.dPrice==0) {
-            errorString = [NSString stringWithFormat:@"%@\n%@",errorString,[NSString stringWithFormat:SetTitle(@"error_blank"),SetTitle(@"price")]];
-        }
-        
+    NSString *msg = @"";
+    if (self.productModel.productCode.length==0) {
+        msg = SetTitle(@"product_code_error");
+    }else if (self.productModel.aPrice==0 || self.productModel.bPrice==0 || self.productModel.cPrice==0 || self.productModel.dPrice==0) {
+        msg = SetTitle(@"sale_price_error");
+    }else if (self.productModel.purchaseprice == 0) {
+        msg = SetTitle(@"purchase_price_error");
+    }else if (self.productModel.productName.length == 0) {
+        msg = SetTitle(@"product_name_error");
     }
     
-    if (errorString.length>0) {
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:nil message:errorString];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
-            
-        }];
-        [alert show];
+    if (msg.length>0) {
+        [PopView showWithImageName:nil message:msg];
         
         return;
     }
     
-    __weak __typeof(self)weakSelf = self;
+    //货号--------------------------------------------------
+    if (self.product_code && [self.product_code isEqualToString:self.productModel.productCode]) {
+        //存在且未改变
+    }else {
+        AVQuery *code_query = [AVQuery queryWithClassName:@"ProductCode"];
+        [code_query whereKey:@"pcode" equalTo:self.productModel.productCode];
+        [code_query whereKey:@"user" equalTo:[AVUser currentUser]];
+        
+        NSInteger code_num = [code_query countObjects];
+        if (code_num>0) {
+            [PopView showWithImageName:@"error" message:SetTitle(@"productError")];
+            return;
+        }else {
+            //货号－－－－－－－－－－－－－－－－－－－－－－－－－
+            AVObject *code_post = [AVObject objectWithClassName:@"ProductCode"];
+            code_post[@"pcode"] = self.productModel.productCode;
+            [code_post setObject:[AVUser currentUser] forKey:@"user"];
+            [code_post saveInBackground];
+        }
+    }
     
+    //统计--------------------------------------------------
+    AVQuery *statistics_query = [AVQuery queryWithClassName:@"Statistics"];
+    [statistics_query whereKey:@"user" equalTo:[AVUser currentUser]];
+    AVObject *statistics_post = [statistics_query getFirstObject];
+    
+    if (!statistics_post) {
+        statistics_post = [AVObject objectWithClassName:@"Statistics"];
+        [statistics_post setObject:[AVUser currentUser] forKey:@"user"];
+    }
+    
+    
+    __weak __typeof(self)weakSelf = self;
     if ([Utility checkString:self.productModel.productId] && self.isEditing) {//修改商品
         
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"product_editing") message:nil];
-        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
-            
-        }];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"product_editing") message:[NSString stringWithFormat:@"%@:%@",SetTitle(@"product_code"),self.productModel.productCode] preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
             [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 
                 AVObject *post = [[AVQuery queryWithClassName:@"Product"] getObjectWithId:weakSelf.productModel.productId];
+                
                 post[@"productCode"] = weakSelf.productModel.productCode;
                 post[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
                 post[@"remark"] = weakSelf.productModel.productMark;
                 post[@"hot"] = @(weakSelf.productModel.isHot);
+                post[@"details"] = weakSelf.productModel.productDetails;
                 post[@"sale"] = @(weakSelf.productModel.isDisplay);
                 post[@"profitStatus"] = @(weakSelf.productModel.profitStatus);
                 post[@"packingNumber"] = @(weakSelf.productModel.packageNum);
@@ -603,29 +651,35 @@ static NSString * sortId = nil;
                     }
                     [post incrementKey:@"stockNum" byAmount:[NSNumber numberWithInteger:num]];
                     post[@"profit"] = @(weakSelf.productModel.profit-weakSelf.productModel.purchaseprice*num);
-                }
-                
-                //颜色
-                if (weakSelf.productModel.productStockArray.count>0) {
+                    
+                    //------------------------------------------
+                    [statistics_post incrementKey:@"totalStock" byAmount:[NSNumber numberWithInt:(int)num]];
+                    [statistics_post incrementKey:@"totalMoney" byAmount:[NSNumber numberWithFloat:num *weakSelf.productModel.purchaseprice]];
+                    [statistics_post saveInBackground];
+                    
+                    //颜色----------------------------------------
                     NSMutableArray *tempArray = [[NSMutableArray alloc]init];
                     
+                    BOOL isExit = NO;
                     for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
                         
                         ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
                         
                         if ([Utility checkString:model.ProductStockId]) {
-                            
+                            //修改的
                             AVObject *p_post = [[AVQuery queryWithClassName:@"ProductStock"] getObjectWithId:model.ProductStockId];
                             
                             NSInteger num = model.stockNum-(model.num-model.saleANum-model.saleBNum-model.saleCNum-model.saleDNum);
                             p_post[@"stockNum"] = @(model.num+num);
                             p_post[@"hot"] = @(weakSelf.productModel.isHot);
                             p_post[@"sale"] = @(weakSelf.productModel.isDisplay);
+                            p_post[@"pcode"] = weakSelf.productModel.productCode;
                             p_post[@"a"] = @(weakSelf.productModel.aPrice);
                             p_post[@"b"] = @(weakSelf.productModel.bPrice);
                             p_post[@"c"] = @(weakSelf.productModel.cPrice);
                             p_post[@"d"] = @(weakSelf.productModel.dPrice);
                             p_post[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
+                            p_post[@"details"] = weakSelf.productModel.productDetails;
                             p_post[@"selected"] = @(weakSelf.productModel.selected);
                             p_post[@"isSetting"] = @(weakSelf.productModel.isSetting);
                             p_post[@"singleNum"] = @(weakSelf.productModel.singleNum);
@@ -635,11 +689,13 @@ static NSString * sortId = nil;
                                 [attachment deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                 }];
                                 
-                                NSData *imageData = UIImagePNGRepresentation(model.image);
+                                NSData *imageData = UIImageJPEGRepresentation(model.image,0.8);
                                 AVFile *imageFile = [AVFile fileWithName:@"image.png" data:imageData];
-                                [p_post setObject:imageFile            forKey:@"header"];
-                                
-                                [post setObject:imageFile forKey:@"header"];
+                                [p_post setObject:imageFile  forKey:@"header"];
+                                if (!isExit) {
+                                    [post setObject:imageFile forKey:@"header"];
+                                    isExit = true;
+                                }
                             }
                             
                             //材质
@@ -662,12 +718,11 @@ static NSString * sortId = nil;
                                 weakSelf.productModel.sortId = weakSelf.productModel.sortModel.sortId;
                             }
                             
-                            [p_post save];
-                            
                             [tempArray addObject:p_post];
                         }else {
                             AVObject *stockPost = [AVObject objectWithClassName:@"ProductStock"];
                             
+                            stockPost[@"details"] = weakSelf.productModel.productDetails;
                             stockPost[@"stockNum"] = @(model.stockNum);
                             stockPost[@"hot"] = @(weakSelf.productModel.isHot);
                             stockPost[@"sale"] = @(weakSelf.productModel.isDisplay);
@@ -682,12 +737,21 @@ static NSString * sortId = nil;
                             stockPost[@"singleNum"] = @(weakSelf.productModel.singleNum);
                             [stockPost setObject:[AVUser currentUser] forKey:@"user"];
                             
+                            if (weakSelf.productModel.isSetting) {
+                                if (model.stockNum<weakSelf.productModel.singleNum) {
+                                    stockPost[@"isWarning"] = @(true);
+                                }
+                            }
+                            
                             if (model.image) {
-                                NSData *imageData = UIImagePNGRepresentation(model.image);
+                                NSData *imageData = UIImageJPEGRepresentation(model.image,0.8);
                                 AVFile *imageFile = [AVFile fileWithName:@"image.png" data:imageData];
                                 [stockPost setObject:imageFile forKey:@"header"];
                                 
-                                [post setObject:imageFile forKey:@"header"];
+                                if (!isExit) {
+                                    [post setObject:imageFile forKey:@"header"];
+                                    isExit = true;
+                                }
                             }
                             
                             //材质
@@ -708,13 +772,14 @@ static NSString * sortId = nil;
                             AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
                             [stockPost setObject:cPost forKey:@"color"];
                             stockPost[@"colorName"] = model.colorModel.colorName;
-                            [stockPost save];
                             
                             [tempArray addObject:stockPost];
                         }
                     }
                     
-                    [post setObject:tempArray forKey:@"products"];
+                    [AVObject saveAll:tempArray];
+                    
+                    [post addUniqueObjectsFromArray:tempArray forKey:@"products"];
                 }else {
                     //材质
                     if (weakSelf.productModel.materialModel!=nil && ![weakSelf.productModel.materialModel.materialId isEqualToString:weakSelf.productModel.materialId]) {
@@ -744,11 +809,9 @@ static NSString * sortId = nil;
                                 if (weakSelf.productModel.materialModel!=nil && [Utility checkString:materialId]) {
                                     AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
                                     [mPost incrementKey:@"productCount"];
-                                    mPost.fetchWhenSave = YES;
                                     [mPost save];
                                     
                                     AVObject *mmPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:materialId];
-                                    mmPost.fetchWhenSave = YES;
                                     [mmPost incrementKey:@"productCount" byAmount:[NSNumber numberWithInt:(-1)]];
                                     [mmPost save];
                                     
@@ -758,13 +821,11 @@ static NSString * sortId = nil;
                                 //分类
                                 if (weakSelf.productModel.sortModel!=nil && [Utility checkString:sortId]) {
                                     AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
-                                    cPost.fetchWhenSave = YES;
                                     [cPost incrementKey:@"productCount"];
                                     [cPost save];
                                     
                                     AVObject *ccPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:sortId];
                                     [ccPost incrementKey:@"productCount" byAmount:[NSNumber numberWithInt:(-1)]];
-                                    ccPost.fetchWhenSave = YES;
                                     [ccPost save];
                                     
                                     sortId = nil;
@@ -779,7 +840,6 @@ static NSString * sortId = nil;
                                             [cPost incrementKey:@"productCount"];
                                             [cPost save];
                                         }
-                                        
                                     }
                                 }
                                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -795,204 +855,199 @@ static NSString * sortId = nil;
                 });
             });
         }];
-        [alert show];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
     }else {//创建商品
-        BlockAlertView *alert = [BlockAlertView alertWithTitle:SetTitle(@"product_creat") message:nil];
-        [alert setCancelButtonWithTitle:SetTitle(@"alert_cancel") block:^{
-            
-        }];
-        [alert setDestructiveButtonWithTitle:SetTitle(@"alert_confirm") block:^{
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"product_creat") message:[NSString stringWithFormat:@"%@:%@",SetTitle(@"product_code"),self.productModel.productCode] preferredStyle:UIAlertControllerStyleAlert];
+        [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
             [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
             
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                //保存对象
+                AVObject *post = [AVObject objectWithClassName:@"Product"];
+                [post setObject:[AVUser currentUser] forKey:@"user"];
+                post[@"productCode"] = weakSelf.productModel.productCode;
+                post[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
+                post[@"remark"] = weakSelf.productModel.productMark;
+                post[@"hot"] = @(weakSelf.productModel.isHot);
+                post[@"details"] = weakSelf.productModel.productDetails;
+                post[@"sale"] = @(weakSelf.productModel.isDisplay);
+                post[@"profitStatus"] = @(weakSelf.productModel.profitStatus);
+                post[@"isSetting"] = @(weakSelf.productModel.isSetting);
+                post[@"totalNum"] = @(weakSelf.productModel.totalNum);
+                post[@"singleNum"] = @(weakSelf.productModel.singleNum);
+                post[@"packingNumber"] = @(weakSelf.productModel.packageNum);
+                post[@"productName"] = weakSelf.productModel.productName;
+                post[@"a"] = @(weakSelf.productModel.aPrice);
+                post[@"b"] = @(weakSelf.productModel.bPrice);
+                post[@"c"] = @(weakSelf.productModel.cPrice);
+                post[@"d"] = @(weakSelf.productModel.dPrice);
+                post[@"selected"] = @(weakSelf.productModel.selected);
                 
-                //判断货号是否存在
-                AVQuery *code_query = [AVQuery queryWithClassName:@"ProductCode"];
-                [code_query whereKey:@"pcode" equalTo:weakSelf.productModel.productCode];
-                [code_query whereKey:@"user" equalTo:[AVUser currentUser]];
-                
-                NSInteger code_num = [code_query countObjects];
-                if (code_num>0) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-                        [PopView showWithImageName:@"error" message:SetTitle(@"productError")];
-                    });
-                }else {
-                    AVObject *code_post = [AVObject objectWithClassName:@"ProductCode"];
-                    code_post[@"pcode"] = weakSelf.productModel.productCode;
-                    [code_post setObject:[AVUser currentUser] forKey:@"user"];
-                    [code_post saveInBackground];
+                if (weakSelf.productModel.productStockArray.count>0) {
+                    NSInteger num = 0;//总的库存－－－－－
+                    for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
+                        ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
+                        num += model.stockNum;
+                    }
+                    //------------------------------------------
+                    [statistics_post incrementKey:@"totalStock" byAmount:[NSNumber numberWithInt:(int)num]];
+                    [statistics_post incrementKey:@"totalMoney" byAmount:[NSNumber numberWithFloat:num *weakSelf.productModel.purchaseprice]];
+                    [statistics_post incrementKey:@"surplusMoney" byAmount:[NSNumber numberWithFloat:num *weakSelf.productModel.purchaseprice]];
+                    [statistics_post saveInBackground];
                     
-                    //保存对象
-                    AVObject *post = [AVObject objectWithClassName:@"Product"];
-                    [post setObject:[AVUser currentUser] forKey:@"user"];
+                    post[@"stockNum"] = @(num);
+                    post[@"profit"] = @(-num*weakSelf.productModel.purchaseprice);
                     
-                    post[@"productCode"] = weakSelf.productModel.productCode;
-                    post[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
-                    post[@"remark"] = weakSelf.productModel.productMark;
-                    post[@"hot"] = @(weakSelf.productModel.isHot);
-                    post[@"sale"] = @(weakSelf.productModel.isDisplay);
-                    post[@"profitStatus"] = @(weakSelf.productModel.profitStatus);
-                    post[@"isSetting"] = @(weakSelf.productModel.isSetting);
-                    post[@"totalNum"] = @(weakSelf.productModel.totalNum);
-                    post[@"singleNum"] = @(weakSelf.productModel.singleNum);
-                    post[@"packingNumber"] = @(weakSelf.productModel.packageNum);
-                    post[@"productName"] = weakSelf.productModel.productName;
-                    post[@"a"] = @(weakSelf.productModel.aPrice);
-                    post[@"b"] = @(weakSelf.productModel.bPrice);
-                    post[@"c"] = @(weakSelf.productModel.cPrice);
-                    post[@"d"] = @(weakSelf.productModel.dPrice);
-                    post[@"selected"] = @(weakSelf.productModel.selected);
-
-                    if (weakSelf.productModel.productStockArray.count>0) {
-                        NSInteger num = 0;
-                        for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
-                            ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
-                            num += model.stockNum;
-                        }
-                        post[@"stockNum"] = @(num);
-                        post[@"profit"] = @(-num*weakSelf.productModel.purchaseprice);
-                        
-                        if (weakSelf.productModel.isSetting) {
-                            if (num<weakSelf.productModel.totalNum) {
-                                post[@"isWarning"] = @(true);
-                            }
+                    if (weakSelf.productModel.isSetting) {
+                        if (num<weakSelf.productModel.totalNum) {
+                            post[@"isWarning"] = @(true);
                         }
                     }
                     
+                    //颜色----------------------------------------
+                    NSMutableArray *tempArray = [[NSMutableArray alloc]init];
                     
-                    //颜色
-                    if (weakSelf.productModel.productStockArray.count>0) {
-                        NSMutableArray *tempArray = [[NSMutableArray alloc]init];
+                    BOOL isExit = NO;
+                    for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
+                        AVObject *stockPost = [AVObject objectWithClassName:@"ProductStock"];
                         
-                        BOOL isExit = NO;
-                        for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
-                            AVObject *stockPost = [AVObject objectWithClassName:@"ProductStock"];
-                            
-                            ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
-                            stockPost[@"stockNum"] = @(model.stockNum);
-                            stockPost[@"hot"] = @(weakSelf.productModel.isHot);
-                            stockPost[@"sale"] = @(weakSelf.productModel.isDisplay);
-                            stockPost[@"pcode"] = weakSelf.productModel.productCode;
-                            [stockPost setObject:[AVUser currentUser] forKey:@"user"];
-                            stockPost[@"a"] = @(weakSelf.productModel.aPrice);
-                            stockPost[@"b"] = @(weakSelf.productModel.bPrice);
-                            stockPost[@"c"] = @(weakSelf.productModel.cPrice);
-                            stockPost[@"d"] = @(weakSelf.productModel.dPrice);
-                            stockPost[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
-                            stockPost[@"selected"] = @(weakSelf.productModel.selected);
-                            stockPost[@"isSetting"] = @(weakSelf.productModel.isSetting);
-                            stockPost[@"singleNum"] = @(weakSelf.productModel.singleNum);
-                            if (weakSelf.productModel.isSetting) {
-                                if (model.stockNum<weakSelf.productModel.singleNum) {
-                                    stockPost[@"isWarning"] = @(true);
-                                }
+                        ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
+                        stockPost[@"details"] = weakSelf.productModel.productDetails;
+                        stockPost[@"stockNum"] = @(model.stockNum);
+                        stockPost[@"hot"] = @(weakSelf.productModel.isHot);
+                        stockPost[@"sale"] = @(weakSelf.productModel.isDisplay);
+                        stockPost[@"pcode"] = weakSelf.productModel.productCode;
+                        [stockPost setObject:[AVUser currentUser] forKey:@"user"];
+                        stockPost[@"a"] = @(weakSelf.productModel.aPrice);
+                        stockPost[@"b"] = @(weakSelf.productModel.bPrice);
+                        stockPost[@"c"] = @(weakSelf.productModel.cPrice);
+                        stockPost[@"d"] = @(weakSelf.productModel.dPrice);
+                        stockPost[@"purchasePrice"] = @(weakSelf.productModel.purchaseprice);
+                        stockPost[@"selected"] = @(weakSelf.productModel.selected);
+                        stockPost[@"isSetting"] = @(weakSelf.productModel.isSetting);
+                        stockPost[@"singleNum"] = @(weakSelf.productModel.singleNum);
+                        if (weakSelf.productModel.isSetting) {
+                            if (model.stockNum<weakSelf.productModel.singleNum) {
+                                stockPost[@"isWarning"] = @(true);
                             }
-                            if (model.image) {
-                                NSData *imageData = UIImagePNGRepresentation(model.image);
-                                AVFile *imageFile = [AVFile fileWithName:@"image.png" data:imageData];
-                                [stockPost setObject:imageFile forKey:@"header"];
-                                if (!isExit) {
-                                    [post setObject:imageFile forKey:@"header"];
-                                    isExit = true;
-                                }
-                            }
-                            
-                            //材质
-                            if (weakSelf.productModel.materialModel != nil) {
-                                AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
-                                [post setObject:mPost forKey:@"material"];
-                                [stockPost setObject:mPost forKey:@"material"];
-                            }
-                            
-                            //分类
-                            if (weakSelf.productModel.sortModel != nil) {
-                                AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
-                                [post setObject:cPost forKey:@"sort"];
-                                [stockPost setObject:cPost forKey:@"sort"];
-                            }
-                            //颜色
-                            AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
-                            [stockPost setObject:cPost forKey:@"color"];
-                            stockPost[@"colorName"] = model.colorModel.colorName;
-                            [stockPost save];
-                            [tempArray addObject:stockPost];
                         }
-                        [post setObject:tempArray forKey:@"products"];
-                    }else {
+                        if (model.image) {
+                            NSData *imageData = UIImageJPEGRepresentation(model.image,0.8);
+                            AVFile *imageFile = [AVFile fileWithName:@"image.png" data:imageData];
+                            [stockPost setObject:imageFile forKey:@"header"];
+                            if (!isExit) {
+                                [post setObject:imageFile forKey:@"header"];
+                                isExit = true;
+                            }
+                        }
+                        
                         //材质
                         if (weakSelf.productModel.materialModel != nil) {
                             AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
                             [post setObject:mPost forKey:@"material"];
+                            [stockPost setObject:mPost forKey:@"material"];
                         }
                         
                         //分类
                         if (weakSelf.productModel.sortModel != nil) {
                             AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
                             [post setObject:cPost forKey:@"sort"];
-                            
+                            [stockPost setObject:cPost forKey:@"sort"];
                         }
+                        //颜色
+                        AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
+                        [stockPost setObject:cPost forKey:@"color"];
+                        stockPost[@"colorName"] = model.colorModel.colorName;
+                        
+                        [tempArray addObject:stockPost];
                     }
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
+                    [AVObject saveAll:tempArray];
+                    
+                    [post addUniqueObjectsFromArray:tempArray forKey:@"products"];
+                }else {
+                    //材质
+                    if (weakSelf.productModel.materialModel != nil) {
+                        AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
+                        [post setObject:mPost forKey:@"material"];
+                    }
+                    
+                    //分类
+                    if (weakSelf.productModel.sortModel != nil) {
+                        AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
+                        [post setObject:cPost forKey:@"sort"];
                         
-                        [AVObject saveAllInBackground:@[post] block:^(BOOL succeeded, NSError *error) {
+                    }
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [AVObject saveAllInBackground:@[post] block:^(BOOL succeeded, NSError *error) {
+                        
+                        if (!error) {
+                            //发推送
+                            AVQuery *queryquery = [AVInstallation query];
+                            [queryquery whereKey:@"user" equalTo:[AVUser currentUser]];
+                            [queryquery whereKey:@"deviceProfile" equalTo:@"CAPP"];
+                            AVPush *push = [[AVPush alloc] init];
+                            [push setQuery:queryquery];
+                            NSDictionary *data = @{
+                                                   @"alert": [NSString stringWithFormat:SetTitle(@"product_push"),[AVUser currentUser].username],
+                                                   @"type": @"1",
+                                                   @"badge":@"1"
+                                                   };
+                            [push setData:data];
+                            [AVPush setProductionMode:YES];
+                            [push sendPushInBackground];
                             
-                            if (!error) {
-                                //发推送
-                                AVQuery *queryquery = [AVInstallation query];
-                                [queryquery whereKey:@"user" equalTo:[AVUser currentUser]];
-                                AVPush *push = [[AVPush alloc] init];
-                                [push setQuery:queryquery];
-                                NSDictionary *data = @{
-                                                       @"alert": SetTitle(@"product_push"),
-                                                       @"type": @"1"
-                                                       };
-                                [push setData:data];
-                                [AVPush setProductionMode:YES];
-                                [push sendPushInBackground];
+                            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                //材质
+                                if (weakSelf.productModel.materialModel != nil) {
+                                    AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
+                                    [mPost incrementKey:@"productCount"];
+                                    [mPost save];
+                                }
                                 
-                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                                    //材质
-                                    if (weakSelf.productModel.materialModel != nil) {
-                                        AVObject *mPost = [[AVQuery queryWithClassName:@"Material"] getObjectWithId:weakSelf.productModel.materialModel.materialId];
-                                        [mPost incrementKey:@"productCount"];
-                                        [mPost save];
-                                    }
-                                    
-                                    //分类
-                                    if (weakSelf.productModel.sortModel != nil) {
-                                        AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
+                                //分类
+                                if (weakSelf.productModel.sortModel != nil) {
+                                    AVObject *cPost = [[AVQuery queryWithClassName:@"Sort"] getObjectWithId:weakSelf.productModel.sortModel.sortId];
+                                    [cPost incrementKey:@"productCount"];
+                                    [cPost save];
+                                }
+                                
+                                //颜色
+                                if (weakSelf.productModel.productStockArray.count>0) {
+                                    for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
+                                        ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
+                                        AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
                                         [cPost incrementKey:@"productCount"];
                                         [cPost save];
                                     }
+                                }
+                                
+                                dispatch_async(dispatch_get_main_queue(), ^{
                                     
-                                    //颜色
-                                    if (weakSelf.productModel.productStockArray.count>0) {
-                                        for (int i=0; i<weakSelf.productModel.productStockArray.count; i++) {
-                                            ProductStockModel *model = (ProductStockModel *)weakSelf.productModel.productStockArray[i];
-                                            AVObject *cPost = [[AVQuery queryWithClassName:@"Color"] getObjectWithId:model.colorModel.colorId];
-                                            [cPost incrementKey:@"productCount"];
-                                            [cPost save];
-                                        }
+                                    if (weakSelf.addHandler) {
+                                        weakSelf.addHandler();
                                     }
                                     
-                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                        [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-                                        [weakSelf.navigationController popViewControllerAnimated:YES];
-                                    });
+                                    [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                                    [weakSelf.navigationController popViewControllerAnimated:YES];
                                 });
-                                
-                            }else {
-                                [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-                            }
+                            });
                             
-                        }];
-                    });
-                }
+                        }else {
+                            [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
+                        }
+                        
+                    }];
+                });
             });
         }];
-        [alert show];
+        [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
@@ -1006,8 +1061,8 @@ static NSString * sortId = nil;
         __weak __typeof(self)weakSelf = self;
         if (index==0) {
             [UIView animateWithDuration:0.25f animations:^{
-                weakSelf.descriptionTable.frame = (CGRect){0,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom-60};
-                weakSelf.stockTable.frame = (CGRect){[UIScreen mainScreen].bounds.size.width,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom-60};
+                weakSelf.descriptionTable.frame = (CGRect){0,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom-60};
+                weakSelf.stockTable.frame = (CGRect){[UIScreen mainScreen].bounds.size.width,self.navBarView.bottom+60,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom-60};
             }];
         }else {
             [UIView animateWithDuration:0.25f animations:^{

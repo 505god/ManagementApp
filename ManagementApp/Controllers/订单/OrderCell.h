@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "OrderModel.h"
+#import "RKNotificationHub.h"
 
 @interface OrderCell : UITableViewCell
 @property(strong,nonatomic) OrderModel *orderModel;
+
+@property (nonatomic, strong) RKNotificationHub *notificationHub;
 @end

@@ -81,7 +81,7 @@
             [self.accessView setImage:[Utility getImgWithImageName:@"uncheck@2x"]];
         }else {
             [self.accessView setImage:[Utility getImgWithImageName:@"check@2x"]];
-            self.titleLab.textColor = COLOR(12, 96, 254, 1);
+            self.titleLab.textColor = kThemeColor;
         }
     }
 }

@@ -18,4 +18,12 @@
 //导航栏代理
 -(void)leftBtnClickByNavBarView:(NavBarView *)navView;
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag;
+
+- (void)addActionTarget:(UIAlertController *)alertController title:(NSString *)title color:(UIColor *)color action:(void(^)(UIAlertAction *action))actionTarget;
+
+
+-(void)addCancelActionTarget:(UIAlertController*)alertController title:(NSString *)title;
+
+
+-(void)addCancelActionTarget:(UIAlertController*)alertController title:(NSString *)title action:(void(^)(UIAlertAction *action))actionTarget;
 @end

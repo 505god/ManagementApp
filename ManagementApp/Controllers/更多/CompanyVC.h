@@ -10,5 +10,4 @@
 
 @interface CompanyVC : BaseVC
 
-@property (nonatomic, strong) AVUser *currentUser;
 @end

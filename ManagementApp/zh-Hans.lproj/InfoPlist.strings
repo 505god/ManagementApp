@@ -5,4 +5,8 @@
   Created by 邱成西 on 15/5/24.
   Copyright (c) 2015年 邱成西. All rights reserved.
 */
-CFBundleDisplayName="闪城";
+NSCameraUsageDescription = "App需要您的同意才能调用摄像头";
+
+NSMicrophoneUsageDescription = "App需要您的同意才能使用麦克风";
+
+NSPhotoLibraryUsageDescription = "App需要您的同意才能读取媒体资料库";

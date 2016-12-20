@@ -31,10 +31,10 @@
 -(void)setUserModel:(UserModel *)userModel {
     _userModel = userModel;
     
-    [self.headerImg sd_setImageWithURL:[NSURL URLWithString:userModel.userHead] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
+    [self.headerImg sd_setImageWithURL:[NSURL URLWithString:userModel.header] placeholderImage:[Utility getImgWithImageName:@"assets_placeholder_picture@2x"]];
     
     self.nameLab.text = userModel.userName;
     
-    self.dayLab.text = userModel.dayString;
+    self.dayLab.text = [NSString stringWithFormat:SetTitle(@"Company_day"),(long)userModel.dayNumber,(long)userModel.hourNumber,(long)userModel.minuteNumber];
 }
 @end

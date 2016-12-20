@@ -12,7 +12,12 @@
 typedef NS_ENUM(NSInteger, WQPushType) {
     WQPushTypeNone = 0,
     WQPushTypeClient = 1,      //新用户
-    WQPushTypeOrder = 2       //订单
+    WQPushTypeOrder = 2,       //订单
+    WQPushTypeMsg = 3,  //消息
+    WQPushTypePay = 4,   //订单付款
+    WQPushTypeOrderDelete = 5,   //订单取消
+    WQPushTypeOrderDeliver = 6,   //订单提醒发货
+    WQPushTypeWarning = 7      //库存
 };
 
 typedef enum OrderFilterType:NSUInteger{
@@ -43,11 +48,8 @@ typedef enum StatusFilterType:NSUInteger{
 #import "NSObject+Motis.h"
 #import "UIView+Common.h"
 #import "MBProgressHUD.h"
-#import "LeanChatManager.h"
 #import "DataShare.h"
-#import "Utility.h"
-#import "MJRefresh.h"
 #import "JSONKit.h"
 #import "NSDate+Utils.h"
-#import <AVOSCloud/AVOSCloud.h>
+#import "AVOSCloud.h"
 

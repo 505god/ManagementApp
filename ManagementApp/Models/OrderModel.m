@@ -29,8 +29,11 @@
               @"isPay": mts_key(isPay),
               @"arrearsPrice": mts_key(arrearsPrice),
               @"isDeliver": mts_key(isDeliver),
-              @"profit": mts_key(profit)
-              
+              @"tax": mts_key(tax),
+              @"taxNum": mts_key(taxNum),
+              @"profit": mts_key(profit),
+              @"ered": mts_key(ered),
+              @"cred": mts_key(cred)
               };
 }
 

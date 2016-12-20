@@ -24,10 +24,18 @@
 #import "ProductVC.h"
 
 #import "Reachability.h"
+#import <CommonCrypto/CommonDigest.h>
 
-#import "LeanChatCoreDataManager.h"
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 100000
+#import <UserNotifications/UserNotifications.h>
+#endif
 
-@interface AppDelegate ()
+//#define kApplicationId @"j39OUXHrhrHTm8RTjvJjxcGU-MdYXbMMI"
+//#define kClientKey @"WMQBhuXeKKxnNdWi0cP3nCpT"
+
+
+
+@interface AppDelegate ()<UNUserNotificationCenterDelegate>
 
 @property (strong, nonatomic) Reachability *hostReach;//网络监听所用
 
@@ -39,15 +47,35 @@
     return (AppDelegate*)([UIApplication sharedApplication].delegate);
 }
 
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [application setStatusBarStyle:UIStatusBarStyleLightContent];    
+    [application setStatusBarStyle:UIStatusBarStyleLightContent];
+    [[UINavigationBar appearance] setBarTintColor:kThemeColor];
+    [[UINavigationBar appearance] setTintColor:kWhiteColor];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName:kWhiteColor,NSFontAttributeName:[UIFont systemFontOfSize:18]}];
     
+    [NSThread detachNewThreadSelector:@selector(loopMethod) toTarget:self withObject:nil];
     // 配置
-    [LeanChatManager setupApplication];
+    [LCChatKitExample invokeThisMethodInDidFinishLaunching];
+    [LCChatKit setAppId:kApplicationId appKey:kClientKey];
     
     ///－－－－－－－－－－－－－－－－－－－－推送
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
-    [application registerUserNotificationSettings:settings];
+    if (Platform >= 10.0) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate=self;
+        UNAuthorizationOptions types10=UNAuthorizationOptionBadge|UNAuthorizationOptionAlert|UNAuthorizationOptionSound;
+        [center requestAuthorizationWithOptions:types10 completionHandler:^(BOOL granted, NSError * _Nullable error) {
+            if (granted) {
+                //点击
+            } else {
+                //点击不允许
+            }
+        }];
+    }else {
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil];
+        [application registerUserNotificationSettings:settings];
+        
+    }
     [application registerForRemoteNotifications];
     //－－－－－－－－－－－－－－－－－－－－开启网络状况的监听
     
@@ -68,8 +96,9 @@
     if (pushDict) {
         [DataShare sharedService].isPushing = YES;
         [DataShare sharedService].pushType = [pushDict[@"type"] integerValue];
+        [DataShare sharedService].pushText = [[pushDict objectForKey:@"aps"] objectForKey:@"alert"];
     }
-    
+
     //－－－－－－－－－－－－－－－－－－－－VC
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
@@ -82,7 +111,6 @@
     
     return YES;
 }
-
 - (void)applicationWillResignActive:(UIApplication *)application {
 }
 
@@ -92,12 +120,10 @@
     [defaults synchronize];
     
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    [self saveMessageData];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     [application setApplicationIconBadgeNumber:0];
-    [self saveMessageData];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
@@ -116,69 +142,57 @@
     [defaults setInteger:0 forKey:@"isOn"];
     [defaults synchronize];
 
-    [[LeanChatManager manager] close:^(BOOL succeeded, NSError *error) {
-        
-    }];
     [Utility dataShareClear];
-    [[LeanChatCoreDataManager manager]saveContext];
-    [self saveMessageData];
-}
-
--(void)saveMessageData {
-    NSFileManager *fileManage = [NSFileManager defaultManager];
-    NSString *path = [Utility returnPath];
-    //保存未读消息的数组
-    NSString *filenameMessage = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"message_%@.plist",[AVUser currentUser].username]];
-    if ([fileManage fileExistsAtPath:filenameMessage]) {
-        [fileManage removeItemAtPath:filenameMessage error:nil];
-    }
-    [NSKeyedArchiver archiveRootObject:[DataShare sharedService].unreadMessageDic toFile:filenameMessage];
-}
-
--(void)getMessageData {
-    NSFileManager *fileManage = [NSFileManager defaultManager];
-    NSString *path = [Utility returnPath];
-    NSString *filenameMessage = [path stringByAppendingPathComponent:[NSString stringWithFormat:@"message_%@.plist",[AVUser currentUser].username]];
-    
-    if ([fileManage fileExistsAtPath:filenameMessage]) {
-        NSDictionary *dic = [NSKeyedUnarchiver unarchiveObjectWithFile:filenameMessage];
-        [DataShare sharedService].unreadMessageDic = [NSMutableDictionary dictionaryWithDictionary:dic];
-    }
 }
 #pragma mark -
 #pragma mark - 推送
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    AVInstallation *currentInstallation = [AVInstallation currentInstallation];
-    [currentInstallation setDeviceProfile:@"MAPP"];
-    [currentInstallation setBadge:0];
-    [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation saveInBackground];
+    [AVOSCloud handleRemoteNotificationsWithDeviceToken:deviceToken constructingInstallationWithBlock:^(AVInstallation *currentInstallation) {
+        currentInstallation.deviceProfile = @"MAPP";
+    }];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     NSInteger isOn = [[NSUserDefaults standardUserDefaults] integerForKey:@"isOn"];
-    int type = [[userInfo objectForKey:@"type"]intValue];
-    if (type==WQPushTypeClient) {//新品上市
-        if (isOn == 2) {//app从后台进入前台
-            [PopView showWithImageName:@"error" message:SetTitle(@"new_client")];
-        }else {
-            [DataShare sharedService].pushType = type;
-            [DataShare sharedService].isPushing = YES;
-        }
-    }else if (type==WQPushTypeOrder) {
-        if (isOn == 2) {//app从后台进入前台
-            [PopView showWithImageName:@"error" message:SetTitle(@"new_order")];
-        }else {
-            [DataShare sharedService].pushType = WQPushTypeOrder;
-            [DataShare sharedService].isPushing = YES;
-        }
-    }
     
+    if (isOn==1) {
+        //前台
+        if (self.messageTo && [self.messageTo isEqualToString:[DataShare sharedService].clientObject.clientName]) {
+        }else{
+            [PopView showWithImageName:nil message:[[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
+        }
+        
+    }else {
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"pushNotification" object:[userInfo objectForKey:@"type"]];
+    }
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
+//iOS10新增：处理后台点击通知的代理方法
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+
+    if (self.messageTo && [self.messageTo isEqualToString:[DataShare sharedService].clientObject.clientName]) {
+    }else{
+        [PopView showWithImageName:nil message:notification.request.content.body];
+    }
+    
+    completionHandler(UNNotificationPresentationOptionAlert);
+    
+}
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler{
+    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+
+    NSDictionary * userInfo = response.notification.request.content.userInfo;
+    
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"pushNotification" object:[userInfo objectForKey:@"type"]];
+    completionHandler();
+}
 #pragma mark -
 #pragma mark - 网络
 
@@ -200,8 +214,6 @@
 ///type: 0=登陆页面  1=首页
 -(void)showRootVCWithType:(NSInteger)type {
     if (type==1) {
-        [self getMessageData];
-        
         MainVC *mainVC  = [[MainVC alloc]init];
         
         StockVC *stockVC = LOADVC(@"StockVC");
@@ -221,12 +233,52 @@
         self.window.rootViewController = navControl;
     }else {
         LoginVC *logVC = LOADVC(@"LoginVC");
-        self.window.rootViewController = logVC;
+        UINavigationController *navControl = [[UINavigationController alloc]initWithRootViewController:logVC];
         
-        if (type==2) {
-            [PopView showWithImageName:@"error" message:SetTitle(@"Company_expire")];
+        self.window.rootViewController = navControl;
+    }
+}
+
+//定时更新信息
+- (void)loopMethod {
+    [NSTimer scheduledTimerWithTimeInterval:60*30 target:self selector:@selector(requestIsHaveReview) userInfo:nil repeats:YES];
+    
+    NSRunLoop *loop = [NSRunLoop currentRunLoop];
+    
+    [loop run];
+}
+
+-(void)requestIsHaveReview {
+    AVUser *user = [AVUser currentUser];
+    
+    if (user != nil) {
+        [[AVUser currentUser] refresh];
+        
+        UserModel *user = [UserModel initWithObject:[AVUser currentUser]];
+        
+        [DataShare sharedService].userObject = user;
+        
+        
+        if ([DataShare sharedService].userObject.isExpire && [DataShare sharedService].userObject.type!=1) {
+            [PopView showWithImageName:nil message:SetTitle(@"authority_error")];
         }
     }
 }
 
+//登录后保存信息
+-(void)saveUserInfo {    
+    //保存到单列
+    UserModel *user = [UserModel initWithObject:[AVUser currentUser]];
+    
+    [DataShare sharedService].userObject = user;
+    
+    [LCChatKitExample invokeThisMethodAfterLoginSuccessWithClientId:[DataShare sharedService].userObject.userName success:^{
+    } failed:^(NSError *error) {
+    }];
+    
+    //用于推送
+    AVInstallation *installation = [AVInstallation currentInstallation];
+    [installation setObject:user.userId forKey:@"cid"];
+    [installation saveInBackground];
+}
 @end

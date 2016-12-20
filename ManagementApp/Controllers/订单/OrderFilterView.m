@@ -26,10 +26,10 @@
 
 @property (nonatomic, strong) NSMutableArray *itemArray;
 
-@property (nonatomic, weak) IBOutlet UIView *customView;
+
 @property (nonatomic, weak) IBOutlet UIButton *sureBtn;
 @property (nonatomic, weak) IBOutlet UIDatePicker *datePicker;
-@property (nonatomic, assign) BOOL isShow;
+
 @property (nonatomic, strong) NSString *time;
 @property (nonatomic, assign) double timeInstance;
 
@@ -37,6 +37,10 @@
 @end
 
 @implementation OrderFilterView
+
+-(void)dealloc {
+//    [self removeObserver:self forKeyPath:@"orderType"];
+}
 
 - (id)initWithFrame:(CGRect)frame orderType:(NSInteger)orderType type:(NSInteger)type filterArray:(NSMutableArray *)filterArray{
     self = [super initWithFrame:frame];
@@ -60,7 +64,7 @@
         
         [self addTarget:self action:@selector(hidden:) forControlEvents:UIControlEventTouchUpInside];
         ///检测orderType的变化
-        [self addObserver:self forKeyPath:@"orderType" options:0 context:nil];
+//        [self addObserver:self forKeyPath:@"orderType" options:0 context:nil];
         
         [self.sureBtn setTitle:SetTitle(@"sureBtn") forState:UIControlStateNormal];
         
@@ -125,7 +129,7 @@
     self.section = [RETableViewSection section];
     [self.manager addSection:self.section];
     
-    NSArray * filterNameArray = @[@[SetTitle(@"Today"),SetTitle(@"Yesterday"),SetTitle(@"week"),SetTitle(@"month"),SetTitle(@"latest_month"),SetTitle(@"select_date")],@[SetTitle(@"pay_none"),SetTitle(@"pay_part"),SetTitle(@"pay_all"),SetTitle(@"deliver_none"),SetTitle(@"deliver_part"),SetTitle(@"deliver_all")],@[SetTitle(@"green"),SetTitle(@"orange"),SetTitle(@"brown"),SetTitle(@"red"),SetTitle(@"violet"),SetTitle(@"blue")]];
+    NSArray * filterNameArray = @[@[SetTitle(@"Today"),SetTitle(@"Yesterday"),SetTitle(@"week"),SetTitle(@"month"),SetTitle(@"latest_month"),SetTitle(@"select_date")],@[SetTitle(@"pay_none"),SetTitle(@"pay_part"),SetTitle(@"pay_all"),SetTitle(@"deliver_none"),SetTitle(@"deliver_part"),SetTitle(@"deliver_all")]];
     
     __weak __typeof(self)weakSelf = self;
     ///----------------------------------------------------------

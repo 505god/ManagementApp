@@ -18,6 +18,8 @@
 #import "ClientDetailVC.h"
 #import "ClientSearchVC.h"
 
+#import "AVIMMessage+LCCKExtension.h"
+
 typedef enum FilterType:NSUInteger{
     ClientFilterType_ccreat=0,//最新创建
     ClientFilterType_update=1,//最近更新
@@ -79,7 +81,29 @@ typedef enum FilterType:NSUInteger{
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fliterDataWithNotification:) name:@"fliterDataWithNotification" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unreadeMessage:) name:@"unreadeMessage" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadData:) name:@"reloadData" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveMessage) name:LCCKNotificationMessageReceived object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receiveMessage) name:LCCKNotificationUnreadsUpdated object:nil];
+}
+
+-(void)reloadData:(NSNotification *)notification {
+    
+    QWeakSelf(self);
+    NSString *name = notification.object;
+    [[LCCKConversationListService sharedInstance] findRecentConversationsWithBlock:^(NSArray *conversations, NSInteger totalUnreadCount, NSError *error) {
+        
+        for (AVIMConversation *conversation in conversations) {
+            if ([conversation.members containsObject:name] && [conversation.members containsObject:[AVUser currentUser].username]) {
+                
+                [weakself.mainVC.tabBarView.item1.notificationHub decrementBy:(int)conversation.lcck_unreadCount];
+                //是这个人和企业的聊天
+                [[LCChatKit sharedInstance] updateUnreadCountToZeroWithConversationId:conversation.conversationId];
+            }
+        }
+    }];
+    
+    [self.tableView.mj_header beginRefreshing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -90,23 +114,71 @@ typedef enum FilterType:NSUInteger{
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.tableView reloadData];
-}
-
--(void)unreadeMessage:(NSNotification *)notification {
-    NSString *name = [notification object];
-    
-    NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"%K == %@", @"clientName", name];
-    NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[self.dataArray filteredArrayUsingPredicate:predicateString]];
-    
-    if (filteredArray.count>0) {
-        ClientModel *model = (ClientModel *)[filteredArray firstObject];
-        model.redPoint ++;
-        NSInteger index = [self.dataArray indexOfObject:model];
+    if (tempIdx != nil) {
+        ClientModel *model = (ClientModel *)self.dataArray[tempIdx.row];
         
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        QWeakSelf(self);
+        [[LCCKConversationListService sharedInstance] findRecentConversationsWithBlock:^(NSArray *conversations, NSInteger totalUnreadCount, NSError *error) {
+            
+            for (AVIMConversation *conversation in conversations) {
+                if ([conversation.members containsObject:model.clientName] && [conversation.members containsObject:[AVUser currentUser].username]) {
+                    //是这个人和企业的聊天
+                    
+                    if (conversation.lcck_unreadCount>0) {
+                        model.msgCount = conversation.lcck_unreadCount;
+                    }else {
+                        model.msgCount = 0;
+                        
+                        [weakself.dataArray replaceObjectAtIndex:tempIdx.row withObject:model];
+                        [weakself.tableView reloadRowsAtIndexPaths:@[tempIdx] withRowAnimation:UITableViewRowAnimationNone];
+                        tempIdx = nil;
+                    }
+                }
+            }
+        }];
     }
 }
+
+
+- (void)receiveMessage {
+    
+    QWeakSelf(self);
+    [[LCCKConversationListService sharedInstance] findRecentConversationsWithBlock:^(NSArray *conversations, NSInteger totalUnreadCount, NSError *error) {
+        
+        for (AVIMConversation *conversation in conversations) {
+            
+            NSInteger count = conversation.lcck_unreadCount;
+            if (count>0) {
+                NSArray *lastestMessages = [conversation queryMessagesFromCacheWithLimit:1];
+                if (lastestMessages.count > 0) {
+                    AVIMTypedMessage *avimTypedMessage = [(AVIMMessage *)lastestMessages[0] lcck_getValidTypedMessage];
+                    
+                    //正在当前聊天页面
+                    if ([AppDelegate shareInstance].messageTo && [[AppDelegate shareInstance].messageTo isEqualToString:avimTypedMessage.clientId]) {
+                        return;
+                    }
+                    
+                    //表示接受消息
+                    if (avimTypedMessage.ioType == AVIMMessageIOTypeIn) {
+                        NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"%K == %@", @"clientName", avimTypedMessage.clientId];
+                        NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[self.dataArray filteredArrayUsingPredicate:predicateString]];
+                        
+                        if (filteredArray.count>0) {
+                            ClientModel *model = (ClientModel *)[filteredArray firstObject];
+                            NSInteger index = [weakself.dataArray indexOfObject:model];
+                            
+                            model.msgCount = conversation.lcck_unreadCount;
+                            [weakself.dataArray replaceObjectAtIndex:index withObject:model];
+                            
+                            [weakself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+                        }
+                    }
+                }
+            }
+        }
+    }];
+}
+
 
 -(void)fliterDataWithNotification:(NSNotification *)notification {
     self.clientType = [[notification object]integerValue];
@@ -133,17 +205,16 @@ typedef enum FilterType:NSUInteger{
 
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addHeaderWithCallback:^{
-        
+    self.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         weakSelf.start = 0;
         weakSelf.isLoadingMore = NO;
         [weakSelf getDataFromSever];
-    } dateKey:@"ClientVC"];
+    }];
 }
 
 - (void)addFooter {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addFooterWithCallback:^{
+    self.tableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
         weakSelf.start ++;
         weakSelf.isLoadingMore = YES;
         [weakSelf getDataFromSever];
@@ -162,7 +233,7 @@ typedef enum FilterType:NSUInteger{
 
 -(FilterView *)filterView {
     if (!_filterView) {
-        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.height} dataSource:self];
+        _filterView = [[FilterView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.height} dataSource:self];
         _filterView.delegate=self;
         [self.view addSubview:_filterView];
     }
@@ -206,7 +277,7 @@ typedef enum FilterType:NSUInteger{
     for (int i=0; i<3; i++) {
         UIButton *btn = (UIButton *)[self.filterDayView viewWithTag:(100+i)];
         if (i==dayType) {
-            [btn setTitleColor:COLOR(12, 96, 254, 1) forState:UIControlStateNormal];
+            [btn setTitleColor:kThemeColor forState:UIControlStateNormal];
         }else {
             [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         }
@@ -244,9 +315,27 @@ typedef enum FilterType:NSUInteger{
 
 -(void)rightBtnClickByNavBarView:(NavBarView *)navView tag:(NSUInteger)tag {
     if (tag==0) {//添加
-        AddClientVC *clientVC = [[AddClientVC alloc]init];
-        [self.navigationController pushViewController:clientVC animated:YES];
-        SafeRelease(clientVC);
+        if ([Utility isAuthority]) {
+            AddClientVC *clientVC = [[AddClientVC alloc]init];
+            QWeakSelf(self);
+            clientVC.addHandler = ^(){
+                [weakself.tableView.mj_header beginRefreshing];
+            };
+            [self.navigationController pushViewController:clientVC animated:YES];
+            SafeRelease(clientVC);
+        }else {
+            /*
+            QWeakSelf(self);
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:SetTitle(@"authority_tip") message:SetTitle(@"authority_error") preferredStyle:UIAlertControllerStyleAlert];
+            [self addActionTarget:alert title:SetTitle(@"alert_confirm") color:kThemeColor action:^(UIAlertAction *action) {
+                
+                AuthorityVC *vc = LOADVC(@"AuthorityVC");
+                [weakself.navigationController pushViewController:vc animated:YES];
+            }];
+            [self addCancelActionTarget:alert title:SetTitle(@"alert_cancel")];
+            [self presentViewController:alert animated:YES completion:nil];
+             */
+        }
     }else if(tag==1){//搜索
         ClientSearchVC *vc = LOADVC(@"ClientSearchVC");
         [self.navigationController pushViewController:vc animated:YES];
@@ -288,7 +377,7 @@ typedef enum FilterType:NSUInteger{
                     yesterDay = [NSDate returnDay:30];
                 }
                 [query1 orderByDescending:@"arrearsPrice"];
-                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:yesterDay];
+                [query1 whereKey:@"updatedAt" greaterThanOrEqualTo:yesterDay];
             }
         }
         
@@ -302,19 +391,20 @@ typedef enum FilterType:NSUInteger{
             [query1 whereKey:@"clientType" equalTo:@(0)];
             [query1 whereKey:@"clientLevel" equalTo:@(self.clientType-1)];
         }
+        [query1 whereKey:@"isMutable" equalTo:[NSNumber numberWithBool:false]];
         
         query1.limit = 10;
         query1.skip = 10*self.start;
         
         [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:weakSelf.view animated:YES];
-            [weakSelf.tableView headerEndRefreshing];
-            [weakSelf.tableView footerEndRefreshing];
+            [weakSelf.tableView.mj_header endRefreshing];
+            [weakSelf.tableView.mj_footer endRefreshing];
             if (!error) {
                 if (!weakSelf.isLoadingMore) {
                     weakSelf.dataArray = nil;
                 }
-                [weakSelf.tableView removeFooter];
+                [weakSelf.tableView.mj_footer setHidden:YES];
                 if (objects.count==10) {
                     [weakSelf addFooter];
                 }
@@ -334,6 +424,8 @@ typedef enum FilterType:NSUInteger{
                         [object saveInBackground];
                     }
                 }
+                
+                [weakSelf receiveMessage];
                 
                 [weakSelf.tableView reloadData];
                 
@@ -361,39 +453,43 @@ typedef enum FilterType:NSUInteger{
     if (!cell) {
         cell=[[ClientCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
-    //红点判断
+    
+    cell.type = self.filterType;
     ClientModel *model = (ClientModel *)self.dataArray[indexPath.row];
-    
-    NSArray *allkeys = [[DataShare sharedService].unreadMessageDic allKeys];
-    if ([allkeys containsObject:model.clientName]) {//包含
-        model.redPoint ++;
-    }
-    
     cell.clientModel = model;
     
     return cell;
 }
 
+static NSIndexPath *tempIdx = nil;
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    
-    __weak __typeof(self)weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-        AVObject *post = [[AVQuery queryWithClassName:@"Client"] getObjectWithId:[(ClientModel *)weakSelf.dataArray[indexPath.row] clientId]];
-        [post setObject:[NSNumber numberWithInt:0] forKey:@"redPoint"];
-        [post saveInBackground];
-    });
-    
     ClientModel *model = (ClientModel *)self.dataArray[indexPath.row];
-    model.redPoint = 0;
-    [self.dataArray replaceObjectAtIndex:indexPath.row withObject:model];
     
-    ClientDetailVC *detailVC = [[ClientDetailVC alloc]init];
-    detailVC.clientModel = model;
-    [self.navigationController pushViewController:detailVC animated:YES];
-    SafeRelease(detailVC);
+    if (model.clientType == 1) {
+        AddClientVC *clientVC = [[AddClientVC alloc]init];
+        clientVC.clientModel = model;
+        clientVC.isEditing = YES;
+        [self.navigationController pushViewController:clientVC animated:YES];
+        SafeRelease(clientVC);
+    }else {
+        if (model.redPoint>0) {
+            model.redPoint = 0;
+            [self.dataArray replaceObjectAtIndex:indexPath.row withObject:model];
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+        
+        if (model.msgCount>0) {
+            tempIdx = indexPath;
+        }
+
+        ClientDetailVC *detailVC = [[ClientDetailVC alloc]init];
+        detailVC.clientModel = model;
+        [self.navigationController pushViewController:detailVC animated:YES];
+        SafeRelease(detailVC);
+    }
 }
 
 

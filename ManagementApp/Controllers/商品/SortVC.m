@@ -34,6 +34,8 @@
     
     [Utility setExtraCellLineHidden:self.sortTable];
     
+    self.dataArray = nil;
+    [self.sortTable reloadData];
     ///底部切换栏布局
     int num = (int)self.currentPage;
     if (num == 0) {
@@ -44,7 +46,7 @@
         
         
         if (self.dataArray.count==0) {
-            [self.sortTable headerBeginRefreshing];
+            [self.sortTable.mj_header beginRefreshing];
         }else {
             [self.sortTable reloadData];
         }
@@ -55,7 +57,7 @@
         self.rightNameLab.text = SetTitle(@"supplier");
         
         if (self.typeArray.count==0) {
-            [self.sortTable headerBeginRefreshing];
+            [self.sortTable.mj_header beginRefreshing];
         }else {
             [self.sortTable reloadData];
         }
@@ -87,14 +89,13 @@
 - (void)addHeader {
     
     __weak __typeof(self)weakSelf = self;
-    [self.sortTable addHeaderWithCallback:^{
+    self.sortTable.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         if (weakSelf.currentPage==0) {
             [weakSelf getSortDataFromSever];
         }else {
             [weakSelf getClientTypeNum];
         }
-        
-    } dateKey:@"SortVC"];
+    }];
 }
 
 #pragma mark - 获取分类列表
@@ -110,7 +111,7 @@
             //库存预警
             AVQuery *query1 = [AVQuery queryWithClassName:@"Product"];
             [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
-            [query1 whereKey:@"isWaring" equalTo:[NSNumber numberWithBool:true]];
+            [query1 whereKey:@"isWarning" equalTo:[NSNumber numberWithBool:true]];
             weakSelf.waringCount = [query1 countObjects];
             
             //全部
@@ -143,12 +144,12 @@
                     }
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf.sortTable headerEndRefreshing];
+                        [weakSelf.sortTable.mj_header endRefreshing];
                         [weakSelf.sortTable reloadData];
                     });
                 } else {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf.sortTable headerEndRefreshing];
+                        [weakSelf.sortTable.mj_header endRefreshing];
                         [PopView showWithImageName:@"error" message:SetTitle(@"connect_error")];
                     });
                 }
@@ -192,7 +193,7 @@
             [weakSelf.typeArray addObject:@[@"D",@(dCount)]];
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.sortTable headerEndRefreshing];
+                [weakSelf.sortTable.mj_header endRefreshing];
                 [weakSelf.sortTable reloadData];
             });
         });

@@ -25,10 +25,6 @@
 
 @implementation OrderCell
 
-- (void)awakeFromNib {
-    // Initialization code
-}
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
@@ -47,6 +43,24 @@
     self.countLab.text = [NSString stringWithFormat:@"%d",(int)orderModel.orderCount];
     self.timeLab.text = orderModel.timeString;
     self.priceLab.text = [NSString stringWithFormat:@"%.2f",orderModel.orderPrice];
+    
+    if (orderModel.ered) {
+        [self.notificationHub setCount:0];
+    }else {
+        [self.notificationHub setCount:-1];
+    }
 }
 
+-(void)awakeFromNib {
+    [super awakeFromNib];
+    
+    self.notificationHub = [[RKNotificationHub alloc]initWithView:self];
+    [self.notificationHub setCount:-1];
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    
+    [self.notificationHub setCircleAtFrame:(CGRect){5,8,10,10}];
+}
 @end

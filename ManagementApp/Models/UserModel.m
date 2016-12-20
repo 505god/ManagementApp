@@ -16,54 +16,51 @@
     model.userId = object.objectId;
     model.userName = object.username;
     model.phone = object.mobilePhoneNumber;
+    model.phoneVerified = object.mobilePhoneVerified;
     model.email = object.email;
-    model.day = [[object objectForKey:@"day"]integerValue];
-    model.isExpire = [[object objectForKey:@"expire"]boolValue];
-    model.createdAt = object.createdAt;
+    model.emailVerified = [[object objectForKey:@"emailVerified"]boolValue];
+    
+    model.type = [[object objectForKey:@"type"]integerValue];
+    
+    model.rule = [[object objectForKey:@"rule"] boolValue];
+    
+    model.tax = [[object objectForKey:@"tax"]integerValue];
     
     AVFile *attachment = [object objectForKey:@"header"];
     if (attachment != nil) {
-        model.userHead = [attachment getThumbnailURLWithScaleToFit:true width:120 height:120];
+        NSString *url = [attachment getThumbnailURLWithScaleToFit:true width:100 height:100];
+        model.header = url;
     }
-
+    
+    model.expireDate = [[object objectForKey:@"expireDate"]doubleValue];
+    
+    
+    NSDate *confromTimesp = [NSDate dateWithTimeIntervalSince1970:model.expireDate];
+    
+    
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorian components:NSCalendarUnitDay | NSCalendarUnitHour |NSCalendarUnitMinute fromDate:[NSDate date] toDate:confromTimesp options:0];
+    
+    NSInteger day = [components day];
+    NSInteger hour = [components hour];
+    NSInteger minute = [components minute];
+    
+    if (day<=0 && hour <=0 && minute<=0) {
+        model.isExpire = true;
+        
+        day = 0;
+        hour = 0;
+        minute = 0;
+    }
+    
+    model.dayNumber = day;
+    model.hourNumber = hour;
+    model.minuteNumber = minute;
+    
     return model;
 }
 
--(BOOL)checkExpire {
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *components = [gregorian components:NSDayCalendarUnit fromDate:self.createdAt toDate:[NSDate date] options:0];
-    
-    NSInteger day = [components day];
-    
-    if (self.day-day<=0) {
-        return true;
-    }
-    return false;
-}
+//[[NSDate date] timeIntervalSince1970]
 
--(NSString *)dayString {
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *components = [gregorian components:NSDayCalendarUnit fromDate:self.createdAt toDate:[NSDate date] options:0];
-    
-    NSInteger day1 = [components day];
-    
-    if ([self checkExpire]) {
-        return SetTitle(@"Company_expire");
-    }else {
-        return [NSString stringWithFormat:@"%ld%@",self.day-day1,SetTitle(@"Company_day")];
-    }
-}
 
--(NSString *)dayNumber {
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *components = [gregorian components:NSDayCalendarUnit fromDate:self.createdAt toDate:[NSDate date] options:0];
-    
-    NSInteger day1 = [components day];
-    
-    if ([self checkExpire]) {
-        return @"0";
-    }else {
-        return [NSString stringWithFormat:@"%ld",self.day-day1];
-    }
-}
 @end

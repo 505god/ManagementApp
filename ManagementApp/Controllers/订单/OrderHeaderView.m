@@ -29,7 +29,7 @@
         self.backgroundColor = [UIColor blackColor];
         
         self.customeView = [[UIView alloc]initWithFrame:CGRectZero];
-        self.customeView.backgroundColor = [UIColor colorWithPatternImage:[Utility getImgWithImageName:@"nav_bg@2x"]];
+        self.customeView.backgroundColor = kThemeColor;
         [self addSubview:self.customeView];
         
         self.numInfo = [[UIImageView alloc]initWithFrame:CGRectZero];
@@ -42,21 +42,21 @@
         self.numLab.font = [UIFont systemFontOfSize:18];
         [self addSubview:self.numLab];
         
-        self.taxInfo = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.taxInfo.textColor = [UIColor lightGrayColor];
-        self.taxInfo.font = [UIFont systemFontOfSize:16];
-        self.taxInfo.text = SetTitle(@"order_tax");
-        [self addSubview:self.taxInfo];
+//        self.taxInfo = [[UILabel alloc]initWithFrame:CGRectZero];
+//        self.taxInfo.textColor = [UIColor whiteColor];
+//        self.taxInfo.font = [UIFont systemFontOfSize:16];
+//        self.taxInfo.text = SetTitle(@"order_tax");
+//        [self addSubview:self.taxInfo];
         
-        self.taxLab = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.taxLab.textColor = [UIColor whiteColor];
-        self.taxLab.textAlignment = NSTextAlignmentRight;
-        self.taxLab.text = @"0";
-        self.taxLab.font = [UIFont systemFontOfSize:18];
-        [self addSubview:self.taxLab];
+//        self.taxLab = [[UILabel alloc]initWithFrame:CGRectZero];
+//        self.taxLab.textColor = [UIColor whiteColor];
+//        self.taxLab.textAlignment = NSTextAlignmentRight;
+//        self.taxLab.text = @"0";
+//        self.taxLab.font = [UIFont systemFontOfSize:18];
+//        [self addSubview:self.taxLab];
         
         self.priceInfo = [[UILabel alloc]initWithFrame:CGRectZero];
-        self.priceInfo.textColor = [UIColor lightGrayColor];
+        self.priceInfo.textColor = [UIColor whiteColor];
         self.priceInfo.font = [UIFont systemFontOfSize:16];
         self.priceInfo.text = SetTitle(@"order_total");
         [self addSubview:self.priceInfo];
@@ -101,9 +101,7 @@
         
         self.priceLab.text = [NSString stringWithFormat:@"%.2f",[dataArray[1] floatValue]];
         
-        
-        CGFloat tax = [[[AVUser currentUser] objectForKey:@"tax"] floatValue];
-        self.taxLab.text = [NSString stringWithFormat:@"%.2f",[dataArray[1] floatValue]*tax/100];
+        self.taxLab.text = [NSString stringWithFormat:@"%.2f",[dataArray[8] floatValue]];
     }
     
 }

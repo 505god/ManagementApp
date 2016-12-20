@@ -38,6 +38,7 @@ NSString *const cellIdentifier=@"OrderCell";
 
 @implementation OrderVC
 
+
 -(void)dealloc {
     SafeRelease(_dataArray);
 }
@@ -56,16 +57,16 @@ NSString *const cellIdentifier=@"OrderCell";
     self.orderType = 0;
     self.type = 0;
     
-    [self.tableView headerBeginRefreshing];
+    [self.tableView.mj_header beginRefreshing];
 }
 
 #pragma mark - private
 
 - (void)addHeader {
     __weak __typeof(self)weakSelf = self;
-    [self.tableView addHeaderWithCallback:^{
+    self.tableView.mj_header = [LCCKConversationRefreshHeader headerWithRefreshingBlock:^{
         [weakSelf getDataFromSever];
-    } dateKey:@"OrderVC"];
+    }];
 }
 
 #pragma mark - getter/setter
@@ -115,6 +116,9 @@ NSString *const cellIdentifier=@"OrderCell";
     [UIView animateWithDuration:0.25f animations:^{
         weakSelf.filterView.frame = (CGRect){0,weakSelf.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,0};
         weakSelf.isFilterOpen = NO;
+        
+        weakSelf.filterView.isShow = NO;
+        weakSelf.filterView.customView.hidden = YES;
     }completion:^(BOOL finished) {
         ///请求订单列表
         if (animated) {
@@ -128,10 +132,10 @@ NSString *const cellIdentifier=@"OrderCell";
 -(void)setNavBarView {
     
     [self.navBarView setLeftWithImage:@"sort_icon" title:[NSString stringWithFormat:@"%@ • 0",SetTitle(@"Today")]];
-    [self.navBarView setRightWithArray:@[@"navicon_options"] type:0];
+    [self.navBarView setRightWithArray:@[@"navicon_more"] type:0];
     [self.view addSubview:self.navBarView];
     
-    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,self.view.height-self.navBarView.bottom} style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc]initWithFrame:(CGRect){0,self.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-self.navBarView.bottom-TabbarHeight} style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view addSubview:self.tableView];
@@ -148,10 +152,13 @@ NSString *const cellIdentifier=@"OrderCell";
     
     if (self.isFilterOpen) {
         [self hiddenFilterView:NO];
+        
+        self.filterView.isShow = NO;
+        self.filterView.customView.hidden = YES;
     }else {
         [self.view bringSubviewToFront:self.filterView];
         [UIView animateWithDuration:0.25f animations:^{
-            weakSelf.filterView.frame = (CGRect){0,weakSelf.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,weakSelf.view.height-weakSelf.navBarView.height};
+            weakSelf.filterView.frame = (CGRect){0,weakSelf.navBarView.bottom,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-weakSelf.navBarView.height-TabbarHeight};
             weakSelf.isFilterOpen = YES;
         }];
     }
@@ -200,11 +207,29 @@ NSString *const cellIdentifier=@"OrderCell";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    OrderDetailVC *VC = LOADVC(@"OrderDetailVC");
-    VC.orderModel = self.dataArray[indexPath.row];
-    VC.idxPath = indexPath;
     
+    OrderModel *order = (OrderModel *)self.dataArray[indexPath.row];
+    
+    //去除红点
+    order.ered = false;
+    [self.dataArray replaceObjectAtIndex:indexPath.row withObject:order];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
+        AVObject *object = [AVObject objectWithClassName:@"Order" objectId:order.orderId];
+        
+        [object setObject:@(false) forKey:@"ered"];
+        
+        [object saveEventually];
+    });
+    
+    
+    //--------
     __weak __typeof(self)weakSelf = self;
+    
+    OrderDetailVC *VC = LOADVC(@"OrderDetailVC");
+    VC.orderModel = order;
+    VC.idxPath = indexPath;
     VC.deleteHandler = ^(NSIndexPath *idxpath){
         [weakSelf.dataArray removeObjectAtIndex:idxpath.row];
         
@@ -230,6 +255,12 @@ NSString *const cellIdentifier=@"OrderCell";
 }
 #pragma mark -
 #pragma mark - 请求数据
+-(NSDate*) getDateWithDateString:(NSString*) dateString{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    NSDate *date = [dateFormat dateFromString:dateString];
+    return date;
+}
 
 -(void)getDataFromSever {
     if ([DataShare sharedService].appDel.isReachable) {
@@ -241,25 +272,74 @@ NSString *const cellIdentifier=@"OrderCell";
         [query1 whereKey:@"user" equalTo:[AVUser currentUser]];
         
         if (self.orderType==0) {
-            NSDate *date;
             if (self.type==5) {
-                date = [NSDate returnDayDawn:self.time];
-                NSDate *date2 = [NSDate returnNextDayDawn:self.time];
-                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:date];
-                [query1 whereKey:@"createdAt" lessThan:date2];
+                NSArray *array = [self.time componentsSeparatedByString:@"/"];
+                
+                NSString *starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",[array[2] integerValue],[array[0] integerValue],[array[1] integerValue]];
+                NSDate *starDate = [self getDateWithDateString:starTime];
+                
+                NSString *endTime = [NSString stringWithFormat:@"%ld-%ld-%ld 23:59:59",[array[2] integerValue],[array[0] integerValue],[array[1] integerValue]];
+                NSDate *endDate = [self getDateWithDateString:endTime];
+                
+                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:starDate];
+                [query1 whereKey:@"createdAt" lessThanOrEqualTo:endDate];
             }else {
+                
+                NSDate * date  = [NSDate date];
+                NSCalendar * calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                NSDateComponents *comps = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond|NSCalendarUnitWeekday|NSCalendarUnitWeekdayOrdinal fromDate:date];
+                NSString *month_starTime;
+                NSDate *month_starDate;
+                
+                NSString *month_endTime;
+                NSDate *month_endDate;
+                
+                if(comps.weekday==1){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day-6];
+                }else if(comps.weekday==2){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day];
+                }else if(comps.weekday==3){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day-1];
+                }else if(comps.weekday==4){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day-2];
+                }else if(comps.weekday==5){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day];
+                }else if(comps.weekday==6){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day-4];
+                }else if(comps.weekday==7){
+                    month_starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day-5];
+                }
+                
+                
+                NSString *starTime = [NSString stringWithFormat:@"%ld-%ld-%ld 00:00:00",comps.year,comps.month,comps.day];
+                NSDate *starDate = [self getDateWithDateString:starTime];
+                
+                NSString *endTime = [NSString stringWithFormat:@"%ld-%ld-%ld 23:59:59",comps.year,comps.month,comps.day];
+                NSDate *endDate = [self getDateWithDateString:endTime];
+                
                 if (self.type==0) {
-                    date = [NSDate returnToday];
+                    [query1 whereKey:@"createdAt" greaterThanOrEqualTo:starDate];
+                    [query1 whereKey:@"createdAt" lessThanOrEqualTo:endDate];
                 }else if (self.type==1) {
-                    date = [NSDate returnYesterday];
+                    NSTimeInterval secondsPerDay = 24 * 60 * 60;
+                    
+                    NSDate *starDate2 = [starDate dateByAddingTimeInterval: -secondsPerDay];
+                    NSDate *endDate2 = [endDate dateByAddingTimeInterval: -secondsPerDay];
+                    [query1 whereKey:@"createdAt" greaterThanOrEqualTo:starDate2];
+                    [query1 whereKey:@"createdAt" lessThanOrEqualTo:endDate2];
                 }else if (self.type==2) {
-                    date = [NSDate returnWeekday];
+                    month_starDate = [self getDateWithDateString:month_starTime];
+                    month_endTime = [NSString stringWithFormat:@"%ld-%ld-%ld 23:59:59",comps.year,comps.month,comps.day];
+                    month_endDate = [self getDateWithDateString:month_endTime];
+                    [query1 whereKey:@"createdAt" greaterThanOrEqualTo:month_starDate];
+                    [query1 whereKey:@"createdAt" lessThanOrEqualTo:month_endDate];
                 }else if (self.type==3) {
                     date = [NSDate returnMonthday];
+                    [query1 whereKey:@"createdAt" greaterThanOrEqualTo:date];
                 }else if (self.type==4) {
                     date = [NSDate returnMonth:3];
+                    [query1 whereKey:@"createdAt" greaterThanOrEqualTo:date];
                 }
-                [query1 whereKey:@"createdAt" greaterThanOrEqualTo:date];
             }
         }else if (self.orderType==1) {
             if (self.type<=2) {
@@ -274,7 +354,7 @@ NSString *const cellIdentifier=@"OrderCell";
         [query1 includeKey:@"products"];
         [query1 includeKey:@"client"];
         [query1 findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            [weakSelf.tableView headerEndRefreshing];
+            [weakSelf.tableView.mj_header endRefreshing];
 
             if (!error) {
                 weakSelf.dataArray = nil;
@@ -289,12 +369,15 @@ NSString *const cellIdentifier=@"OrderCell";
                 NSInteger partship = 0;//部分发货
                 NSInteger allship= 0;//全部发货
                 
+                CGFloat tax = 0;//税
+                
                 for (int i=0; i<objects.count; i++) {
                     AVObject *object = objects[i];
                     OrderModel *model = [OrderModel initWithObject:object];
                     num += model.orderCount;
                     price += model.orderPrice;
                     profit += model.profit;
+                    tax += model.tax;
                     
                     if ([Utility checkString:model.clientId]) {
                         client ++;
@@ -322,7 +405,7 @@ NSString *const cellIdentifier=@"OrderCell";
                 [weakSelf.headerArray addObject:@(allPay)];
                 [weakSelf.headerArray addObject:@(partship)];
                 [weakSelf.headerArray addObject:@(allship)];
-                
+                [weakSelf.headerArray addObject:@(tax)];
                 [weakSelf.tableView reloadData];
                 
                 if (weakSelf.orderType==0 && weakSelf.type==5) {

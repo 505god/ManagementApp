@@ -89,25 +89,25 @@
         [weakSelf checkData];
     };
     nameItem.alignment = NSTextAlignmentRight;
-    nameItem.validators = @[@"presence"];
+    nameItem.validators = @[@"pwd"];
     [section1 addItem:nameItem];
     
-    RETextItem *nameItem2 = [RETextItem itemWithTitle:SetTitle(@"NewPwd") value:@"" placeholder:SetTitle(@"product_required")];
+    RETextItem *nameItem2 = [RETextItem itemWithTitle:SetTitle(@"NewPwd") value:@"" placeholder:SetTitle(@"pwd_error")];
     nameItem2.onChange = ^(RETextItem *item){
         weakSelf.pwd1 = item.value;
         [weakSelf checkData];
     };
     nameItem2.alignment = NSTextAlignmentRight;
-    nameItem2.validators = @[@"presence"];
+    nameItem2.validators = @[@"pwd"];
     [section1 addItem:nameItem2];
     
-    RETextItem *nameItem3 = [RETextItem itemWithTitle:SetTitle(@"NewAgainPwd") value:@"" placeholder:SetTitle(@"product_required")];
+    RETextItem *nameItem3 = [RETextItem itemWithTitle:SetTitle(@"NewAgainPwd") value:@"" placeholder:SetTitle(@"pwd_error")];
     nameItem3.onChange = ^(RETextItem *item){
         weakSelf.pwd2 = item.value;
         [weakSelf checkData];
     };
     nameItem3.alignment = NSTextAlignmentRight;
-    nameItem3.validators = @[@"presence"];
+    nameItem3.validators = @[@"pwd"];
     [section1 addItem:nameItem3];
 }
 
@@ -134,8 +134,9 @@
     [self.view endEditing:YES];
     __weak __typeof(self)weakSelf = self;
     [[AVUser currentUser] updatePassword:self.pwd0 newPassword:self.pwd1 block:^(id object, NSError *error) {
-        //处理结果
-        [weakSelf.navigationController popViewControllerAnimated:YES];
+        if (!error) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }
     }];
 }
 #pragma mark - keyboard

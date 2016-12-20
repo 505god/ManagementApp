@@ -154,7 +154,7 @@ typedef NS_ENUM(NSUInteger, ICSDrawerControllerState)
     self.panGestureRecognizer.maximumNumberOfTouches = 1;
     self.panGestureRecognizer.delegate = self;
     
-    [self.centerView addGestureRecognizer:self.panGestureRecognizer];
+//    [self.centerView addGestureRecognizer:self.panGestureRecognizer];
 }
 
 - (void)addClosingGestureRecognizers
