@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		5D054FE31DDF04FC007548E9 /* ContactVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D054FE21DDF04FB007548E9 /* ContactVC.m */; };
 		5D054FE51DDF0556007548E9 /* ContactVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D054FE41DDF0556007548E9 /* ContactVC.xib */; };
+		5D063C251E79143100B28EC8 /* PhotoInput+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D063C241E79143100B28EC8 /* PhotoInput+Test.m */; };
 		5D07AA401DC4B59C000F4F99 /* StaticVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D07AA3E1DC4B59C000F4F99 /* StaticVC.m */; };
 		5D07AA411DC4B59C000F4F99 /* StaticVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D07AA3F1DC4B59C000F4F99 /* StaticVC.xib */; };
 		5D0DE1D71DBEF36D0016251F /* VerifiedVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D0DE1D51DBEF36D0016251F /* VerifiedVC.m */; };
@@ -406,6 +407,8 @@
 		5D054FE11DDF04FB007548E9 /* ContactVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactVC.h; sourceTree = "<group>"; };
 		5D054FE21DDF04FB007548E9 /* ContactVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactVC.m; sourceTree = "<group>"; };
 		5D054FE41DDF0556007548E9 /* ContactVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ContactVC.xib; sourceTree = "<group>"; };
+		5D063C231E79143100B28EC8 /* PhotoInput+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PhotoInput+Test.h"; sourceTree = "<group>"; };
+		5D063C241E79143100B28EC8 /* PhotoInput+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PhotoInput+Test.m"; sourceTree = "<group>"; };
 		5D07AA3D1DC4B59C000F4F99 /* StaticVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticVC.h; sourceTree = "<group>"; };
 		5D07AA3E1DC4B59C000F4F99 /* StaticVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StaticVC.m; sourceTree = "<group>"; };
 		5D07AA3F1DC4B59C000F4F99 /* StaticVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StaticVC.xib; sourceTree = "<group>"; };
@@ -1652,6 +1655,8 @@
 				5D6160BF1DE52CB5003CDCA9 /* LCCKUtil.m */,
 				5D133FF71DC19B62001F1D7A /* PhotoInput.h */,
 				5D133FF81DC19B62001F1D7A /* PhotoInput.m */,
+				5D063C231E79143100B28EC8 /* PhotoInput+Test.h */,
+				5D063C241E79143100B28EC8 /* PhotoInput+Test.m */,
 				5D133FFA1DC19C2A001F1D7A /* PickImageInput.h */,
 				5D133FFB1DC19C2A001F1D7A /* PickImageInput.m */,
 				5D61295C1C3110FC004343FF /* data.xcdatamodeld */,
@@ -1996,7 +2001,7 @@
 					5DFE00D61BC8DE2B009A35C3 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = VH5ASA49V5;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -2284,6 +2289,7 @@
 				5DAA2D151BD0BC1400FBCA24 /* RETableViewNumberCell.m in Sources */,
 				5D3F05EE1BCB571E00849DA8 /* TabbarView.m in Sources */,
 				5DAA2D141BD0BC1400FBCA24 /* RETableViewLongTextCell.m in Sources */,
+				5D063C251E79143100B28EC8 /* PhotoInput+Test.m in Sources */,
 				5DF547551BC8E35500DF5295 /* JSONKit.m in Sources */,
 				745B46F51BCFA52D00095E4D /* ClientModel.m in Sources */,
 				5DF546BC1BC8E34C00DF5295 /* ChineseToPinyinResource.m in Sources */,
@@ -2613,7 +2619,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Yuwei Chen (27EP6TSR8U)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yuwei Chen (27EP6TSR8U)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = VH5ASA49V5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2637,8 +2643,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuwei.fixdealEnterprise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "36d1a764-629b-419a-ba25-98acae4fbc56";
-				PROVISIONING_PROFILE_SPECIFIER = enterprise_dev;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -2649,10 +2655,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ManagementApp/ManagementApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Yuwei Chen (27EP6TSR8U)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Yuwei Chen (VH5ASA49V5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Yuwei Chen (VH5ASA49V5)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = VH5ASA49V5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2676,8 +2682,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yuwei.fixdealEnterprise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "36d1a764-629b-419a-ba25-98acae4fbc56";
-				PROVISIONING_PROFILE_SPECIFIER = enterprise_dev;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

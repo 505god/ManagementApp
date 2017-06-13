@@ -143,7 +143,7 @@
                                                                  index:i
                                                                  title:items[i]
                                                               norColor:[UIColor whiteColor]
-                                                              selColor:kDefaultTintColor
+                                                              selColor:[UIColor redColor]
                                                             isSelected:(i == 0)? YES: NO];
             [self.bgView addSubview:item];
             item.delegate = self;

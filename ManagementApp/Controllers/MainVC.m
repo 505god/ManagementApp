@@ -173,7 +173,7 @@
 #pragma mark - ICSDrawerControllerPresenting
 
 - (void)drawerControllerWillOpen:(ICSDrawerController *)drawerController {
-    self.view.userInteractionEnabled = NO;
+    self.view.userInteractionEnabled = YES;
 }
 
 - (void)drawerControllerDidClose:(ICSDrawerController *)drawerController {
